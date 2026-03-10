@@ -1,0 +1,15 @@
+# IDX specific
+.idx/
+
+# Node.js dependencies
+/node_modules
+/client/node_modules
+/server/node_modules
+
+# Environment variables
+.env
+/server/.env
+
+# Build outputs
+/dist
+/build

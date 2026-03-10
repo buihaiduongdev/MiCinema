@@ -1,0 +1,23 @@
+/**
+ * Express App Setup
+ * 
+ * Middleware theo thứ tự:
+ * 1. cors (config/cors)
+ * 2. express.json()
+ * 3. express.urlencoded({ extended: true })
+ * 4. Morgan logger (dev mode)
+ * 5. Routes: app.use('/api', routes)
+ * 6. Error handler middleware (cuối cùng)
+ * 
+ * Import routes từ từng module và mount:
+ * - /api/auth → auth.routes
+ * - /api/movies → movie.routes
+ * - /api/showtimes → showtime.routes
+ * - /api/rooms → room.routes
+ * - /api/bookings → booking.routes
+ * - /api/payments → payment.routes
+ * - /api/users → user.routes
+ * - /api/statistics → statistics.routes
+ * - /api/food → food.routes
+ * - /api/loyalty → loyalty.routes
+ */
