@@ -1,6 +1,6 @@
 /**
  * Format Utilities
- * 
+ *
  * Export:
  * - formatCurrency(amount: number): string — VD: "120.000 ₫"
  * - formatDate(date: string | Date): string — VD: "15/03/2026"

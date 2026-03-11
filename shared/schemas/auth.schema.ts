@@ -1,18 +1,16 @@
-/**
- * Auth Validation Schemas (Zod)
- *
- * Dùng chung cho cả FE (React Hook Form) và BE (Express middleware).
- *
- * Export:
- * - loginSchema: z.object({ email, matKhau })
- * - registerSchema: z.object({ email, matKhau, hoTen, soDienThoai? })
- * - changePasswordSchema: z.object({ matKhauCu, matKhauMoi })
- *
- * Type exports (infer từ Zod):
- * - LoginInput = z.infer<typeof loginSchema>
- * - RegisterInput = z.infer<typeof registerSchema>
- *
- * Sử dụng:
- * - FE: import { loginSchema } → zodResolver(loginSchema) trong useForm
- * - BE: import { loginSchema } → loginSchema.safeParse(req.body) trong controller
- */
+import z from 'zod';
+import { userSchema } from './user.schema.js';
+export const registerSchema = userSchema.pick({
+  email: true,
+  password: true,
+  fullName: true,
+  phone: true,
+});
+
+export const loginSchema = userSchema.pick({
+  email: true,
+  password: true,
+});
+
+export type RegisterInput = z.infer<typeof registerSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;

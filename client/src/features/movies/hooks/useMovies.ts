@@ -1,6 +1,6 @@
 /**
  * useMovies — Lấy danh sách phim
- * 
+ *
  * Dùng: useQuery từ TanStack Query
  * queryKey: ['movies', { genre, status, page }]
  * queryFn: GET /api/movies?genre=...&status=...&page=...

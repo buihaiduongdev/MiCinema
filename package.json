@@ -1,0 +1,27 @@
+{
+  "name": "micinema",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write .",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/buihaiduongdev/MiCinema.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/buihaiduongdev/MiCinema/issues"
+  },
+  "homepage": "https://github.com/buihaiduongdev/MiCinema#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^20.4.3",
+    "@commitlint/config-conventional": "^20.4.3",
+    "husky": "^9.1.7",
+    "prettier": "^3.8.1"
+  }
+}

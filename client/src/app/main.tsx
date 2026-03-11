@@ -1,6 +1,6 @@
 /**
  * main.tsx — Entry Point
- * 
+ *
  * Dùng: ReactDOM.createRoot
  * Wrap App với các Providers theo thứ tự:
  * 1. <QueryProvider> — TanStack Query

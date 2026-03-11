@@ -1,6 +1,6 @@
 /**
  * useSeatMap — Lấy sơ đồ ghế + trạng thái
- * 
+ *
  * Dùng: useQuery
  * queryKey: ['seats', showtimeId]
  * queryFn: GET /api/bookings/seats/:showtimeId

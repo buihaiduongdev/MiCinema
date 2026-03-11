@@ -1,8 +1,8 @@
 /**
  * Seed Data — Dữ liệu mẫu
- * 
+ *
  * Chạy: npx ts-node src/seed/seed.ts
- * 
+ *
  * Tạo:
  * 1. Admin account (admin@cinema.com / admin123)
  * 2. 2 Nhân viên mẫu

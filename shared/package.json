@@ -2,6 +2,7 @@
   "name": "@shared",
   "version": "1.0.0",
   "description": "Shared Zod schemas, types, and constants for FE + BE",
+  "type": "module",
   "main": "index.ts",
   "dependencies": {
     "zod": "^3.24.2"

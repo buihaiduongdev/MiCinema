@@ -1,9 +1,38 @@
 /**
- * Status Constants — tất cả trạng thái trong hệ thống
- * 
- * Export:
- * - TRANG_THAI_PHIM = { SAP_CHIEU, DANG_CHIEU, NGUNG_CHIEU }
- * - TRANG_THAI_DAT_VE = { CHO_THANH_TOAN, DA_THANH_TOAN, DA_HUY, DA_SU_DUNG }
- * - TRANG_THAI_XUAT_CHIEU = { MO_BAN, DA_CHIEU, HUY }
- * - HANG_THANH_VIEN = { BRONZE, SILVER, GOLD }
+ * Movie, Booking, and Showtime Statuses
  */
+export const MOVIE_STATUS = {
+  UPCOMING: 'UPCOMING',
+  RELEASED: 'RELEASED',
+  ENDED: 'ENDED',
+} as const;
+
+export type MovieStatus = (typeof MOVIE_STATUS)[keyof typeof MOVIE_STATUS];
+
+export const BOOKING_STATUS = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  CANCELLED: 'CANCELLED',
+  COMPLETED: 'COMPLETED',
+} as const;
+
+export type BookingStatus =
+  (typeof BOOKING_STATUS)[keyof typeof BOOKING_STATUS];
+
+export const SHOWTIME_STATUS = {
+  OPEN: 'OPEN',
+  FINISHED: 'FINISHED',
+  CANCELLED: 'CANCELLED',
+} as const;
+
+export type ShowtimeStatus =
+  (typeof SHOWTIME_STATUS)[keyof typeof SHOWTIME_STATUS];
+
+export const MEMBERSHIP_TIER = {
+  BRONZE: 'BRONZE',
+  SILVER: 'SILVER',
+  GOLD: 'GOLD',
+} as const;
+
+export type MembershipTier =
+  (typeof MEMBERSHIP_TIER)[keyof typeof MEMBERSHIP_TIER];

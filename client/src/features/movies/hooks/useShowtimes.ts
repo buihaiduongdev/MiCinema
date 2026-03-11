@@ -1,6 +1,6 @@
 /**
  * useShowtimes — Lấy lịch chiếu theo phim
- * 
+ *
  * Dùng: useQuery
  * queryKey: ['showtimes', { movieId, date }]
  * queryFn: GET /api/showtimes?movieId=...&date=...
