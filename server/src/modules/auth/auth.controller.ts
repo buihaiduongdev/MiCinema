@@ -9,24 +9,29 @@
 
 import { Request, Response } from 'express';
 import * as authService from './auth.service.js';
+import { signToken, TokenPayLoad } from 'src/utils/jwt.js';
+import { responseSuccess } from 'src/utils/response.js';
 
 export const register = async (req: Request, res: Response) => {
   const user = await authService.register(req.body);
 
-  res.status(201).json({
-    success: true,
-    message: 'Đăng ký thành công',
-    data: user,
+  const token = signToken({
+    userId: user._id.toString(),
+    email: user.email,
+    role: user.role,
   });
+  res.status(201).json(responseSuccess({ user, token }, 'Đăng ký thành công'));
 };
 
 export const login = async (req: Request, res: Response) => {
   const user = await authService.login(req.body);
-
-  // thêm JWT Token ở đây
-  res.status(200).json({
-    success: true,
-    message: 'Đăng nhập thành công',
-    data: user,
-  });
+  const tokenPayLoad: TokenPayLoad = {
+    userId: user._id.toString(),
+    email: user.email,
+    role: user.role,
+  };
+  const token = signToken(tokenPayLoad);
+  res
+    .status(200)
+    .json(responseSuccess({ user, token }, 'Đăng nhập thành công'));
 };

@@ -1,9 +1,18 @@
-/**
- * JWT Utilities
- *
- * Export:
- * - generateToken(payload: { _id, email, vaiTro }): string
- * - verifyToken(token: string): JwtPayload
- *
- * Dùng: jsonwebtoken, config/env (JWT_SECRET, JWT_EXPIRES_IN)
- */
+import jwt from 'jsonwebtoken';
+import { env } from 'src/config/env.js';
+
+export type TokenPayLoad = {
+  userId: string;
+  email: string;
+  role: string;
+};
+
+export const signToken = (payload: TokenPayLoad): string => {
+  return jwt.sign(payload, env.JWT_SECRET, {
+    expiresIn: env.JWT_EXPIRES_IN as jwt.SignOptions['expiresIn'],
+  });
+};
+
+export const verifyToken = (token: string): TokenPayLoad => {
+  return jwt.verify(token, env.JWT_SECRET) as TokenPayLoad;
+};
