@@ -1,10 +1,27 @@
-/**
- * Pagination Utility
- *
- * Export:
- * - getPaginationParams(query: { page?, limit? }): { skip: number, limit: number, page: number }
- * - getPaginationMeta(total: number, page: number, limit: number): { page, limit, total, totalPages }
- *
- * Dùng: trong service khi query MongoDB
- * VD: Model.find().skip(skip).limit(limit)
- */
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+
+export const getPaginationData = (
+  totalItems: number,
+  page: number,
+  limit: number,
+): PaginationMeta => {
+  const totalPages = Math.ceil(totalItems / limit);
+  return {
+    page,
+    limit,
+    totalItems,
+    totalPages,
+    hasNextPage: page < totalPages,
+    hasPrevPage: page > 1,
+  };
+};
+
+export const getSkip = (page: number, limit: number): number =>
+  (page - 1) * limit;
