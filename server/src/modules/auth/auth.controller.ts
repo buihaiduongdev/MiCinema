@@ -11,6 +11,7 @@ import { Request, Response } from 'express';
 import * as authService from './auth.service.js';
 import { signToken, TokenPayLoad } from 'src/utils/jwt.js';
 import { responseSuccess } from 'src/utils/response.js';
+import { AuthResponseData } from '@shared/schemas/auth.schema.js';
 
 export const register = async (req: Request, res: Response) => {
   const user = await authService.register(req.body);
@@ -20,7 +21,10 @@ export const register = async (req: Request, res: Response) => {
     email: user.email,
     role: user.role,
   });
-  res.status(201).json(responseSuccess({ user, token }, 'Đăng ký thành công'));
+
+  const responseData: AuthResponseData = { user, token };
+
+  res.status(201).json(responseSuccess(responseData, 'Đăng ký thành công'));
 };
 
 export const login = async (req: Request, res: Response) => {
@@ -31,7 +35,6 @@ export const login = async (req: Request, res: Response) => {
     role: user.role,
   };
   const token = signToken(tokenPayLoad);
-  res
-    .status(200)
-    .json(responseSuccess({ user, token }, 'Đăng nhập thành công'));
+  const responseData: AuthResponseData = { user, token };
+  res.status(200).json(responseSuccess(responseData, 'Đăng nhập thành công'));
 };

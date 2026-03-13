@@ -1,5 +1,5 @@
 import z from 'zod';
-import { userSchema } from './user.schema.js';
+import { User, userSchema } from './user.schema.js';
 export const registerSchema = userSchema.pick({
   email: true,
   password: true,
@@ -14,3 +14,7 @@ export const loginSchema = userSchema.pick({
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type AuthResponseData = {
+  user: User;
+  token: string;
+};
