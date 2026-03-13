@@ -10,16 +10,6 @@
 import { User } from '../../models/User.model.js';
 import { RegisterInput, LoginInput } from '@shared/schemas/auth.schema.js';
 
-export const register = async (data: RegisterInput) => {
-  const existingUser = await User.findOne({ email: data.email });
-  if (existingUser) {
-    throw new Error('Email này đã được sử  dụng');
-  }
-
-  const user = await User.create(data);
-  return user;
-};
-
 export const login = async (data: LoginInput) => {
   const user = await User.findOne({ email: data.email }).select('+password');
   if (!user) {
@@ -31,5 +21,15 @@ export const login = async (data: LoginInput) => {
     throw new Error('Mật khẩu không đúng');
   }
 
+  return user;
+};
+
+export const register = async (data: RegisterInput) => {
+  const existingUser = await User.findOne({ email: data.email });
+  if (existingUser) {
+    throw new Error('Email này đã được sử  dụng');
+  }
+
+  const user = await User.create(data);
   return user;
 };

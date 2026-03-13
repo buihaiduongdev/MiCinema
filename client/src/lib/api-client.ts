@@ -22,12 +22,12 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('accessToken');
       if (typeof window !== 'undefined') {
+        //TODO: dùng react-router
         window.location.href = '/login';
       }
     }
 
-    const message = error.response?.data?.message || 'Lỗi hệ thống';
-    return Promise.reject(new Error(message));
+    return Promise.reject(error.response?.data || { message: 'Lỗi hệ thống' });
   },
 );
 

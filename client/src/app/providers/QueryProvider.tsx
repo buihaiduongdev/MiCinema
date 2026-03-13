@@ -1,9 +1,9 @@
-/**
- * QueryProvider — TanStack Query Config
- *
- * Dùng: QueryClientProvider + QueryClient
- * Config:
- * - defaultOptions.queries.staleTime = 5 * 60 * 1000 (5 phút)
- * - defaultOptions.queries.retry = 1
- * - defaultOptions.queries.refetchOnWindowFocus = true
- */
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/lib/query-client';
+import type { ReactNode } from 'react';
+
+export function QueryProvider({ children }: { children: ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+}
