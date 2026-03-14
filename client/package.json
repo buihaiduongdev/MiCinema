@@ -10,10 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@hookform/resolvers": "^5.2.2",
     "@mantine/core": "^8.3.16",
     "@mantine/hooks": "^8.3.16",
     "@mantine/notifications": "^8.3.16",
+=======
+>>>>>>> 2eb284f (feat: implement api-client, pagination, and file upload utilities)
     "@tanstack/react-query": "^5.90.21",
     "axios": "^1.13.6",
     "react": "^19.2.0",
