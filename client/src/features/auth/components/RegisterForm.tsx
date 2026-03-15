@@ -1,11 +1,3 @@
-/**
- * RegisterForm — Form đăng ký
- *
- * Dùng: useForm + zodResolver(registerSchema) từ @shared/schemas/auth.schema
- * Submit: gọi useRegister() hook → useMutation
- * Fields: email, matKhau, xacNhanMatKhau, hoTen, soDienThoai
- */
-
 import { registerSchema, type RegisterInput } from '@shared/index';
 import { useForm } from '@tanstack/react-form';
 import { useRegister } from '../hooks/useRegister';

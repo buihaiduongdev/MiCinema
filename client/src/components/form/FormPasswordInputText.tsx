@@ -16,7 +16,9 @@ export function FormPasswordInputText({ field, ...props }: FormInputTextProps) {
       onChange={(e) => field.handleChange(e.target.value)}
       error={
         field.state.meta.isTouched && field.state.meta.errors.length
-          ? field.state.meta.errors.join(', ')
+          ? field.state.meta.errors
+              .map((err) => (typeof err === 'object' ? err.message : err))
+              .join(', ')
           : undefined
       }
     />
