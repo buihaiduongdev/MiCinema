@@ -1,11 +1,31 @@
-/**
- * Booking Validation Schemas (Zod)
- *
- * Export:
- * - createBookingSchema: z.object({ maXuatChieu, danhSachGhe: z.array({ maGhe, loaiGhe }) })
- * - seatSelectionSchema: z.object({ maGhe, hang, cot, loaiGhe, giaVe })
- * - cancelBookingSchema: z.object({ maDatVe, lyDo? })
- *
- * Type exports:
- * - CreateBookingInput, SeatSelection, CancelBookingInput
- */
+import z from 'zod';
+import { SEAT_TYPE } from '../constants/seat-types.js';
+import { BOOKING_STATUS } from '../constants/statuses.js';
+
+export const seatSelectionSchema = z.object({
+  seatId: z.string(),
+  row: z.string(),
+  col: z.number(),
+  type: z.nativeEnum(SEAT_TYPE),
+  price: z.number(),
+});
+
+export const createBookingSchema = z.object({
+  showtimeId: z.string(),
+  seats: z.array(seatSelectionSchema).min(1, 'Phải lựa chọn ít nhất 1 ghế'),
+});
+
+export const cancelBookingSchema = z.object({
+  bookingId: z.string(),
+  reason: z.string().optional(),
+});
+export const bookingSchema = createBookingSchema.extend({
+  userId: z.string(),
+  status: z.nativeEnum(BOOKING_STATUS),
+  totalPrice: z.number(),
+  createdAt: z.date().or(z.string()),
+});
+export type SeatSelection = z.infer<typeof seatSelectionSchema>;
+export type CreateBooking = z.infer<typeof createBookingSchema>;
+export type CancelBooking = z.infer<typeof cancelBookingSchema>;
+export type BookingType = z.infer<typeof bookingSchema>;
