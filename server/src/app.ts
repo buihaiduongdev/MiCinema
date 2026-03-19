@@ -27,6 +27,8 @@ import { corsOptions } from './config/cors';
 
 import authRoutes from './modules/auth/auth.routes.js';
 import userRoutes from './modules/users/user.routes.js';
+import bookingRoutes from './modules/bookings/booking.routes.js';
+
 import { errorHandler } from './middlewares/error.middleware.js';
 
 const app: Application = express();
@@ -43,6 +45,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/booking', bookingRoutes);
 
 app.use(errorHandler);
 
