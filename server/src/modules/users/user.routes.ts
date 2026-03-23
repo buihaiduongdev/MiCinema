@@ -35,4 +35,10 @@ router.patch('/:id', restrictTo(ROLES.ADMIN), validate(userSchema.partial()), us
 // Delete user (admin only)
 router.delete('/:id', restrictTo(ROLES.ADMIN), userController.remove);
 
+// Lock user account (admin only)
+router.patch('/:id/lock', restrictTo(ROLES.ADMIN), userController.lockUser);
+
+// Unlock user account (admin only)
+router.patch('/:id/unlock', restrictTo(ROLES.ADMIN), userController.unlockUser);
+
 export default router;

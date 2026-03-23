@@ -83,3 +83,14 @@ export const remove = async (id: string) => {
     return deleted;
 };
 
+export const lockUser = async (id: string) => {
+    const user = await User.findByIdAndUpdate(id, { isActive: false }, { new: true });
+    if (!user) throw new Error('Người dùng không tồn tại');
+    return user;
+};
+
+export const unlockUser = async (id: string) => {
+    const user = await User.findByIdAndUpdate(id, { isActive: true }, { new: true });
+    if (!user) throw new Error('Người dùng không tồn tại');
+    return user;
+};
