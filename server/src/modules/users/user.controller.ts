@@ -52,3 +52,17 @@ export const remove = async (req: Request, res: Response) => {
     res.status(200).json(responseSuccess(deleted, 'Xóa người dùng thành công'));
 };
 
+// Lock user account
+export const lockUser = async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const user = await userService.lockUser(id);
+    res.status(200).json(responseSuccess(user, 'Khoá tài khoản thành công'));
+};
+
+// Unlock user account
+export const unlockUser = async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const user = await userService.unlockUser(id);
+    res.status(200).json(responseSuccess(user, 'Mở khoá tài khoản thành công'));
+};
+
