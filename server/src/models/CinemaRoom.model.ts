@@ -2,10 +2,17 @@ import mongoose, { Schema, Document } from 'mongoose';
 import { ROOM_TYPE, SEAT_TYPE } from '@shared/constants/seat-types.js';
 import { RoomType } from '@shared/schemas/room.schema';
 
-export interface ICinemaRoom extends RoomType, Document {}
+export interface ICinemaRoom extends RoomType, Document {
+  cinemaId: mongoose.Types.ObjectId;
+}
 
 const cinemaRoomSchema = new Schema<ICinemaRoom>(
   {
+    cinemaId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Cinema',
+      required: true,
+    },
     name: { type: String, required: true, unique: true },
     roomType: {
       type: String,

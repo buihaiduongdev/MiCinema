@@ -1,18 +1,27 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { SHOWTIME_STATUS } from '@shared/constants/statuses';
-import { ShowtimeType } from '@shared/schemas/showtime.schema';
 
-export interface IShowtime
-  extends Omit<ShowtimeType, 'movieId' | 'roomId' | 'startTime'>, Document {
+export interface IShowtime extends Document {
   movieId: mongoose.Types.ObjectId;
+  cinemaId: mongoose.Types.ObjectId;
   roomId: mongoose.Types.ObjectId;
   startTime: Date;
+  ticketPrice: number;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
+
 const showtimeSchema = new Schema<IShowtime>(
   {
     movieId: {
       type: Schema.Types.ObjectId,
       ref: 'Movie',
+      required: true,
+    },
+    cinemaId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Cinema',
       required: true,
     },
     roomId: {
@@ -39,6 +48,14 @@ const showtimeSchema = new Schema<IShowtime>(
     timestamps: true,
   },
 );
+
+// Lọc suất chiếu theo phim + thời gian
 showtimeSchema.index({ movieId: 1, startTime: 1 });
+// Lọc theo phòng + thời gian (kiểm tra trùng lịch)
 showtimeSchema.index({ roomId: 1, startTime: 1 });
+// Lọc theo chi nhánh rạp
+showtimeSchema.index({ cinemaId: 1, startTime: 1 });
+// Lọc theo trạng thái
+showtimeSchema.index({ status: 1 });
+
 export const Showtime = mongoose.model<IShowtime>('Showtime', showtimeSchema);
