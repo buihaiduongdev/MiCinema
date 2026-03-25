@@ -101,9 +101,23 @@ export const getRevenue = async (opts: RevenueOptions = {}) => {
     { $sort: { _id: 1 } },
   ]);
 
+  // Calculate summary statistics
+  const summary = await Booking.aggregate([
+    { $match: match },
+    {
+      $group: {
+        _id: null,
+        totalRevenue: { $sum: '$totalPrice' },
+        totalBookings: { $sum: 1 },
+        averageRevenuePerBooking: { $avg: '$totalPrice' },
+      },
+    },
+  ]);
+
   return {
     groupBy,
     data,
+    summary: summary[0] || { totalRevenue: 0, totalBookings: 0, averageRevenuePerBooking: 0 },
   };
 };
 
@@ -149,6 +163,54 @@ export const getOccupancy = async (opts: OccupancyOptions = {}) => {
   );
 
   return occupancyData;
+};
+
+/**
+ * Get occupancy rate by room (aggregate)
+ */
+export const getOccupancyByRoom = async () => {
+  const rooms = await CinemaRoom.find({ isActive: true });
+
+  const roomOccupancy = await Promise.all(
+    rooms.map(async (room: any) => {
+      const totalSeats = (room.rows || 0) * (room.cols || 0);
+
+      // Get all showtimes for this room
+      const showtimes = await Showtime.find({ roomId: room._id });
+      const showtimeIds = showtimes.map((s) => s._id);
+
+      const bookedSeats = await Booking.countDocuments({
+        showtimeId: { $in: showtimeIds },
+        status: { $ne: BOOKING_STATUS.CANCELLED },
+      });
+
+      const occupancyRate =
+        totalSeats > 0 ? ((bookedSeats / totalSeats) * 100).toFixed(2) : 0;
+
+      return {
+        roomId: room._id,
+        roomName: room.name,
+        roomType: room.roomType,
+        rows: room.rows,
+        cols: room.cols,
+        totalSeats,
+        bookedSeats,
+        availableSeats: totalSeats - bookedSeats,
+        occupancyRate: parseFloat(occupancyRate as string),
+      };
+    }),
+  );
+
+  // Calculate overall occupancy
+  const totalSeats = roomOccupancy.reduce((sum, room) => sum + room.totalSeats, 0);
+  const totalBooked = roomOccupancy.reduce((sum, room) => sum + room.bookedSeats, 0);
+  const overallOccupancyRate =
+    totalSeats > 0 ? ((totalBooked / totalSeats) * 100).toFixed(2) : 0;
+
+  return {
+    overallOccupancyRate: parseFloat(overallOccupancyRate as string),
+    byRoom: roomOccupancy,
+  };
 };
 
 /**
@@ -217,17 +279,86 @@ export const getMoviePerformance = async (limit = 10) => {
     {
       $group: {
         _id: '$movie._id',
+        movieId: { $first: '$movie._id' },
         movieTitle: { $first: '$movie.title' },
+        moviePoster: { $first: '$movie.poster' },
         totalBookings: { $sum: 1 },
         totalRevenue: { $sum: '$totalPrice' },
         averageTicketPrice: { $avg: '$totalPrice' },
+        totalTicketsSold: {
+          $sum: { $size: '$seats' },
+        },
       },
     },
     { $sort: { totalRevenue: -1 } },
     { $limit: limit },
   ]);
 
-  return movieStats;
+  return movieStats.map((stat, index) => ({
+    rank: index + 1,
+    ...stat,
+  }));
+};
+
+/**
+ * Get top movies by revenue
+ */
+export const getTopMoviesByRevenue = async (limit = 10) => {
+  return getMoviePerformance(limit);
+};
+
+/**
+ * Get movies with detailed statistics
+ */
+export const getMovieDetailedStats = async (limit = 10) => {
+  const movieStats = await Booking.aggregate([
+    { $match: { status: { $ne: BOOKING_STATUS.CANCELLED } } },
+    {
+      $lookup: {
+        from: 'showtimes',
+        localField: 'showtimeId',
+        foreignField: '_id',
+        as: 'showtime',
+      },
+    },
+    { $unwind: '$showtime' },
+    {
+      $lookup: {
+        from: 'movies',
+        localField: 'showtime.movieId',
+        foreignField: '_id',
+        as: 'movie',
+      },
+    },
+    { $unwind: '$movie' },
+    {
+      $group: {
+        _id: '$movie._id',
+        movieId: { $first: '$movie._id' },
+        movieTitle: { $first: '$movie.title' },
+        moviePoster: { $first: '$movie.poster' },
+        status: { $first: '$movie.status' },
+        totalBookings: { $sum: 1 },
+        totalRevenue: { $sum: '$totalPrice' },
+        averageTicketPrice: { $avg: '$totalPrice' },
+        totalTicketsSold: {
+          $sum: { $size: '$seats' },
+        },
+        showtimesCount: { $sum: 1 },
+      },
+    },
+    {
+      $facet: {
+        byRevenue: [{ $sort: { totalRevenue: -1 } }, { $limit: limit }],
+        byBookings: [{ $sort: { totalBookings: -1 } }, { $limit: limit }],
+      },
+    },
+  ]);
+
+  return {
+    topByRevenue: movieStats[0]?.byRevenue || [],
+    topByBookings: movieStats[0]?.byBookings || [],
+  };
 };
 
 /**

@@ -52,7 +52,16 @@ export const getOccupancy = async (req: Request, res: Response) => {
     roomId: roomId as string | undefined,
   };
   const data = await statisticsService.getOccupancy(opts);
-  res.status(200).json(responseSuccess(data, 'Lấy tỷ lệ lấp đầy thành công'));
+  res.status(200).json(responseSuccess(data, 'Lấy tỷ lệ lấp đầy theo suất chiếu thành công'));
+};
+
+/**
+ * Get occupancy rate by room
+ * GET /api/statistics/occupancy/by-room
+ */
+export const getOccupancyByRoom = async (req: Request, res: Response) => {
+  const data = await statisticsService.getOccupancyByRoom();
+  res.status(200).json(responseSuccess(data, 'Lấy tỷ lệ lấp đầy theo phòng thành công'));
 };
 
 /**
@@ -76,7 +85,27 @@ export const getBookingStats = async (req: Request, res: Response) => {
 export const getMoviePerformance = async (req: Request, res: Response) => {
   const limit = req.query.limit ? Number(req.query.limit) : 10;
   const data = await statisticsService.getMoviePerformance(limit);
-  res.status(200).json(responseSuccess(data, 'Lấy thống kê phim thành công'));
+  res.status(200).json(responseSuccess(data, 'Lấy top phim theo doanh thu thành công'));
+};
+
+/**
+ * Get top movies by revenue
+ * GET /api/statistics/top-movies?limit=10
+ */
+export const getTopMoviesByRevenue = async (req: Request, res: Response) => {
+  const limit = req.query.limit ? Number(req.query.limit) : 10;
+  const data = await statisticsService.getTopMoviesByRevenue(limit);
+  res.status(200).json(responseSuccess(data, 'Lấy top phim theo doanh thu thành công'));
+};
+
+/**
+ * Get movies with detailed statistics
+ * GET /api/statistics/movies/detailed?limit=10
+ */
+export const getMovieDetailedStats = async (req: Request, res: Response) => {
+  const limit = req.query.limit ? Number(req.query.limit) : 10;
+  const data = await statisticsService.getMovieDetailedStats(limit);
+  res.status(200).json(responseSuccess(data, 'Lấy thống kê chi tiết phim thành công'));
 };
 
 /**
