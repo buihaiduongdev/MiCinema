@@ -50,11 +50,29 @@ export const getAll = async (req: Request, res: Response) => {
 export const getById = async (req: Request, res: Response) => {
   const { id } = req.params;
   
-  const person = await personService.getById(id);
+  const person = await personService.getById(id as string);
   
   return res.status(200).json(
     responseSuccess(person)
   );
+};
+
+/**
+ * Lấy chi tiết Person bằng slug
+ */
+export const getBySlug = async (req: Request, res: Response) => {
+  const { slug } = req.params;
+  const person = await personService.getBySlug(slug as string);
+  return res.status(200).json(responseSuccess(person));
+};
+
+/**
+ * Lấy danh sách quốc tịch của Person (cho dropdown filter)
+ */
+export const getNationalities = async (req: Request, res: Response) => {
+  const role = req.query.role as string | undefined;
+  const nationalities = await personService.getNationalities(role);
+  return res.status(200).json(responseSuccess(nationalities));
 };
 
 /**
@@ -64,7 +82,7 @@ export const update = async (req: Request, res: Response) => {
   const { id } = req.params;
   const data: UpdatePersonInput = req.body;
   
-  const person = await personService.update(id, data);
+  const person = await personService.update(id as string, data);
   
   return res.status(200).json(
     responseSuccess(person, 'Cập nhật thông tin thành công')
@@ -77,7 +95,7 @@ export const update = async (req: Request, res: Response) => {
 export const remove = async (req: Request, res: Response) => {
   const { id } = req.params;
   
-  await personService.remove(id);
+  await personService.remove(id as string);
   
   return res.status(200).json(
     responseSuccess(null, 'Xóa thông tin thành công')

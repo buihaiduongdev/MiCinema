@@ -42,6 +42,8 @@ export const movieFilterSchema = z.object({
   status: z.nativeEnum(MOVIE_STATUS).optional(),
   ageRating: z.nativeEnum(AGE_RATING).optional(),
   audioType: z.nativeEnum(AUDIO_TYPE).optional(),
+  country: z.string().optional(),     // Lọc theo quốc gia
+  year: z.coerce.number().optional(), // Lọc theo năm phát hành
   sortBy: z
     .enum(['title', 'releaseDate', 'rating', 'viewCount', 'createdAt'])
     .default('createdAt'),

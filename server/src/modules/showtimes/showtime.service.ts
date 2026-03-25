@@ -343,7 +343,12 @@ const groupShowtimesByDate = (showtimes: any[]) => {
   const grouped: Record<string, any[]> = {};
 
   for (const showtime of showtimes) {
-    const dateKey = new Date(showtime.startTime).toISOString().split('T')[0];
+    // Dùng local date (UTC+7) thay vì UTC để tránh lệch ngày
+    const d = new Date(showtime.startTime);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    const dateKey = `${year}-${month}-${day}`;
     if (!grouped[dateKey]) grouped[dateKey] = [];
     grouped[dateKey].push(showtime);
   }

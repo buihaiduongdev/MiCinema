@@ -75,11 +75,40 @@ const seed = async () => {
 
   console.log('3. Tạo Nhân Sự (Đạo diễn & Diễn viên)...');
   const persons = await Person.insertMany([
-    { name: 'Christopher Nolan', slug: slugify('Christopher Nolan'), role: 'DIRECTOR', avatar: 'https://image.tmdb.org/t/p/w200/xuAIuYSmsUzKlUMBFGVZaWsY3DZ.jpg' },
-    { name: 'Ryan Gosling', slug: slugify('Ryan Gosling'), role: 'ACTOR', avatar: 'https://image.tmdb.org/t/p/w200/lyUyVARQEhIGcmcVyZTXobrpvhi.jpg' },
-    { name: 'Emma Stone', slug: slugify('Emma Stone'), role: 'ACTOR', avatar: 'https://image.tmdb.org/t/p/w200/2hwHwA1mNHrI6Ibsk70kKkX860I.jpg' },
-    { name: 'Denis Villeneuve', slug: slugify('Denis Villeneuve'), role: 'DIRECTOR', avatar: 'https://image.tmdb.org/t/p/w200/rsx0CttmGgONb770X01V8fL8f9X.jpg' },
-    { name: 'Timothée Chalamet', slug: slugify('Timothée Chalamet'), role: 'ACTOR', avatar: 'https://image.tmdb.org/t/p/w200/B2DpwjIfVn9X7j7pPib81Zg3wS.jpg' },
+    { name: 'Christopher Nolan', slug: slugify('Christopher Nolan'), roles: ['DIRECTOR'], avatar: 'https://image.tmdb.org/t/p/w200/xuAIuYSmsUzKlUMBFGVZaWsY3DZ.jpg' },
+    { name: 'Ryan Gosling', slug: slugify('Ryan Gosling'), roles: ['ACTOR'], avatar: 'https://image.tmdb.org/t/p/w200/lyUyVARQEhIGcmcVyZTXobrpvhi.jpg' },
+    { name: 'Emma Stone', slug: slugify('Emma Stone'), roles: ['ACTOR'], avatar: 'https://image.tmdb.org/t/p/w200/2hwHwA1mNHrI6Ibsk70kKkX860I.jpg' },
+    { name: 'Denis Villeneuve', slug: slugify('Denis Villeneuve'), roles: ['DIRECTOR'], avatar: 'https://image.tmdb.org/t/p/w200/rsx0CttmGgONb770X01V8fL8f9X.jpg' },
+    { name: 'Timothée Chalamet', slug: slugify('Timothée Chalamet'), roles: ['ACTOR'], avatar: 'https://image.tmdb.org/t/p/w200/B2DpwjIfVn9X7j7pPib81Zg3wS.jpg' },
+    {
+      name: 'Chris Evans', slug: slugify('Chris Evans'), roles: ['ACTOR'],
+      avatar: 'https://m.media-amazon.com/images/M/MV5BNzQ0YWM1ODEtZDFkYy00MGJhLTkwZDUtMzVkZjljODU3ZTRmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg',
+      nationality: 'Mỹ', height: 183, viewCount: 154634, birthDate: new Date('1981-06-13'),
+      images: [
+        'https://upload.wikimedia.org/wikipedia/commons/2/25/Chris_Evans_SDCC_2014.jpg',
+        'https://www.caa.com/caaspeakers/partyHeadshot/chris-evans.png',
+        'https://c8.alamy.com/comp/2F0RX2B/chris-evans-22-april-2007-hollywood-california-movielines-hollywood-life-9th-annual-young-hollywood-awards-arrivals-photo-credit-giulio-marcocchisipa-press-copyright-2007-by-giulio-marcocchiyoung-gm2550704230949-2F0RX2B.jpg'
+      ],
+      biography: 'Khác với Chris Hemsworth vẫn đang loay hoay trong hình tượng vị thần sấm sét, đa số người hâm mộ vẫn nhìn nhận rõ ràng. Chris Evans và Captain America là hai con người hoàn toàn khác nhau.\n\nSinh ngày 13 tháng 6 năm 1981 tại Boston, bang Massachusetts, con đường diễn xuất của cậu bé Chris Evans bắt đầu từ nhỏ với những vở kịch trong trường học. Tình yêu diễn xuất lớn dần theo năm tháng, khi trưởng thành, Evans lắng nghe tiếng gọi con tim, tới New York và thi vào trường nghệ thuật Lee Strasberg.'
+    },
+    {
+      name: 'Margot Robbie', slug: slugify('Margot Robbie'), roles: ['ACTOR'],
+      avatar: 'https://image.tmdb.org/t/p/w200/p5iFqTqA71F6rA1v2W8i7U3X6v8.jpg',
+      nationality: 'Úc', height: 168, viewCount: 129409, birthDate: new Date('1990-07-02'),
+      biography: 'Dĩ nhiên, có nhan sắc chẳng bao giờ là đủ để đảm bảo cho chiếc vé thành công tại Hollywood. Margot còn phải cố gắng nhiều. Nhưng ta biết, hiện nay nàng xứng đáng được coi là minh tinh hạng A!'
+    },
+    {
+      name: 'Charlize Theron', slug: slugify('Charlize Theron'), roles: ['ACTOR'],
+      avatar: 'https://image.tmdb.org/t/p/w200/vQvS1yGqB7M0f4hN1gG1f0P1hV3.jpg',
+      nationality: 'Nam Phi', height: 177, viewCount: 104261, birthDate: new Date('1975-08-07'),
+      biography: 'Bắt đầu từ vai diễn không có lời thoại, chỉ xuất hiện 3 giây trong một bộ phim hạng B, Charlize Theron nay đã trở thành nữ thần của Hollywood.'
+    },
+    {
+      name: 'Robert Downey Jr.', slug: slugify('Robert Downey Jr.'), roles: ['ACTOR'],
+      avatar: 'https://image.tmdb.org/t/p/w200/1YjdSym1jTG7xjHSI0yGGWEswGL.jpg',
+      nationality: 'Mỹ', height: 174, viewCount: 99250, birthDate: new Date('1965-04-04'),
+      biography: 'Thành công lớn ở giai đoạn đầu sự nghiệp nhưng nghiện ngập từ bé, có phim kiếm cả tỉ đôla lại từng lang thang không xu dính túi, 2 lần để cử Oscar đi kèm với những lần vào tù ra khám... Nếu phải chọn cuộc đời một ngôi sao để viết kịch bản phim, thì "cuộc đời của Robert Downey Jr. là hoàn hảo nhất!"'
+    }
   ]);
 
   console.log('4. Tạo Chi Nhánh Rạp (Cinema)...');
@@ -132,23 +161,77 @@ const seed = async () => {
   console.log('6. Tạo Phim (Movies)...');
   const movies = await Movie.insertMany([
     {
-      title: 'Thoát Khỏi Tận Thế (Dự Án Hail Mary)',
-      slug: slugify('Thoát Khỏi Tận Thế (Dự Án Hail Mary)'),
-      description: 'Ryland Grace là một giáo viên khoa học nhận ra anh chính là hy vọng cuối cùng của Trái Đất...\nGiữa không gian vũ trụ cô độc, anh phải gánh vác sứ mệnh quan trọng.',
+      title: 'CAPTAIN AMERICA: CHIẾN BINH MÙA ĐÔNG',
+      slug: slugify('CAPTAIN AMERICA: CHIẾN BINH MÙA ĐÔNG'),
+      description: 'Hành trình chống lại Hydra của Steve Rogers.',
       directors: [persons[0]._id],
-      actors: [persons[1]._id, persons[2]._id],
+      actors: [persons[5]._id],
       genres: [genres[0]._id, genres[1]._id],
-      duration: 157,
-      releaseDate: new Date(),
-      poster: 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/1/image/c5f0a1eff4c394a251036189ccddaacd/3/5/350x495-mary.jpg',
-      trailer: 'https://www.youtube.com/watch?v=1g3_CFmnU7k',
-      rating: 8.8,
+      duration: 136,
+      releaseDate: new Date('2014-04-04'),
+      poster: 'https://upload.wikimedia.org/wikipedia/vi/e/e8/Captain_America_The_Winter_Soldier.jpg',
+      rating: 7.8,
       status: 'RELEASED',
       language: 'Tiếng Anh',
       audioType: 'SUBTITLED',
       ageRating: 'C13',
       country: 'Mỹ',
-      viewCount: 1543,
+      viewCount: 15430,
+    },
+    {
+      title: 'CAPTAIN AMERICA: NỘI CHIẾN SIÊU ANH HÙNG',
+      slug: slugify('CAPTAIN AMERICA: NỘI CHIẾN SIÊU ANH HÙNG'),
+      description: 'Trận chiến chia rẽ Avengers.',
+      directors: [persons[0]._id],
+      actors: [persons[5]._id, persons[8]._id],
+      genres: [genres[0]._id, genres[1]._id],
+      duration: 147,
+      releaseDate: new Date('2016-05-06'),
+      poster: 'https://static1.dienanh.net/upload/202206/d2339787-05a0-41b5-8f17-7240cd7d94f7.jpg',
+      rating: 7.8,
+      status: 'RELEASED',
+      language: 'Tiếng Anh',
+      audioType: 'DUBBED',
+      ageRating: 'P',
+      country: 'Mỹ',
+      viewCount: 22100,
+    },
+    {
+      title: 'Knives Out',
+      slug: slugify('Knives Out'),
+      description: 'Vụ án bí ẩn gia đình Thrombrey.',
+      directors: [persons[0]._id],
+      actors: [persons[5]._id],
+      genres: [genres[2]._id, genres[3]._id],
+      duration: 130,
+      releaseDate: new Date('2019-11-27'),
+      poster: 'https://image.tmdb.org/t/p/w500/pThyQovXQrw2m0s9x82twj48Jq4.jpg',
+      trailer: 'https://www.youtube.com/watch?v=sL-9Khv7wa4',
+      rating: 8.0,
+      status: 'RELEASED',
+      language: 'Tiếng Anh',
+      audioType: 'SUBTITLED',
+      ageRating: 'C16',
+      country: 'Mỹ',
+      viewCount: 10400,
+    },
+    {
+      title: 'AVENGERS: INFINITY WAR',
+      slug: slugify('AVENGERS: INFINITY WAR'),
+      description: 'Cuộc chiến vô cực chấn động thế giới.',
+      directors: [persons[0]._id],
+      actors: [persons[5]._id, persons[8]._id],
+      genres: [genres[0]._id, genres[1]._id],
+      duration: 149,
+      releaseDate: new Date('2018-04-27'),
+      poster: 'https://image.tmdb.org/t/p/w500/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg',
+      rating: 8.5,
+      status: 'RELEASED',
+      language: 'Tiếng Anh',
+      audioType: 'SUBTITLED',
+      ageRating: 'C13',
+      country: 'Mỹ',
+      viewCount: 45000,
     },
     {
       title: 'Dune: Hành Tinh Cát - Phần 2',
