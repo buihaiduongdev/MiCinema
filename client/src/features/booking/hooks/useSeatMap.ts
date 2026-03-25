@@ -1,9 +1,13 @@
-/**
- * useSeatMap — Lấy sơ đồ ghế + trạng thái
- *
- * Dùng: useQuery
- * queryKey: ['seats', showtimeId]
- * queryFn: GET /api/bookings/seats/:showtimeId
- * staleTime: 30 * 1000 (30 giây — cần real-time cho trạng thái ghế)
- * refetchInterval: 30 * 1000 (auto refetch mỗi 30s)
- */
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { getSeatMapApi } from '../services/booking.service';
+
+export const useSeatMap = (showtimeId: string) => {
+  return useQuery({
+    queryKey: ['seats', showtimeId],
+    queryFn: () => getSeatMapApi(showtimeId).then((res) => res.data),
+    staleTime: 10 * 1000,
+    refetchInterval: 30 * 1000,
+    enabled: !!showtimeId,
+    placeholderData: keepPreviousData,
+  });
+};

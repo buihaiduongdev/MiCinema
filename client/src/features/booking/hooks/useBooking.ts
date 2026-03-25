@@ -1,7 +1,15 @@
-/**
- * useBooking — Tạo đặt vé
- *
- * Dùng: useMutation
- * mutationFn: POST /api/bookings { maXuatChieu, danhSachGhe }
- * onSuccess: invalidateQueries(['showtimes']), navigate → /booking/confirm
- */
+import type { CreateBooking } from '@shared/index';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createBookingApi } from '../services/booking.service';
+
+export const useCreateBooking = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateBooking) => createBookingApi(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['seats'] });
+      queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
+    },
+  });
+};
