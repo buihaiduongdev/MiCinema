@@ -117,7 +117,11 @@ export const getRevenue = async (opts: RevenueOptions = {}) => {
   return {
     groupBy,
     data,
-    summary: summary[0] || { totalRevenue: 0, totalBookings: 0, averageRevenuePerBooking: 0 },
+    summary: summary[0] || {
+      totalRevenue: 0,
+      totalBookings: 0,
+      averageRevenuePerBooking: 0,
+    },
   };
 };
 
@@ -202,8 +206,14 @@ export const getOccupancyByRoom = async () => {
   );
 
   // Calculate overall occupancy
-  const totalSeats = roomOccupancy.reduce((sum, room) => sum + room.totalSeats, 0);
-  const totalBooked = roomOccupancy.reduce((sum, room) => sum + room.bookedSeats, 0);
+  const totalSeats = roomOccupancy.reduce(
+    (sum, room) => sum + room.totalSeats,
+    0,
+  );
+  const totalBooked = roomOccupancy.reduce(
+    (sum, room) => sum + room.bookedSeats,
+    0,
+  );
   const overallOccupancyRate =
     totalSeats > 0 ? ((totalBooked / totalSeats) * 100).toFixed(2) : 0;
 
