@@ -13,7 +13,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <QueryProvider>
-        <MantineProvider defaultColorScheme="dark">
+        <MantineProvider defaultColorScheme="light">
           <Notifications position="top-right" zIndex={1000} />
           <App />
         </MantineProvider>

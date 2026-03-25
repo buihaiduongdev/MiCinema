@@ -5,9 +5,8 @@
  * 1. cors (config/cors)
  * 2. express.json()
  * 3. express.urlencoded({ extended: true })
- * 4. Morgan logger (dev mode)
- * 5. Routes: app.use('/api', routes)
- * 6. Error handler middleware (cuối cùng)
+ * 4. Routes: app.use('/api', routes)
+ * 5. Error handler middleware (cuối cùng)
  *
  * Import routes từ từng module và mount:
  * - /api/auth → auth.routes
@@ -20,6 +19,8 @@
  * - /api/statistics → statistics.routes
  * - /api/food → food.routes
  * - /api/loyalty → loyalty.routes
+ * - /api/persons → person.routes
+ * - /api/genres → genre.routes
  */
 import express, { Application } from 'express';
 import cors from 'cors';
@@ -29,6 +30,12 @@ import authRoutes from './modules/auth/auth.routes.js';
 import roomRoutes from './modules/rooms/room.routes.js';
 import showtimeRoutes from './modules/showtimes/showtime.routes.js';
 import bookingRoutes from './modules/bookings/booking.routes.js';
+import loyaltyRoutes from './modules/loyalty/loyalty.routes.js';
+import movieRoutes from './modules/movies/movie.routes.js';
+import personRoutes from './modules/persons/person.routes.js';
+import genreRoutes from './modules/genres/genre.routes.js';
+import cinemaRoutes from './modules/cinemas/cinema.routes.js';
+
 import foodRoutes from './modules/food/food.routes.js';
 import { errorHandler } from './middlewares/error.middleware.js';
 
@@ -45,8 +52,14 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/rooms', roomRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/loyalty', loyaltyRoutes);
+app.use('/api/movies', movieRoutes);
+app.use('/api/persons', personRoutes);
+app.use('/api/genres', genreRoutes);
+app.use('/api/cinemas', cinemaRoutes);
 app.use('/api/showtimes', showtimeRoutes);
+app.use('/api/rooms', roomRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/products', foodRoutes);
 

@@ -1,45 +1,27 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
-import {
-  SHOWTIME_STATUS,
-  ShowtimeStatus,
-  SEAT_STATUS,
-  SeatStatus,
-} from '@shared/constants/statuses';
-
-export interface ISeatStatus {
-  seatId: string;
-  status: SeatStatus;
-  heldUntil?: Date;
-  bookingId?: Types.ObjectId;
-}
+import mongoose, { Document, Schema } from 'mongoose';
+import { SHOWTIME_STATUS } from '@shared/constants/statuses';
 
 export interface IShowtime extends Document {
-  movieId: Types.ObjectId;
-  roomId: Types.ObjectId;
+  movieId: mongoose.Types.ObjectId;
+  cinemaId: mongoose.Types.ObjectId;
+  roomId: mongoose.Types.ObjectId;
   startTime: Date;
   ticketPrice: number;
-  status: ShowtimeStatus;
-  seatStatus: ISeatStatus[];
+  status: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const SeatStatusSchema = new Schema<ISeatStatus>({
-  seatId: { type: String, required: true },
-  status: {
-    type: String,
-    enum: Object.values(SEAT_STATUS),
-    default: SEAT_STATUS.AVAILABLE,
-  },
-  heldUntil: { type: Date },
-  bookingId: { type: Schema.Types.ObjectId, ref: 'Booking' },
-});
-
-const ShowtimeSchema = new Schema<IShowtime>(
+const showtimeSchema = new Schema<IShowtime>(
   {
     movieId: {
       type: Schema.Types.ObjectId,
       ref: 'Movie',
+      required: true,
+    },
+    cinemaId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Cinema',
       required: true,
     },
     roomId: {
@@ -69,9 +51,13 @@ const ShowtimeSchema = new Schema<IShowtime>(
   }
 );
 
-ShowtimeSchema.index({ movieId: 1, startTime: 1 });
-ShowtimeSchema.index({ roomId: 1, startTime: 1 });
-ShowtimeSchema.index({ startTime: 1, status: 1 });
-ShowtimeSchema.index({ 'seatStatus.seatId': 1 });
+// Lọc suất chiếu theo phim + thời gian
+showtimeSchema.index({ movieId: 1, startTime: 1 });
+// Lọc theo phòng + thời gian (kiểm tra trùng lịch)
+showtimeSchema.index({ roomId: 1, startTime: 1 });
+// Lọc theo chi nhánh rạp
+showtimeSchema.index({ cinemaId: 1, startTime: 1 });
+// Lọc theo trạng thái
+showtimeSchema.index({ status: 1 });
 
-export const Showtime = mongoose.model<IShowtime>('Showtime', ShowtimeSchema);
+export const Showtime = mongoose.model<IShowtime>('Showtime', showtimeSchema);
