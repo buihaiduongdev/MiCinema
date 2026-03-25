@@ -14,7 +14,3 @@
 # Build outputs
 /dist
 /build
-
-# Markdown ngoại trừ README gốc repo
-*.md
-!README.md
