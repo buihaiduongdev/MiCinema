@@ -3,11 +3,13 @@
 ## 🎬 TỔNG QUAN
 
 ```
-MiCinema/
+(Repo gốc)
+├── .github/         → CI/CD (ví dụ commitlint)
+├── .husky/          → Git hooks
 ├── client/          → ⚛️ Frontend (React)
 ├── server/          → 🔧 Backend (Express + MongoDB)
 ├── shared/          → 📦 Shared code (Schemas + Types)
-├── package.json     → Dependencies của root  
+├── package.json     → Dependencies của root
 ├── commitlint.config.js  → Quy tắc commit message
 └── README.md        → Hướng dẫn dự án
 ```

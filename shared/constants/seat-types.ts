@@ -7,7 +7,7 @@ export const SEAT_TYPE = {
   SWEETBOX: 'SWEETBOX',
 } as const;
 
-export type SeatTypeValue = (typeof SEAT_TYPE)[keyof typeof SEAT_TYPE];
+export type SeatType = (typeof SEAT_TYPE)[keyof typeof SEAT_TYPE];
 
 export const ROOM_TYPE = {
   STANDARD: 'STANDARD',
@@ -16,7 +16,7 @@ export const ROOM_TYPE = {
   FOUR_DX: '4DX',
 } as const;
 
-export type RoomTypeValue = (typeof ROOM_TYPE)[keyof typeof ROOM_TYPE];
+export type RoomType = (typeof ROOM_TYPE)[keyof typeof ROOM_TYPE];
 
 export const PRICE_MULTIPLIER = {
   NORMAL: 1,

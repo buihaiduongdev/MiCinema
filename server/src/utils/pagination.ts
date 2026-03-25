@@ -1,4 +1,11 @@
-import { PaginationMeta } from '@shared/types/pagination.type';
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
 
 export const getPaginationData = (
   totalItems: number,
