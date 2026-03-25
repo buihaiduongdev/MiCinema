@@ -1,37 +1,85 @@
 /**
  * Person Controller — CRUD Actor/Director
- *
- * Dùng: import schemas từ @shared/schemas/person.schema
- * Validate: dùng validate.middleware
- * Response: dùng utils/response.ts helper
- * Auth: req.user từ auth.middleware
+ * * Sử dụng: 
+ * - Request/Response từ express
+ * - Các hàm nghiệp vụ từ person.service
+ * - Type định nghĩa từ @shared/schemas/person.schema
  */
 
 import { Request, Response } from 'express';
 import * as personService from './person.service.js';
 import { responseSuccess } from '../../utils/response.js';
+import type { 
+  CreatePersonInput, 
+  UpdatePersonInput, 
+  PersonFilter 
+} from '@shared/schemas/person.schema';
 
+/**
+ * Tạo mới Person
+ */
 export const create = async (req: Request, res: Response) => {
-  const person = await personService.create(req.body);
-  res.status(201).json(responseSuccess(person, 'Tạo thành công'));
+  // req.body đã được validate bởi middleware nên có kiểu là CreatePersonInput
+  const data: CreatePersonInput = req.body;
+  
+  const person = await personService.create(data);
+  
+  return res.status(201).json(
+    responseSuccess(person, 'Tạo thông tin diễn viên/đạo diễn thành công')
+  );
 };
 
+/**
+ * Lấy danh sách Person (có phân trang, lọc và Text Search)
+ */
 export const getAll = async (req: Request, res: Response) => {
-  const result = await personService.getAll(req.query as any);
-  res.status(200).json(responseSuccess(result, 'Lấy danh sách thành công'));
+  // Ép kiểu req.query về PersonFilter để Service nhận đúng các tham số
+  // Dùng unknown làm trung gian để tránh lỗi ép kiểu trực tiếp trong TS
+  const filter = req.query as unknown as PersonFilter;
+  
+  const result = await personService.getAll(filter);
+  
+  return res.status(200).json(
+    responseSuccess(result, 'Lấy danh sách thành công')
+  );
 };
 
+/**
+ * Lấy chi tiết một Person theo ID
+ */
 export const getById = async (req: Request, res: Response) => {
-  const person = await personService.getById(req.params.id);
-  res.status(200).json(responseSuccess(person));
+  const { id } = req.params;
+  
+  const person = await personService.getById(id);
+  
+  return res.status(200).json(
+    responseSuccess(person)
+  );
 };
 
+/**
+ * Cập nhật thông tin Person
+ */
 export const update = async (req: Request, res: Response) => {
-  const person = await personService.update(req.params.id, req.body);
-  res.status(200).json(responseSuccess(person, 'Cập nhật thành công'));
+  const { id } = req.params;
+  const data: UpdatePersonInput = req.body;
+  
+  const person = await personService.update(id, data);
+  
+  return res.status(200).json(
+    responseSuccess(person, 'Cập nhật thông tin thành công')
+  );
 };
 
+/**
+ * Xóa Person (Soft Delete)
+ */
 export const remove = async (req: Request, res: Response) => {
-  await personService.remove(req.params.id);
-  res.status(200).json(responseSuccess(null, 'Xóa thành công'));
+  const { id } = req.params;
+  
+  await personService.remove(id);
+  
+  return res.status(200).json(
+    responseSuccess(null, 'Xóa thông tin thành công')
+  );
 };

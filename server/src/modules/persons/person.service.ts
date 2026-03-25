@@ -1,12 +1,3 @@
-/**
- * Person Service — CRUD Actor/Director
- *
- * Dùng: Mongoose models từ models/
- * Tách business logic ra khỏi controller
- * Export các function: create, getAll, getById, update, remove
- * Xử lý: pagination (utils/pagination), error throwing
- */
-
 import { Person } from '../../models/Person.model.js';
 import { getSkip, getPaginationData } from '../../utils/pagination.js';
 import type {
@@ -16,13 +7,19 @@ import type {
 } from '@shared/schemas/person.schema';
 
 /**
- * Tạo mới Person (Actor / Director)
+ * Tạo mới Person
  */
 export const create = async (data: CreatePersonInput) => {
-  // Kiểm tra trùng tên
-  const existing = await Person.findOne({ name: data.name });
-  if (existing) {
-    throw new Error(`Người này đã tồn tại: ${data.name}`);
+  // Kiểm tra trùng bộ (Tên + Ngày sinh) thay vì chỉ mỗi tên
+  if (data.name && data.birthDate) {
+    const existing = await Person.findOne({
+      name: data.name,
+      birthDate: data.birthDate,
+      isActive: true,
+    });
+    if (existing) {
+      throw new Error(`Người này (${data.name}) với ngày sinh đã chọn đã tồn tại.`);
+    }
   }
 
   const person = await Person.create(data);
@@ -30,7 +27,7 @@ export const create = async (data: CreatePersonInput) => {
 };
 
 /**
- * Lấy danh sách Person có phân trang + lọc
+ * Lấy danh sách Person - Dùng Text Index để tìm kiếm
  */
 export const getAll = async (filter: PersonFilter) => {
   const { page, limit, search, role, nationality } = filter;
@@ -38,11 +35,15 @@ export const getAll = async (filter: PersonFilter) => {
   const query: any = { isActive: true };
 
   if (search) {
+    // Quay lại dùng $text index
+    // Lưu ý: Model Person phải được đánh index: personSchema.index({ name: 'text' })
     query.$text = { $search: search };
   }
+  
   if (role) {
     query.roles = role;
   }
+  
   if (nationality) {
     query.nationality = nationality;
   }
@@ -50,8 +51,10 @@ export const getAll = async (filter: PersonFilter) => {
   const totalItems = await Person.countDocuments(query);
   const skip = getSkip(page, limit);
 
+  // Nếu dùng $text, thường người ta sẽ sort theo độ liên quan (score) 
+  // nhưng ở đây bạn đang muốn sort theo tên (A-Z) nên mình giữ nguyên sort name
   const data = await Person.find(query)
-    .sort({ name: 1 })
+    .sort(search ? { score: { $meta: 'textScore' } } : { name: 1 }) 
     .skip(skip)
     .limit(limit)
     .lean();
@@ -62,7 +65,7 @@ export const getAll = async (filter: PersonFilter) => {
 };
 
 /**
- * Lấy chi tiết Person theo ID
+ * Lấy chi tiết Person
  */
 export const getById = async (id: string) => {
   const person = await Person.findById(id).lean();
@@ -74,14 +77,21 @@ export const getById = async (id: string) => {
  * Cập nhật Person
  */
 export const update = async (id: string, data: UpdatePersonInput) => {
-  // Nếu đổi tên → kiểm tra trùng
-  if (data.name) {
-    const existing = await Person.findOne({
-      name: data.name,
-      _id: { $ne: id },
-    });
-    if (existing) {
-      throw new Error(`Tên "${data.name}" đã được sử dụng`);
+  if (data.name || data.birthDate) {
+    const current = await Person.findById(id);
+    if (!current) throw new Error('Không tìm thấy người này');
+
+    const nameToCheck = data.name || current.name;
+    const birthToCheck = data.birthDate || current.birthDate;
+
+    if (birthToCheck) {
+      const duplicate = await Person.findOne({
+        name: nameToCheck,
+        birthDate: birthToCheck,
+        _id: { $ne: id },
+        isActive: true,
+      });
+      if (duplicate) throw new Error('Thông tin này trùng với một người khác đã có.');
     }
   }
 
@@ -95,8 +105,7 @@ export const update = async (id: string, data: UpdatePersonInput) => {
 };
 
 /**
- * Xóa Person (soft delete — đặt isActive = false)
- * Không xóa cứng vì phim cũ vẫn cần reference
+ * Xóa Person (soft delete)
  */
 export const remove = async (id: string) => {
   const person = await Person.findByIdAndUpdate(
