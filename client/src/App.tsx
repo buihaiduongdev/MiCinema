@@ -6,6 +6,7 @@ import LoginPage from './features/auth/pages/LoginPage';
 import RegisterPage from './features/auth/pages/RegisterPage';
 import MoviesPage from './features/movies/pages/MoviesPage';
 import MovieDetailPage from './features/movies/pages/MovieDetailPage';
+import UiComponentsTestPage from './pages/UiComponentsTestPage';
 // import BookingPage from './features/booking/pages/BookingPage';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/offers" element={<div>Offers Page</div>} />
         <Route path="/news" element={<div>News Page</div>} />
         <Route path="/member" element={<div>Member Page</div>} />
+        <Route path="/ui-components-test" element={<UiComponentsTestPage />} />
       </Route>
 
       {/* Auth Routes (without AppLayout) */}
