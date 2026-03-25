@@ -27,15 +27,16 @@ import cors from 'cors';
 import { corsOptions } from './config/cors';
 
 import authRoutes from './modules/auth/auth.routes.js';
-import userRoutes from './modules/users/user.routes.js';
+import roomRoutes from './modules/rooms/room.routes.js';
+import showtimeRoutes from './modules/showtimes/showtime.routes.js';
 import bookingRoutes from './modules/bookings/booking.routes.js';
 import loyaltyRoutes from './modules/loyalty/loyalty.routes.js';
 import movieRoutes from './modules/movies/movie.routes.js';
 import personRoutes from './modules/persons/person.routes.js';
 import genreRoutes from './modules/genres/genre.routes.js';
 import cinemaRoutes from './modules/cinemas/cinema.routes.js';
-import showtimeRoutes from './modules/showtimes/showtime.routes.js';
 
+import foodRoutes from './modules/food/food.routes.js';
 import { errorHandler } from './middlewares/error.middleware.js';
 
 const app: Application = express();
@@ -52,13 +53,15 @@ app.get('/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/booking', bookingRoutes);
 app.use('/api/loyalty', loyaltyRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/persons', personRoutes);
 app.use('/api/genres', genreRoutes);
 app.use('/api/cinemas', cinemaRoutes);
 app.use('/api/showtimes', showtimeRoutes);
+app.use('/api/rooms', roomRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/products', foodRoutes);
 
 app.use(errorHandler);
 

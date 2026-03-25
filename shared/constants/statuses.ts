@@ -37,11 +37,20 @@ export const MEMBERSHIP_TIER = {
 export type MembershipTier =
   (typeof MEMBERSHIP_TIER)[keyof typeof MEMBERSHIP_TIER];
 
-  export const LOYALTY_ACTION = {
-  EARN: 'EARN',
-  REDEEM: 'REDEEM',
-  EXPIRE: 'EXPIRE',
+export const SEAT_STATUS = {
+  AVAILABLE: 'AVAILABLE',
+  BOOKED: 'BOOKED',
+  HELD: 'HELD',
 } as const;
 
-export type LoyaltyAction =
-  (typeof LOYALTY_ACTION)[keyof typeof LOYALTY_ACTION];
+export type SeatStatus = (typeof SEAT_STATUS)[keyof typeof SEAT_STATUS];
+
+export const PAYMENT_METHOD = {
+  CASH: 'CASH',
+  MOMO: 'MOMO',
+  VNPAY: 'VNPAY',
+  ZALOPAY: 'ZALOPAY',
+} as const;
+
+export type PaymentMethod =
+  (typeof PAYMENT_METHOD)[keyof typeof PAYMENT_METHOD];

@@ -19,12 +19,13 @@ export function useLogin() {
   return useMutation({
     mutationFn: (data: LoginInput) => loginApi(data),
     onSuccess: (res) => {
-      localStorage.setItem('accessToken', res.data.token);
+      /** api-client unwraps ApiResponse → res = { user, token } */
+      localStorage.setItem('accessToken', res.token);
 
       queryClient.invalidateQueries({ queryKey: ['me'] });
       notifications.show({
         title: 'Thành công',
-        message: res.message,
+        message: 'Đăng nhập thành công',
         color: 'green',
       });
       navigate('/');

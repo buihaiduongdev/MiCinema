@@ -17,7 +17,12 @@ apiClient.interceptors.request.use((config) => {
 });
 
 apiClient.interceptors.response.use(
-  (response) => response.data,
+  (response) => {
+    if (response.data?.success && response.data?.data !== undefined) {
+      return response.data.data;
+    }
+    return response.data;
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('accessToken');

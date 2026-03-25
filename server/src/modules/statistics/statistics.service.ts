@@ -14,253 +14,394 @@ import { CinemaRoom } from '../../models/CinemaRoom.model.js';
 import { BOOKING_STATUS } from '@shared/constants/statuses.js';
 
 type RevenueOptions = {
-    startDate?: Date;
-    endDate?: Date;
-    groupBy?: 'day' | 'week' | 'month';
+  startDate?: Date;
+  endDate?: Date;
+  groupBy?: 'day' | 'week' | 'month';
 };
 
 type OccupancyOptions = {
-    showtimeId?: string;
-    roomId?: string;
+  showtimeId?: string;
+  roomId?: string;
 };
 
 type BookingStatsOptions = {
-    startDate?: Date;
-    endDate?: Date;
+  startDate?: Date;
+  endDate?: Date;
 };
 
 type UserGrowthOptions = {
-    startDate?: Date;
-    endDate?: Date;
-    groupBy?: 'day' | 'week' | 'month';
+  startDate?: Date;
+  endDate?: Date;
+  groupBy?: 'day' | 'week' | 'month';
 };
 
 /**
  * Get dashboard overview — tổng quan các chỉ số chính
  */
 export const getOverview = async () => {
-    const [
-        totalRevenue,
-        totalBookings,
-        totalUsers,
-        completedBookings,
-        cancelledBookings,
-    ] = await Promise.all([
-        Booking.aggregate([
-            { $match: { status: BOOKING_STATUS.PAID } },
-            { $group: { _id: null, total: { $sum: '$totalPrice' } } },
-        ]),
-        Booking.countDocuments(),
-        User.countDocuments(),
-        Booking.countDocuments({ status: BOOKING_STATUS.COMPLETED }),
-        Booking.countDocuments({ status: BOOKING_STATUS.CANCELLED }),
-    ]);
+  const [
+    totalRevenue,
+    totalBookings,
+    totalUsers,
+    completedBookings,
+    cancelledBookings,
+  ] = await Promise.all([
+    Booking.aggregate([
+      { $match: { status: BOOKING_STATUS.PAID } },
+      { $group: { _id: null, total: { $sum: '$totalPrice' } } },
+    ]),
+    Booking.countDocuments(),
+    User.countDocuments(),
+    Booking.countDocuments({ status: BOOKING_STATUS.COMPLETED }),
+    Booking.countDocuments({ status: BOOKING_STATUS.CANCELLED }),
+  ]);
 
-    const successRate =
-        totalBookings > 0
-            ? ((completedBookings / totalBookings) * 100).toFixed(2)
-            : 0;
+  const successRate =
+    totalBookings > 0
+      ? ((completedBookings / totalBookings) * 100).toFixed(2)
+      : 0;
 
-    return {
-        totalRevenue: totalRevenue[0]?.total || 0,
-        totalBookings,
-        totalUsers,
-        completedBookings,
-        cancelledBookings,
-        successRate: parseFloat(successRate as string),
-    };
+  return {
+    totalRevenue: totalRevenue[0]?.total || 0,
+    totalBookings,
+    totalUsers,
+    completedBookings,
+    cancelledBookings,
+    successRate: parseFloat(successRate as string),
+  };
 };
 
 /**
  * Get revenue statistics grouped by date/week/month
  */
 export const getRevenue = async (opts: RevenueOptions = {}) => {
-    const { startDate, endDate, groupBy = 'day' } = opts;
+  const { startDate, endDate, groupBy = 'day' } = opts;
 
-    const match: any = { status: BOOKING_STATUS.PAID };
-    if (startDate || endDate) {
-        match.createdAt = {};
-        if (startDate) match.createdAt.$gte = startDate;
-        if (endDate) match.createdAt.$lte = endDate;
-    }
+  const match: any = { status: BOOKING_STATUS.PAID };
+  if (startDate || endDate) {
+    match.createdAt = {};
+    if (startDate) match.createdAt.$gte = startDate;
+    if (endDate) match.createdAt.$lte = endDate;
+  }
 
-    // Determine grouping format
-    let dateFormat = '%Y-%m-%d'; // day
-    if (groupBy === 'week') dateFormat = '%Y-W%V';
-    if (groupBy === 'month') dateFormat = '%Y-%m';
+  // Determine grouping format
+  let dateFormat = '%Y-%m-%d'; // day
+  if (groupBy === 'week') dateFormat = '%Y-W%V';
+  if (groupBy === 'month') dateFormat = '%Y-%m';
 
-    const data = await Booking.aggregate([
-        { $match: match },
-        {
-            $group: {
-                _id: { $dateToString: { format: dateFormat, date: '$createdAt' } },
-                revenue: { $sum: '$totalPrice' },
-                bookings: { $sum: 1 },
-            },
-        },
-        { $sort: { _id: 1 } },
-    ]);
+  const data = await Booking.aggregate([
+    { $match: match },
+    {
+      $group: {
+        _id: { $dateToString: { format: dateFormat, date: '$createdAt' } },
+        revenue: { $sum: '$totalPrice' },
+        bookings: { $sum: 1 },
+      },
+    },
+    { $sort: { _id: 1 } },
+  ]);
 
-    return {
-        groupBy,
-        data,
-    };
+  // Calculate summary statistics
+  const summary = await Booking.aggregate([
+    { $match: match },
+    {
+      $group: {
+        _id: null,
+        totalRevenue: { $sum: '$totalPrice' },
+        totalBookings: { $sum: 1 },
+        averageRevenuePerBooking: { $avg: '$totalPrice' },
+      },
+    },
+  ]);
+
+  return {
+    groupBy,
+    data,
+    summary: summary[0] || {
+      totalRevenue: 0,
+      totalBookings: 0,
+      averageRevenuePerBooking: 0,
+    },
+  };
 };
 
 /**
  * Get occupancy rate statistics
  */
 export const getOccupancy = async (opts: OccupancyOptions = {}) => {
-    const { showtimeId, roomId } = opts;
+  const { showtimeId, roomId } = opts;
 
-    const match: any = {};
-    if (showtimeId) match.showtimeId = showtimeId;
-    if (roomId) match.roomId = roomId;
+  const match: any = {};
+  if (showtimeId) match.showtimeId = showtimeId;
+  if (roomId) match.roomId = roomId;
 
-    // Get all showtimes (for total seats)
-    const showtimes = await Showtime.find(match).populate('roomId');
+  // Get all showtimes (for total seats)
+  const showtimes = await Showtime.find(match).populate('roomId');
 
-    const occupancyData = await Promise.all(
-        showtimes.map(async (showtime: any) => {
-            // Calculate total seats from room layout (rows * cols)
-            const room = showtime.roomId as any;
-            const totalSeats = (room.rows || 0) * (room.cols || 0);
+  const occupancyData = await Promise.all(
+    showtimes.map(async (showtime: any) => {
+      // Calculate total seats from room layout (rows * cols)
+      const room = showtime.roomId as any;
+      const totalSeats = (room.rows || 0) * (room.cols || 0);
 
-            const bookedSeats = await Booking.countDocuments({
-                showtimeId: showtime._id,
-                status: { $ne: BOOKING_STATUS.CANCELLED },
-            });
+      const bookedSeats = await Booking.countDocuments({
+        showtimeId: showtime._id,
+        status: { $ne: BOOKING_STATUS.CANCELLED },
+      });
 
-            const occupancyRate =
-                totalSeats > 0 ? ((bookedSeats / totalSeats) * 100).toFixed(2) : 0;
+      const occupancyRate =
+        totalSeats > 0 ? ((bookedSeats / totalSeats) * 100).toFixed(2) : 0;
 
-            return {
-                showtimeId: showtime._id,
-                movieId: showtime.movieId,
-                roomId: showtime.roomId._id,
-                roomName: (showtime.roomId as any).name,
-                startTime: showtime.startTime,
-                totalSeats,
-                bookedSeats,
-                availableSeats: totalSeats - bookedSeats,
-                occupancyRate: parseFloat(occupancyRate as string),
-            };
-        }),
-    );
+      return {
+        showtimeId: showtime._id,
+        movieId: showtime.movieId,
+        roomId: showtime.roomId._id,
+        roomName: (showtime.roomId as any).name,
+        startTime: showtime.startTime,
+        totalSeats,
+        bookedSeats,
+        availableSeats: totalSeats - bookedSeats,
+        occupancyRate: parseFloat(occupancyRate as string),
+      };
+    }),
+  );
 
-    return occupancyData;
+  return occupancyData;
+};
+
+/**
+ * Get occupancy rate by room (aggregate)
+ */
+export const getOccupancyByRoom = async () => {
+  const rooms = await CinemaRoom.find({ isActive: true });
+
+  const roomOccupancy = await Promise.all(
+    rooms.map(async (room: any) => {
+      const totalSeats = (room.rows || 0) * (room.cols || 0);
+
+      // Get all showtimes for this room
+      const showtimes = await Showtime.find({ roomId: room._id });
+      const showtimeIds = showtimes.map((s) => s._id);
+
+      const bookedSeats = await Booking.countDocuments({
+        showtimeId: { $in: showtimeIds },
+        status: { $ne: BOOKING_STATUS.CANCELLED },
+      });
+
+      const occupancyRate =
+        totalSeats > 0 ? ((bookedSeats / totalSeats) * 100).toFixed(2) : 0;
+
+      return {
+        roomId: room._id,
+        roomName: room.name,
+        roomType: room.roomType,
+        rows: room.rows,
+        cols: room.cols,
+        totalSeats,
+        bookedSeats,
+        availableSeats: totalSeats - bookedSeats,
+        occupancyRate: parseFloat(occupancyRate as string),
+      };
+    }),
+  );
+
+  // Calculate overall occupancy
+  const totalSeats = roomOccupancy.reduce(
+    (sum, room) => sum + room.totalSeats,
+    0,
+  );
+  const totalBooked = roomOccupancy.reduce(
+    (sum, room) => sum + room.bookedSeats,
+    0,
+  );
+  const overallOccupancyRate =
+    totalSeats > 0 ? ((totalBooked / totalSeats) * 100).toFixed(2) : 0;
+
+  return {
+    overallOccupancyRate: parseFloat(overallOccupancyRate as string),
+    byRoom: roomOccupancy,
+  };
 };
 
 /**
  * Get booking statistics by status
  */
 export const getBookingStats = async (opts: BookingStatsOptions = {}) => {
-    const { startDate, endDate } = opts;
+  const { startDate, endDate } = opts;
 
-    const match: any = {};
-    if (startDate || endDate) {
-        match.createdAt = {};
-        if (startDate) match.createdAt.$gte = startDate;
-        if (endDate) match.createdAt.$lte = endDate;
-    }
+  const match: any = {};
+  if (startDate || endDate) {
+    match.createdAt = {};
+    if (startDate) match.createdAt.$gte = startDate;
+    if (endDate) match.createdAt.$lte = endDate;
+  }
 
-    const stats = await Booking.aggregate([
-        { $match: match },
-        {
-            $group: {
-                _id: '$status',
-                count: { $sum: 1 },
-                totalRevenue: {
-                    $sum: {
-                        $cond: [
-                            { $eq: ['$status', BOOKING_STATUS.PAID] },
-                            '$totalPrice',
-                            0,
-                        ],
-                    },
-                },
-            },
+  const stats = await Booking.aggregate([
+    { $match: match },
+    {
+      $group: {
+        _id: '$status',
+        count: { $sum: 1 },
+        totalRevenue: {
+          $sum: {
+            $cond: [
+              { $eq: ['$status', BOOKING_STATUS.PAID] },
+              '$totalPrice',
+              0,
+            ],
+          },
         },
-    ]);
+      },
+    },
+  ]);
 
-    return {
-        startDate,
-        endDate,
-        data: stats,
-    };
+  return {
+    startDate,
+    endDate,
+    data: stats,
+  };
 };
 
 /**
  * Get movie performance statistics
  */
 export const getMoviePerformance = async (limit = 10) => {
-    const movieStats = await Booking.aggregate([
-        { $match: { status: { $ne: BOOKING_STATUS.CANCELLED } } },
-        {
-            $lookup: {
-                from: 'showtimes',
-                localField: 'showtimeId',
-                foreignField: '_id',
-                as: 'showtime',
-            },
+  const movieStats = await Booking.aggregate([
+    { $match: { status: { $ne: BOOKING_STATUS.CANCELLED } } },
+    {
+      $lookup: {
+        from: 'showtimes',
+        localField: 'showtimeId',
+        foreignField: '_id',
+        as: 'showtime',
+      },
+    },
+    { $unwind: '$showtime' },
+    {
+      $lookup: {
+        from: 'movies',
+        localField: 'showtime.movieId',
+        foreignField: '_id',
+        as: 'movie',
+      },
+    },
+    { $unwind: '$movie' },
+    {
+      $group: {
+        _id: '$movie._id',
+        movieId: { $first: '$movie._id' },
+        movieTitle: { $first: '$movie.title' },
+        moviePoster: { $first: '$movie.poster' },
+        totalBookings: { $sum: 1 },
+        totalRevenue: { $sum: '$totalPrice' },
+        averageTicketPrice: { $avg: '$totalPrice' },
+        totalTicketsSold: {
+          $sum: { $size: '$seats' },
         },
-        { $unwind: '$showtime' },
-        {
-            $lookup: {
-                from: 'movies',
-                localField: 'showtime.movieId',
-                foreignField: '_id',
-                as: 'movie',
-            },
-        },
-        { $unwind: '$movie' },
-        {
-            $group: {
-                _id: '$movie._id',
-                movieTitle: { $first: '$movie.title' },
-                totalBookings: { $sum: 1 },
-                totalRevenue: { $sum: '$totalPrice' },
-                averageTicketPrice: { $avg: '$totalPrice' },
-            },
-        },
-        { $sort: { totalRevenue: -1 } },
-        { $limit: limit },
-    ]);
+      },
+    },
+    { $sort: { totalRevenue: -1 } },
+    { $limit: limit },
+  ]);
 
-    return movieStats;
+  return movieStats.map((stat, index) => ({
+    rank: index + 1,
+    ...stat,
+  }));
+};
+
+/**
+ * Get top movies by revenue
+ */
+export const getTopMoviesByRevenue = async (limit = 10) => {
+  return getMoviePerformance(limit);
+};
+
+/**
+ * Get movies with detailed statistics
+ */
+export const getMovieDetailedStats = async (limit = 10) => {
+  const movieStats = await Booking.aggregate([
+    { $match: { status: { $ne: BOOKING_STATUS.CANCELLED } } },
+    {
+      $lookup: {
+        from: 'showtimes',
+        localField: 'showtimeId',
+        foreignField: '_id',
+        as: 'showtime',
+      },
+    },
+    { $unwind: '$showtime' },
+    {
+      $lookup: {
+        from: 'movies',
+        localField: 'showtime.movieId',
+        foreignField: '_id',
+        as: 'movie',
+      },
+    },
+    { $unwind: '$movie' },
+    {
+      $group: {
+        _id: '$movie._id',
+        movieId: { $first: '$movie._id' },
+        movieTitle: { $first: '$movie.title' },
+        moviePoster: { $first: '$movie.poster' },
+        status: { $first: '$movie.status' },
+        totalBookings: { $sum: 1 },
+        totalRevenue: { $sum: '$totalPrice' },
+        averageTicketPrice: { $avg: '$totalPrice' },
+        totalTicketsSold: {
+          $sum: { $size: '$seats' },
+        },
+        showtimesCount: { $sum: 1 },
+      },
+    },
+    {
+      $facet: {
+        byRevenue: [{ $sort: { totalRevenue: -1 } }, { $limit: limit }],
+        byBookings: [{ $sort: { totalBookings: -1 } }, { $limit: limit }],
+      },
+    },
+  ]);
+
+  return {
+    topByRevenue: movieStats[0]?.byRevenue || [],
+    topByBookings: movieStats[0]?.byBookings || [],
+  };
 };
 
 /**
  * Get user growth statistics
  */
 export const getUserGrowth = async (opts: UserGrowthOptions = {}) => {
-    const { startDate, endDate, groupBy = 'day' } = opts;
+  const { startDate, endDate, groupBy = 'day' } = opts;
 
-    const match: any = {};
-    if (startDate || endDate) {
-        match.createdAt = {};
-        if (startDate) match.createdAt.$gte = startDate;
-        if (endDate) match.createdAt.$lte = endDate;
-    }
+  const match: any = {};
+  if (startDate || endDate) {
+    match.createdAt = {};
+    if (startDate) match.createdAt.$gte = startDate;
+    if (endDate) match.createdAt.$lte = endDate;
+  }
 
-    // Determine grouping format
-    let dateFormat = '%Y-%m-%d'; // day
-    if (groupBy === 'week') dateFormat = '%Y-W%V';
-    if (groupBy === 'month') dateFormat = '%Y-%m';
+  // Determine grouping format
+  let dateFormat = '%Y-%m-%d'; // day
+  if (groupBy === 'week') dateFormat = '%Y-W%V';
+  if (groupBy === 'month') dateFormat = '%Y-%m';
 
-    const data = await User.aggregate([
-        { $match: match },
-        {
-            $group: {
-                _id: { $dateToString: { format: dateFormat, date: '$createdAt' } },
-                newUsers: { $sum: 1 },
-            },
-        },
-        { $sort: { _id: 1 } },
-    ]);
+  const data = await User.aggregate([
+    { $match: match },
+    {
+      $group: {
+        _id: { $dateToString: { format: dateFormat, date: '$createdAt' } },
+        newUsers: { $sum: 1 },
+      },
+    },
+    { $sort: { _id: 1 } },
+  ]);
 
-    return {
-        groupBy,
-        data,
-    };
+  return {
+    groupBy,
+    data,
+  };
 };
