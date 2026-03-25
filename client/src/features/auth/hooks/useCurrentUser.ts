@@ -4,7 +4,8 @@ import { getMeApi } from '../services/auth.service';
 export function useCurrentUser() {
   return useQuery({
     queryKey: ['me'],
-    queryFn: () => getMeApi().then((res) => res.data.user),
+    /** GET /auth/me: interceptor trả về trực tiếp user trong data */
+    queryFn: () => getMeApi(),
     enabled: !!localStorage.getItem('accessToken'),
     staleTime: 4 * 60 * 1000,
   });

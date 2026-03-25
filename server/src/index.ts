@@ -7,18 +7,34 @@
  * 4. Kết nối MongoDB → app.listen(PORT)
  * 5. Bắt unhandled errors
  */
+
+import { createServer } from 'http';
 import { env } from './config/env';
 import { connectDB } from './config/database';
+import { initSocket } from './config/socket';
+import { startReleaseExpiredSeatsJob } from './jobs/releaseExpiredSeats';
 import app from './app';
-import { setServers } from 'node:dns/promises';
 
-setServers(['1.1.1.1', '8.8.8.8']);
+import './models/Movie.model';
+import './models/CinemaRoom.model';
+import './models/Showtime.model';
+import './models/Product.model';
+import './models/Booking.model';
+import './models/User.model';
+
 const startServer = async () => {
   try {
     await connectDB();
 
-    app.listen(env.PORT, () => {
-      console.log(`http://localhost:${env.PORT}`);
+    const httpServer = createServer(app);
+    
+    initSocket(httpServer);
+
+    startReleaseExpiredSeatsJob();
+
+    httpServer.listen(env.PORT, () => {
+      console.log(`🚀 Server: http://localhost:${env.PORT}`);
+      console.log(`🔌 WebSocket: ws://localhost:${env.PORT}`);
     });
   } catch (errors) {
     console.log('Failed to start: ', errors);

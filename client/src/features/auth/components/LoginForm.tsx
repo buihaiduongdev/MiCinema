@@ -1,11 +1,12 @@
 import { Button, Stack } from '@mantine/core';
 import { useForm } from '@tanstack/react-form';
+import { zodValidator } from '@tanstack/zod-form-adapter';
 import { loginSchema, type LoginInput } from '@shared/index';
 import { FormInputText } from '@/components/form/FormInputText';
 import { FormPasswordInputText } from '@/components/form/FormPasswordInputText';
 import { useLogin } from '../hooks/useLogin';
 
-export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
+export function LoginForm() {
   const { mutate: login, isPending } = useLogin();
 
   const form = useForm({
@@ -13,14 +14,10 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
       email: '',
       password: '',
     } as LoginInput,
-    validators: { onChange: loginSchema },
-    onSubmit: ({ value }) => {
-      login(value, {
-        onSuccess: () => {
-          onSuccess();
-        },
-      });
+    onSubmit: async ({ value }) => {
+      login(value);
     },
+    validatorAdapter: zodValidator(),
   });
 
   return (
@@ -32,9 +29,8 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
       }}
     >
       <Stack>
-        <form.Field
-          name="email"
-          children={(field) => (
+        <form.Field name="email">
+          {(field) => (
             <FormInputText
               field={field}
               label="Email"
@@ -42,10 +38,10 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
               required
             />
           )}
-        />
-        <form.Field
-          name="password"
-          children={(field) => (
+        </form.Field>
+        
+        <form.Field name="password">
+          {(field) => (
             <FormPasswordInputText
               field={field}
               label="Mật khẩu"
@@ -53,7 +49,7 @@ export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
               required
             />
           )}
-        />
+        </form.Field>
 
         <Button type="submit" mt="md" loading={isPending} fullWidth>
           Đăng nhập
