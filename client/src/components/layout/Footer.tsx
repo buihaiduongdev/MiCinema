@@ -1,19 +1,12 @@
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Facebook,
-  Twitter,
-  Instagram,
-  Youtube,
-} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-slate-950 border-t border-slate-800 mt-20">
-      <div className="w-full px-4 md:px-6 lg:px-8 py-12">
+    <footer className="bg-slate-950 border-t border-slate-800 mt-20">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Logo & About */}
           <div>
@@ -24,9 +17,7 @@ export default function Footer() {
               <span className="text-xl font-bold text-white">MiCinema</span>
             </div>
             <p className="text-gray-400 text-sm">
-              Hệ thống rạp chiếu phim hàng đầu Việt Nam, mang đến trải nghiệm
-              giải trí đỉnh cao với công nghệ hiện đại và dịch vụ tận tâm. Đặt
-              vé ngay hôm nay để không bỏ lỡ những bộ phim bom tấn mới nhất!
+              Nền tảng xem phim trực tuyến hàng đầu tại Việt Nam
             </p>
           </div>
 
@@ -35,36 +26,29 @@ export default function Footer() {
             <h3 className="text-white font-bold mb-4">Điều hướng</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li>
-                <a
-                  href="/movies"
-                  className="hover:text-yellow-400 transition-colors"
-                >
+                <Link to="/movies" className="hover:text-yellow-400 transition-colors">
                   Phim
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/schedule"
-                  className="hover:text-yellow-400 transition-colors"
-                >
+                <Link to="/rooms" className="hover:text-yellow-400 transition-colors">
+                  Phòng chiếu
+                </Link>
+              </li>
+              <li>
+                <Link to="/schedule" className="hover:text-yellow-400 transition-colors">
                   Lịch chiếu
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/offers"
-                  className="hover:text-yellow-400 transition-colors"
-                >
+                <Link to="/offers" className="hover:text-yellow-400 transition-colors">
                   Ưu đãi
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/news"
-                  className="hover:text-yellow-400 transition-colors"
-                >
+                <Link to="/news" className="hover:text-yellow-400 transition-colors">
                   Tin tức
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -153,7 +137,7 @@ export default function Footer() {
           </div>
 
           <p className="text-gray-500 text-sm text-center md:text-right">
-            © {currentYear} RoPhim. All rights reserved.
+            © {currentYear} MiCinema. All rights reserved.
           </p>
         </div>
       </div>
