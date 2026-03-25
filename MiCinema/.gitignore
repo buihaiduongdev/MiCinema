@@ -15,6 +15,6 @@
 /dist
 /build
 
-# Markdown ngoại trừ README gốc repo
+# Không theo dõi file Markdown (tránh đẩy tài liệu nháp lên remote)
 *.md
 !README.md

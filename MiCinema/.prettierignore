@@ -1,0 +1,9 @@
+node_modules
+dist
+build
+.env
+package-lock.json
+*.md
+client/node_modules
+server/node_modules
+shared/node_modules
