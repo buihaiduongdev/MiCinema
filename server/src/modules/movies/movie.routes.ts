@@ -38,7 +38,6 @@ router.get(
   validate({ query: movieFilterSchema }),
   movieController.getMovies,
 );
-
 router.get('/:id', movieController.getMovieById);
 router.get('/:id/related', movieController.getRelatedMovies);
 
