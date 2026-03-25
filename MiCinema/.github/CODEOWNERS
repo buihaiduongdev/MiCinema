@@ -1,0 +1,18 @@
+# CODEOWNERS - MiCinema Project
+# Lead: @buihaiduongdev
+
+# These files are critical to the system. Changes here require Lead approval.
+
+# 1. Global Infrastructure & Config
+/server/src/config/ @buihaiduongdev
+/server/.env.example @buihaiduongdev
+/shared/constants @buihaiduongdev
+
+# 2. Server Core Utilities & Middleware
+/server/src/utils/ @buihaiduongdev
+/server/src/middlewares/ @buihaiduongdev
+
+# 3. Client Core Infrastructure
+/client/src/lib/api-client.ts @buihaiduongdev
+/client/src/lib/query-client.ts @buihaiduongdev
+
