@@ -2,6 +2,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 import LoginPage from './features/auth/pages/LoginPage';
 import RegisterPage from './features/auth/pages/RegisterPage';
+import MoviesPage from './features/movies/pages/MoviesPage';
+import MovieDetailPage from './features/movies/pages/MovieDetailPage';
 
 function App() {
   return (
@@ -9,7 +11,13 @@ function App() {
       {/* Public */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/" element={<Navigate to="/login" replace />} />
+
+      {/* Movies */}
+      <Route path="/phim" element={<MoviesPage />} />
+      <Route path="/phim/:slug" element={<MovieDetailPage />} />
+
+      {/* Default redirect */}
+      <Route path="/" element={<Navigate to="/phim" replace />} />
     </Routes>
   );
 }
