@@ -4,6 +4,7 @@ import LoginPage from './features/auth/pages/LoginPage';
 import RegisterPage from './features/auth/pages/RegisterPage';
 import MoviesPage from './features/movies/pages/MoviesPage';
 import MovieDetailPage from './features/movies/pages/MovieDetailPage';
+// import BookingPage from './features/booking/pages/BookingPage';
 
 function App() {
   return (

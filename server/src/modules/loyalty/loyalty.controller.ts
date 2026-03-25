@@ -17,11 +17,16 @@ import { responseSuccess } from '../../utils/response.js';
  * Xem bảng xếp hạng thành viên - Top khách hàng theo điểm
  */
 export const getMemberRankingByPoints = async (req: Request, res: Response) => {
-    const limit = req.query.limit ? Number(req.query.limit) : 10;
-    const data = await loyaltyService.getMemberRankingByPoints(limit);
-    res
-        .status(200)
-        .json(responseSuccess(data, 'Lấy bảng xếp hạng thành viên theo điểm thành công'));
+  const limit = req.query.limit ? Number(req.query.limit) : 10;
+  const data = await loyaltyService.getMemberRankingByPoints(limit);
+  res
+    .status(200)
+    .json(
+      responseSuccess(
+        data,
+        'Lấy bảng xếp hạng thành viên theo điểm thành công',
+      ),
+    );
 };
 
 /**
@@ -30,11 +35,16 @@ export const getMemberRankingByPoints = async (req: Request, res: Response) => {
  * Xem bảng xếp hạng thành viên - Top khách hàng theo hạng
  */
 export const getMemberRankingByTier = async (req: Request, res: Response) => {
-    const limit = req.query.limit ? Number(req.query.limit) : 100;
-    const data = await loyaltyService.getMemberRankingByTier(limit);
-    res
-        .status(200)
-        .json(responseSuccess(data, 'Lấy bảng xếp hạng thành viên theo hạng thành công'));
+  const limit = req.query.limit ? Number(req.query.limit) : 100;
+  const data = await loyaltyService.getMemberRankingByTier(limit);
+  res
+    .status(200)
+    .json(
+      responseSuccess(
+        data,
+        'Lấy bảng xếp hạng thành viên theo hạng thành công',
+      ),
+    );
 };
 
 /**
@@ -43,9 +53,11 @@ export const getMemberRankingByTier = async (req: Request, res: Response) => {
  * Xem bảng xếp hạng thành viên chi tiết
  */
 export const getMemberRankingDetailed = async (req: Request, res: Response) => {
-    const limit = req.query.limit ? Number(req.query.limit) : 10;
-    const sortBy = (req.query.sortBy as 'points' | 'tier') || 'points';
+  const limit = req.query.limit ? Number(req.query.limit) : 10;
+  const sortBy = (req.query.sortBy as 'points' | 'tier') || 'points';
 
-    const data = await loyaltyService.getMemberRankingDetailed(limit, sortBy);
-    res.status(200).json(responseSuccess(data, 'Lấy bảng xếp hạng thành viên thành công'));
+  const data = await loyaltyService.getMemberRankingDetailed(limit, sortBy);
+  res
+    .status(200)
+    .json(responseSuccess(data, 'Lấy bảng xếp hạng thành viên thành công'));
 };

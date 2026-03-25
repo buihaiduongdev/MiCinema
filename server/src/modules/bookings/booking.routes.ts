@@ -34,7 +34,7 @@ router.get(
 );
 
 router.get(
-  ':id',
+  '/:id',
   validate({ params: z.object({ id: objectIdSchema }) }),
   bookingController.getBookingDetail,
 );

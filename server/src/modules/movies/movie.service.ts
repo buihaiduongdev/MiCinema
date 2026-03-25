@@ -159,9 +159,7 @@ export const getAll = async (filter: MovieFilter) => {
  * UC-03: Xem poster, trailer, mô tả, đạo diễn, diễn viên, đánh giá
  */
 export const getById = async (id: string) => {
-  const movie = await Movie.findById(id)
-    .populate(POPULATE_FIELDS)
-    .lean();
+  const movie = await Movie.findById(id).populate(POPULATE_FIELDS).lean();
 
   if (!movie) throw new Error('Không tìm thấy phim');
 
@@ -175,9 +173,7 @@ export const getById = async (id: string) => {
  * Lấy chi tiết phim theo slug (cho URL SEO-friendly)
  */
 export const getBySlug = async (slug: string) => {
-  const movie = await Movie.findOne({ slug })
-    .populate(POPULATE_FIELDS)
-    .lean();
+  const movie = await Movie.findOne({ slug }).populate(POPULATE_FIELDS).lean();
 
   if (!movie) throw new Error('Không tìm thấy phim');
 

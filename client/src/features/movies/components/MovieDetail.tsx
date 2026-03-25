@@ -182,7 +182,9 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
                 {/* Country */}
                 {movie.country && (
                   <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                    <span className="text-gray-400 min-w-[80px]">Quốc gia:</span>
+                    <span className="text-gray-400 min-w-[80px]">
+                      Quốc gia:
+                    </span>
                     <span>{movie.country}</span>
                   </div>
                 )}
@@ -192,9 +194,7 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
                   <span className="text-gray-400 min-w-[80px]">Ngôn ngữ:</span>
                   <span>
                     {movie.language}{' '}
-                    {movie.audioType === 'DUBBED'
-                      ? '(Lồng tiếng)'
-                      : '(Phụ đề)'}
+                    {movie.audioType === 'DUBBED' ? '(Lồng tiếng)' : '(Phụ đề)'}
                   </span>
                 </div>
 
@@ -219,7 +219,9 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
                 {/* Directors */}
                 {movie.directors.length > 0 && (
                   <div className="flex items-center gap-2 text-sm mb-2">
-                    <span className="text-gray-400 min-w-[80px]">Đạo diễn:</span>
+                    <span className="text-gray-400 min-w-[80px]">
+                      Đạo diễn:
+                    </span>
                     <div className="flex flex-wrap gap-2">
                       {movie.directors.map((d) => (
                         <Badge
@@ -239,7 +241,9 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
                 {/* Actors */}
                 {movie.actors.length > 0 && (
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-gray-400 min-w-[80px]">Diễn viên:</span>
+                    <span className="text-gray-400 min-w-[80px]">
+                      Diễn viên:
+                    </span>
                     <div className="flex flex-wrap gap-2">
                       {movie.actors.map((a) => (
                         <Badge

@@ -22,8 +22,7 @@ export default function MovieDetailPage() {
   const { data: nowShowingData } = useNowShowing(6);
 
   const movie: MovieResponse | null = (movieData as any)?.data || null;
-  const nowShowingMovies: MovieResponse[] =
-    (nowShowingData as any)?.data || [];
+  const nowShowingMovies: MovieResponse[] = (nowShowingData as any)?.data || [];
 
   // Loading State
   if (isLoading) {

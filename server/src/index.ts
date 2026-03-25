@@ -7,13 +7,12 @@
  * 4. Kết nối MongoDB → app.listen(PORT)
  * 5. Bắt unhandled errors
  */
-import { setServers } from "node:dns/promises";
-
-setServers(["1.1.1.1", "8.8.8.8"]);
 import { env } from './config/env';
 import { connectDB } from './config/database';
 import app from './app';
+import { setServers } from 'node:dns/promises';
 
+setServers(['1.1.1.1', '8.8.8.8']);
 const startServer = async () => {
   try {
     await connectDB();

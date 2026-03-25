@@ -1,4 +1,4 @@
-import { ApiResponse } from '@shared/schemas/api.type';
+import { ApiResponse } from '@shared/types/api.type';
 
 export const responseSuccess = <T>(
   data: T,

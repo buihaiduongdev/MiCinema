@@ -25,8 +25,7 @@ export const validate = (schema: SchemaLike | ValidationSchema) => {
         const s = schema as ValidationSchema;
         if (s.body) req.body = await s.body.parseAsync(req.body);
         if (s.query) req.query = await s.query.parseAsync(req.query);
-        if (s.params)
-          req.params = await s.params.parseAsync(req.params);
+        if (s.params) req.params = await s.params.parseAsync(req.params);
       }
       return next();
     } catch (error) {

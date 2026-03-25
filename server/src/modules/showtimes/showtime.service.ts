@@ -169,9 +169,7 @@ export const getAll = async (filter: ShowtimeFilter) => {
  * Lấy chi tiết suất chiếu theo ID
  */
 export const getById = async (id: string) => {
-  const showtime = await Showtime.findById(id)
-    .populate(POPULATE_FIELDS)
-    .lean();
+  const showtime = await Showtime.findById(id).populate(POPULATE_FIELDS).lean();
 
   if (!showtime) throw new Error('Không tìm thấy suất chiếu');
   return showtime;
@@ -284,7 +282,9 @@ export const update = async (id: string, data: UpdateShowtimeInput) => {
           (conflictMovie.duration + BUFFER_MINUTES) * 60 * 1000,
       );
       if (newStartTime < conflictEnd) {
-        throw new Error('Phòng đã có suất chiếu trùng giờ. Vui lòng chọn giờ khác.');
+        throw new Error(
+          'Phòng đã có suất chiếu trùng giờ. Vui lòng chọn giờ khác.',
+        );
       }
     }
   }

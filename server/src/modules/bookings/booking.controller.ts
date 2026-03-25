@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import * as bookingService from './booking.service.js';
-import { createBookingSchema } from '@shared/schemas/booking.schema.js';
 import { responseSuccess } from 'src/utils/response.js';
 
 export const getSeats = async (req: Request, res: Response) => {
@@ -11,14 +10,14 @@ export const getSeats = async (req: Request, res: Response) => {
 };
 
 export const createBooking = async (req: Request, res: Response) => {
-  const userId = (req as any).user.userId;
+  const userId = (req as any).user._id;
   const booking = await bookingService.createBooking(userId, req.body);
 
   res.status(200).json(responseSuccess(booking, 'Đặt vé thành công'));
 };
 
 export const getMyBookings = async (req: Request, res: Response) => {
-  const userId = (req as any).user.userId;
+  const userId = (req as any).user._id;
 
   const page = req.query.page ? Number(req.query.page) : undefined;
   const limit = req.query.limit ? Number(req.query.limit) : undefined;
