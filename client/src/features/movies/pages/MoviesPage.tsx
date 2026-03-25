@@ -10,7 +10,11 @@
 import { useState } from 'react';
 import { Container, Loader } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useNowShowing, useUpcoming, useCinemaCities } from '../hooks/useMovies';
+import {
+  useNowShowing,
+  useUpcoming,
+  useCinemaCities,
+} from '../hooks/useMovies';
 import MovieCard from '../../../components/common/MovieCard';
 import CitySelector from '../components/CitySelector';
 import type { MovieResponse } from '../services/movies.service';
@@ -24,7 +28,8 @@ export default function MoviesPage() {
     useDisclosure(false);
 
   // Fetch data
-  const { data: nowShowingData, isLoading: nowShowingLoading } = useNowShowing(20);
+  const { data: nowShowingData, isLoading: nowShowingLoading } =
+    useNowShowing(20);
   const { data: upcomingData, isLoading: upcomingLoading } = useUpcoming(20);
   const { data: citiesData } = useCinemaCities();
 

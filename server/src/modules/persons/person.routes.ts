@@ -21,7 +21,11 @@ import {
 const router = Router();
 
 // --- PUBLIC ROUTES ---
-router.get('/', validate({ query: personFilterSchema }), personController.getAll);
+router.get(
+  '/',
+  validate({ query: personFilterSchema }),
+  personController.getAll,
+);
 router.get('/:id', personController.getById);
 
 // --- PROTECTED ROUTES (Staff + Admin) ---

@@ -18,7 +18,8 @@ setServers(['1.1.1.1', '8.8.8.8']); // Sửa lỗi DNS của Node trên máy Win
 
 const connectDB = async () => {
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/micinema';
+    const mongoUri =
+      process.env.MONGODB_URI || 'mongodb://localhost:27017/micinema';
     await mongoose.connect(mongoUri);
     console.log('MongoDB Connected for Seeding');
   } catch (err: any) {
@@ -75,11 +76,36 @@ const seed = async () => {
 
   console.log('3. Tạo Nhân Sự (Đạo diễn & Diễn viên)...');
   const persons = await Person.insertMany([
-    { name: 'Christopher Nolan', slug: slugify('Christopher Nolan'), role: 'DIRECTOR', avatar: 'https://image.tmdb.org/t/p/w200/xuAIuYSmsUzKlUMBFGVZaWsY3DZ.jpg' },
-    { name: 'Ryan Gosling', slug: slugify('Ryan Gosling'), role: 'ACTOR', avatar: 'https://image.tmdb.org/t/p/w200/lyUyVARQEhIGcmcVyZTXobrpvhi.jpg' },
-    { name: 'Emma Stone', slug: slugify('Emma Stone'), role: 'ACTOR', avatar: 'https://image.tmdb.org/t/p/w200/2hwHwA1mNHrI6Ibsk70kKkX860I.jpg' },
-    { name: 'Denis Villeneuve', slug: slugify('Denis Villeneuve'), role: 'DIRECTOR', avatar: 'https://image.tmdb.org/t/p/w200/rsx0CttmGgONb770X01V8fL8f9X.jpg' },
-    { name: 'Timothée Chalamet', slug: slugify('Timothée Chalamet'), role: 'ACTOR', avatar: 'https://image.tmdb.org/t/p/w200/B2DpwjIfVn9X7j7pPib81Zg3wS.jpg' },
+    {
+      name: 'Christopher Nolan',
+      slug: slugify('Christopher Nolan'),
+      role: 'DIRECTOR',
+      avatar: 'https://image.tmdb.org/t/p/w200/xuAIuYSmsUzKlUMBFGVZaWsY3DZ.jpg',
+    },
+    {
+      name: 'Ryan Gosling',
+      slug: slugify('Ryan Gosling'),
+      role: 'ACTOR',
+      avatar: 'https://image.tmdb.org/t/p/w200/lyUyVARQEhIGcmcVyZTXobrpvhi.jpg',
+    },
+    {
+      name: 'Emma Stone',
+      slug: slugify('Emma Stone'),
+      role: 'ACTOR',
+      avatar: 'https://image.tmdb.org/t/p/w200/2hwHwA1mNHrI6Ibsk70kKkX860I.jpg',
+    },
+    {
+      name: 'Denis Villeneuve',
+      slug: slugify('Denis Villeneuve'),
+      role: 'DIRECTOR',
+      avatar: 'https://image.tmdb.org/t/p/w200/rsx0CttmGgONb770X01V8fL8f9X.jpg',
+    },
+    {
+      name: 'Timothée Chalamet',
+      slug: slugify('Timothée Chalamet'),
+      role: 'ACTOR',
+      avatar: 'https://image.tmdb.org/t/p/w200/B2DpwjIfVn9X7j7pPib81Zg3wS.jpg',
+    },
   ]);
 
   console.log('4. Tạo Chi Nhánh Rạp (Cinema)...');
@@ -89,21 +115,27 @@ const seed = async () => {
       slug: slugify('Galaxy CineX - Hà Nội Centre'),
       address: '123 Cầu Giấy, Hà Nội',
       city: 'Hà Nội',
-      images: ['https://bmd.com.vn/wp-content/uploads/2022/11/ghe-rap-chieu-phim-4.jpeg'],
+      images: [
+        'https://bmd.com.vn/wp-content/uploads/2022/11/ghe-rap-chieu-phim-4.jpeg',
+      ],
     },
     {
       name: 'Galaxy CineX - Đắk Lắk',
       slug: slugify('Galaxy CineX - Đắk Lắk'),
       address: '71 Nguyễn Tất Thành, Buôn Ma Thuột',
       city: 'Đắk Lắk',
-      images: ['https://bmd.com.vn/wp-content/uploads/2022/11/ghe-rap-chieu-phim-4.jpeg'],
+      images: [
+        'https://bmd.com.vn/wp-content/uploads/2022/11/ghe-rap-chieu-phim-4.jpeg',
+      ],
     },
     {
       name: 'Galaxy CineX - TP.HCM Quận 1',
       slug: slugify('Galaxy CineX - TP.HCM Quận 1'),
       address: 'Đồng Khởi, Quận 1, Tp.HCM',
       city: 'TP Hồ Chí Minh',
-      images: ['https://bmd.com.vn/wp-content/uploads/2022/11/ghe-rap-chieu-phim-4.jpeg'],
+      images: [
+        'https://bmd.com.vn/wp-content/uploads/2022/11/ghe-rap-chieu-phim-4.jpeg',
+      ],
     },
   ]);
 
@@ -134,13 +166,15 @@ const seed = async () => {
     {
       title: 'Thoát Khỏi Tận Thế (Dự Án Hail Mary)',
       slug: slugify('Thoát Khỏi Tận Thế (Dự Án Hail Mary)'),
-      description: 'Ryland Grace là một giáo viên khoa học nhận ra anh chính là hy vọng cuối cùng của Trái Đất...\nGiữa không gian vũ trụ cô độc, anh phải gánh vác sứ mệnh quan trọng.',
+      description:
+        'Ryland Grace là một giáo viên khoa học nhận ra anh chính là hy vọng cuối cùng của Trái Đất...\nGiữa không gian vũ trụ cô độc, anh phải gánh vác sứ mệnh quan trọng.',
       directors: [persons[0]._id],
       actors: [persons[1]._id, persons[2]._id],
       genres: [genres[0]._id, genres[1]._id],
       duration: 157,
       releaseDate: new Date(),
-      poster: 'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/1/image/c5f0a1eff4c394a251036189ccddaacd/3/5/350x495-mary.jpg',
+      poster:
+        'https://iguov8nhvyobj.vcdn.cloud/media/catalog/product/cache/1/image/c5f0a1eff4c394a251036189ccddaacd/3/5/350x495-mary.jpg',
       trailer: 'https://www.youtube.com/watch?v=1g3_CFmnU7k',
       rating: 8.8,
       status: 'RELEASED',
@@ -159,7 +193,8 @@ const seed = async () => {
       genres: [genres[0]._id, genres[1]._id],
       duration: 166,
       releaseDate: new Date(),
-      poster: 'https://baodongnai.com.vn/file/e7837c02876411cd0187645a2551379f/022024/18_1_20240229171501.jpg',
+      poster:
+        'https://baodongnai.com.vn/file/e7837c02876411cd0187645a2551379f/022024/18_1_20240229171501.jpg',
       trailer: 'https://www.youtube.com/watch?v=Way9Dexny3w',
       rating: 9.1,
       status: 'RELEASED',
@@ -178,7 +213,8 @@ const seed = async () => {
       genres: [genres[2]._id],
       duration: 110,
       releaseDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 ngày sau
-      poster: 'https://img-cdn.2game.vn/pictures/images/2015/10/14/Ma_soi_3.jpg',
+      poster:
+        'https://img-cdn.2game.vn/pictures/images/2015/10/14/Ma_soi_3.jpg',
       trailer: 'https://www.youtube.com/watch?v=u31qwQUeGuM',
       rating: 0,
       status: 'UPCOMING',
@@ -187,7 +223,7 @@ const seed = async () => {
       ageRating: 'C18',
       country: 'Nhật Bản',
       viewCount: 120,
-    }
+    },
   ]);
 
   console.log('7. Tạo Suất Chiếu (Showtimes) cho 3 ngày tới...');
@@ -197,12 +233,14 @@ const seed = async () => {
   today.setMinutes(0, 0, 0);
 
   // Tạo lịch cho từng phim (chỉ những phim RELEASED), từng rạp, từng phòng
-  const showingMovies = movies.filter(m => m.status === 'RELEASED');
+  const showingMovies = movies.filter((m) => m.status === 'RELEASED');
 
   for (let dayOffset = 0; dayOffset < 3; dayOffset++) {
     for (const cinema of cinemas) {
       // Lấy danh sách phòng của rạp này
-      const cinemaRooms = insertedRooms.filter(r => r.cinemaId.toString() === cinema._id.toString());
+      const cinemaRooms = insertedRooms.filter(
+        (r) => r.cinemaId.toString() === cinema._id.toString(),
+      );
 
       for (const movie of showingMovies) {
         for (const room of cinemaRooms) {

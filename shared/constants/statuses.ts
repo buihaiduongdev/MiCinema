@@ -37,7 +37,7 @@ export const MEMBERSHIP_TIER = {
 export type MembershipTier =
   (typeof MEMBERSHIP_TIER)[keyof typeof MEMBERSHIP_TIER];
 
-  export const LOYALTY_ACTION = {
+export const LOYALTY_ACTION = {
   EARN: 'EARN',
   REDEEM: 'REDEEM',
   EXPIRE: 'EXPIRE',

@@ -18,7 +18,9 @@ export const create = async (data: CreatePersonInput) => {
       isActive: true,
     });
     if (existing) {
-      throw new Error(`Người này (${data.name}) với ngày sinh đã chọn đã tồn tại.`);
+      throw new Error(
+        `Người này (${data.name}) với ngày sinh đã chọn đã tồn tại.`,
+      );
     }
   }
 
@@ -39,11 +41,11 @@ export const getAll = async (filter: PersonFilter) => {
     // Lưu ý: Model Person phải được đánh index: personSchema.index({ name: 'text' })
     query.$text = { $search: search };
   }
-  
+
   if (role) {
     query.roles = role;
   }
-  
+
   if (nationality) {
     query.nationality = nationality;
   }
@@ -51,10 +53,10 @@ export const getAll = async (filter: PersonFilter) => {
   const totalItems = await Person.countDocuments(query);
   const skip = getSkip(page, limit);
 
-  // Nếu dùng $text, thường người ta sẽ sort theo độ liên quan (score) 
+  // Nếu dùng $text, thường người ta sẽ sort theo độ liên quan (score)
   // nhưng ở đây bạn đang muốn sort theo tên (A-Z) nên mình giữ nguyên sort name
   const data = await Person.find(query)
-    .sort(search ? { score: { $meta: 'textScore' } } : { name: 1 }) 
+    .sort(search ? { score: { $meta: 'textScore' } } : { name: 1 })
     .skip(skip)
     .limit(limit)
     .lean();
@@ -91,7 +93,8 @@ export const update = async (id: string, data: UpdatePersonInput) => {
         _id: { $ne: id },
         isActive: true,
       });
-      if (duplicate) throw new Error('Thông tin này trùng với một người khác đã có.');
+      if (duplicate)
+        throw new Error('Thông tin này trùng với một người khác đã có.');
     }
   }
 

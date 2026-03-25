@@ -12,8 +12,18 @@ export interface MovieResponse {
   title: string;
   slug: string;
   description: string;
-  directors: { _id: string; name: string; avatar?: string; nationality?: string }[];
-  actors: { _id: string; name: string; avatar?: string; nationality?: string }[];
+  directors: {
+    _id: string;
+    name: string;
+    avatar?: string;
+    nationality?: string;
+  }[];
+  actors: {
+    _id: string;
+    name: string;
+    avatar?: string;
+    nationality?: string;
+  }[];
   genres: { _id: string; name: string; slug: string }[];
   duration: number;
   releaseDate: string;
@@ -70,8 +80,7 @@ export const getUpcoming = (limit = 10) =>
 export const getMovieBySlug = (slug: string) =>
   apiClient.get(`/movies/slug/${slug}`);
 
-export const getMovieById = (id: string) =>
-  apiClient.get(`/movies/${id}`);
+export const getMovieById = (id: string) => apiClient.get(`/movies/${id}`);
 
 export const getRelatedMovies = (movieId: string, limit = 6) =>
   apiClient.get(`/movies/${movieId}/related`, { params: { limit } });
@@ -81,10 +90,8 @@ export const getRelatedMovies = (movieId: string, limit = 6) =>
 export const getCinemas = (params?: Record<string, any>) =>
   apiClient.get('/cinemas', { params });
 
-export const getCinemaCities = () =>
-  apiClient.get('/cinemas/cities');
+export const getCinemaCities = () => apiClient.get('/cinemas/cities');
 
 // --- GENRES API ---
 
-export const getGenres = () =>
-  apiClient.get('/genres');
+export const getGenres = () => apiClient.get('/genres');

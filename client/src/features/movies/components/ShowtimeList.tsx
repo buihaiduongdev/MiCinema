@@ -63,8 +63,10 @@ export default function ShowtimeSection({ movieId }: ShowtimeSectionProps) {
 
   // Nhóm theo cinema
   const groupedByCinema = useMemo(() => {
-    const groups: Record<string, { cinema: any; rooms: Record<string, any[]> }> =
-      {};
+    const groups: Record<
+      string,
+      { cinema: any; rooms: Record<string, any[]> }
+    > = {};
 
     for (const st of currentDateShowtimes) {
       const cinemaId = st.cinemaId?._id || 'unknown';

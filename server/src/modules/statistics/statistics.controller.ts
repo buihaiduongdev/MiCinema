@@ -16,8 +16,10 @@ import { responseSuccess } from '../../utils/response.js';
  * GET /api/statistics/overview
  */
 export const getOverview = async (req: Request, res: Response) => {
-    const data = await statisticsService.getOverview();
-    res.status(200).json(responseSuccess(data, 'Lấy tổng quan dashboard thành công'));
+  const data = await statisticsService.getOverview();
+  res
+    .status(200)
+    .json(responseSuccess(data, 'Lấy tổng quan dashboard thành công'));
 };
 
 /**
@@ -25,16 +27,18 @@ export const getOverview = async (req: Request, res: Response) => {
  * GET /api/statistics/revenue?startDate=...&endDate=...&groupBy=day|week|month
  */
 export const getRevenue = async (req: Request, res: Response) => {
-    const { startDate, endDate, groupBy } = req.query;
-    const opts = {
-        startDate: startDate ? new Date(startDate as string) : undefined,
-        endDate: endDate ? new Date(endDate as string) : undefined,
-        groupBy: (['day', 'week', 'month'].includes(groupBy as string)
-            ? (groupBy as 'day' | 'week' | 'month')
-            : 'day') as 'day' | 'week' | 'month',
-    };
-    const data = await statisticsService.getRevenue(opts);
-    res.status(200).json(responseSuccess(data, 'Lấy dữ liệu doanh thu thành công'));
+  const { startDate, endDate, groupBy } = req.query;
+  const opts = {
+    startDate: startDate ? new Date(startDate as string) : undefined,
+    endDate: endDate ? new Date(endDate as string) : undefined,
+    groupBy: (['day', 'week', 'month'].includes(groupBy as string)
+      ? (groupBy as 'day' | 'week' | 'month')
+      : 'day') as 'day' | 'week' | 'month',
+  };
+  const data = await statisticsService.getRevenue(opts);
+  res
+    .status(200)
+    .json(responseSuccess(data, 'Lấy dữ liệu doanh thu thành công'));
 };
 
 /**
@@ -42,13 +46,13 @@ export const getRevenue = async (req: Request, res: Response) => {
  * GET /api/statistics/occupancy?showtimeId=...&roomId=...
  */
 export const getOccupancy = async (req: Request, res: Response) => {
-    const { showtimeId, roomId } = req.query;
-    const opts = {
-        showtimeId: showtimeId as string | undefined,
-        roomId: roomId as string | undefined,
-    };
-    const data = await statisticsService.getOccupancy(opts);
-    res.status(200).json(responseSuccess(data, 'Lấy tỷ lệ lấp đầy thành công'));
+  const { showtimeId, roomId } = req.query;
+  const opts = {
+    showtimeId: showtimeId as string | undefined,
+    roomId: roomId as string | undefined,
+  };
+  const data = await statisticsService.getOccupancy(opts);
+  res.status(200).json(responseSuccess(data, 'Lấy tỷ lệ lấp đầy thành công'));
 };
 
 /**
@@ -56,13 +60,13 @@ export const getOccupancy = async (req: Request, res: Response) => {
  * GET /api/statistics/bookings?startDate=...&endDate=...
  */
 export const getBookingStats = async (req: Request, res: Response) => {
-    const { startDate, endDate } = req.query;
-    const opts = {
-        startDate: startDate ? new Date(startDate as string) : undefined,
-        endDate: endDate ? new Date(endDate as string) : undefined,
-    };
-    const data = await statisticsService.getBookingStats(opts);
-    res.status(200).json(responseSuccess(data, 'Lấy thống kê đặt vé thành công'));
+  const { startDate, endDate } = req.query;
+  const opts = {
+    startDate: startDate ? new Date(startDate as string) : undefined,
+    endDate: endDate ? new Date(endDate as string) : undefined,
+  };
+  const data = await statisticsService.getBookingStats(opts);
+  res.status(200).json(responseSuccess(data, 'Lấy thống kê đặt vé thành công'));
 };
 
 /**
@@ -70,9 +74,9 @@ export const getBookingStats = async (req: Request, res: Response) => {
  * GET /api/statistics/movies?limit=10
  */
 export const getMoviePerformance = async (req: Request, res: Response) => {
-    const limit = req.query.limit ? Number(req.query.limit) : 10;
-    const data = await statisticsService.getMoviePerformance(limit);
-    res.status(200).json(responseSuccess(data, 'Lấy thống kê phim thành công'));
+  const limit = req.query.limit ? Number(req.query.limit) : 10;
+  const data = await statisticsService.getMoviePerformance(limit);
+  res.status(200).json(responseSuccess(data, 'Lấy thống kê phim thành công'));
 };
 
 /**
@@ -80,14 +84,18 @@ export const getMoviePerformance = async (req: Request, res: Response) => {
  * GET /api/statistics/users?startDate=...&endDate=...&groupBy=day|week|month
  */
 export const getUserGrowth = async (req: Request, res: Response) => {
-    const { startDate, endDate, groupBy } = req.query;
-    const opts = {
-        startDate: startDate ? new Date(startDate as string) : undefined,
-        endDate: endDate ? new Date(endDate as string) : undefined,
-        groupBy: (['day', 'week', 'month'].includes(groupBy as string)
-            ? (groupBy as 'day' | 'week' | 'month')
-            : 'day') as 'day' | 'week' | 'month',
-    };
-    const data = await statisticsService.getUserGrowth(opts);
-    res.status(200).json(responseSuccess(data, 'Lấy thống kê tăng trưởng người dùng thành công'));
+  const { startDate, endDate, groupBy } = req.query;
+  const opts = {
+    startDate: startDate ? new Date(startDate as string) : undefined,
+    endDate: endDate ? new Date(endDate as string) : undefined,
+    groupBy: (['day', 'week', 'month'].includes(groupBy as string)
+      ? (groupBy as 'day' | 'week' | 'month')
+      : 'day') as 'day' | 'week' | 'month',
+  };
+  const data = await statisticsService.getUserGrowth(opts);
+  res
+    .status(200)
+    .json(
+      responseSuccess(data, 'Lấy thống kê tăng trưởng người dùng thành công'),
+    );
 };
