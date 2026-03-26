@@ -1,14 +1,21 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 import AppLayout from './components/layout/AppLayout';
+import AdminLayout from './components/layout/AdminLayout';
 import HomePage from './pages/HomePage';
 import LoginPage from './features/auth/pages/LoginPage';
 import RegisterPage from './features/auth/pages/RegisterPage';
 import MoviesPage from './features/movies/pages/MoviesPage';
 import MovieDetailPage from './features/movies/pages/MovieDetailPage';
+import { ProtectedRoute } from './components/common/ProtectedRoute';
+import { adminRoutes } from './features/admin/routes';
+import { ROLES } from '@shared/constants/roles';
 // import BookingPage from './features/booking/pages/BookingPage';
 
 function App() {
+  const adminChildren =
+    adminRoutes.find((route) => route.path === 'admin')?.children || [];
+
   return (
     <Routes>
       {/* App Layout Routes */}
@@ -24,6 +31,22 @@ function App() {
       {/* Auth Routes (without AppLayout) */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+
+      {/* Admin Routes */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="/admin/dashboard" replace />} />
+        {adminChildren.map((child) => (
+          <Route key={child.path} path={child.path} element={child.element} />
+        ))}
+        <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+      </Route>
 
       {/* 404 Redirect */}
       <Route path="*" element={<Navigate to="/" replace />} />
