@@ -358,7 +358,7 @@ export const getMoviePerformance = async (limit = 10) => {
             $match: {
               $expr: {
                 $and: [
-                  { $ne: ['$status', BOOKING_STATUS.CANCELLED] },
+                  { $eq: ['$status', BOOKING_STATUS.PAID] },
                   {
                     $or: [
                       { $in: ['$showtimeId', '$$showtimeIds'] },

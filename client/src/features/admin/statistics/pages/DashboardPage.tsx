@@ -399,9 +399,6 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="flex justify-between items-center pt-3 border-t border-[#222a3d]">
-                      <div className="text-xs text-[#8c90a1]">
-                        Avg: ${(movie.averageTicketPrice || 0).toFixed(0)}/vé
-                      </div>
                       <div className="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-bold">
                         TOP #{idx + 1}
                       </div>
