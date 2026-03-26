@@ -10,13 +10,10 @@ import MovieDetailPage from './features/movies/pages/MovieDetailPage';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { adminRoutes } from './features/admin/routes';
 import { ROLES } from '@shared/constants/roles';
-// import BookingPage from './features/booking/pages/BookingPage';
-
 import CinemaBrowsePage from './features/movies/pages/CinemaBrowsePage';
 import PersonsListPage from './features/persons/pages/PersonsListPage';
 import PersonDetailPage from './features/persons/pages/PersonDetailPage';
 import BookingPage from './features/booking/pages/BookingPage';
-import { ProtectedRoute } from './components/common/ProtectedRoute';
 function App() {
   const adminChildren =
     adminRoutes.find((route) => route.path === 'admin')?.children || [];
@@ -36,21 +33,21 @@ function App() {
         <Route path="/phim" element={<MoviesPage />} />
         <Route path="/phim/:slug" element={<MovieDetailPage />} />
         <Route path="/dien-anh" element={<CinemaBrowsePage />} />
-         {/* 404 Redirect */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-      {/* Movies */}
-      
-      <Route path="/phim/:slug" element={<MovieDetailPage />} />
+        {/* 404 Redirect */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* Movies */}
 
-      {/* Booking */}
-      <Route
-        path="/booking/:showtimeId"
-        element={
-          <ProtectedRoute>
-            <BookingPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route path="/phim/:slug" element={<MovieDetailPage />} />
+
+        {/* Booking */}
+        <Route
+          path="/booking/:showtimeId"
+          element={
+            <ProtectedRoute>
+              <BookingPage />
+            </ProtectedRoute>
+          }
+        />
         {/* Persons */}
         <Route path="/dien-vien" element={<PersonsListPage />} />
         <Route path="/dao-dien" element={<PersonsListPage />} />
