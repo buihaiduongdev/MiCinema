@@ -40,7 +40,11 @@ router.get('/:id', showtimeController.getShowtimeById);
 router.use(protect);
 router.use(restrictTo('STAFF', 'ADMIN'));
 
-router.post('/', validate(createShowtimeSchema), showtimeController.createShowtime);
+router.post(
+  '/',
+  validate(createShowtimeSchema),
+  showtimeController.createShowtime,
+);
 router.put(
   '/:id',
   validate(updateShowtimeSchema),

@@ -21,7 +21,13 @@ export interface IPerson extends Document {
 const personSchema = new Schema<IPerson>(
   {
     name: { type: String, required: true, trim: true },
-    slug: { type: String, required: true, unique: true, trim: true, lowercase: true },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
     avatar: { type: String },
     images: [{ type: String }],
     nationality: { type: String, trim: true },
