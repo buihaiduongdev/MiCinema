@@ -35,7 +35,9 @@ export const getBySlug = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   const cinema = await cinemaService.update(req.params.id as string, req.body);
-  res.status(200).json(responseSuccess(cinema, 'Cập nhật chi nhánh thành công'));
+  res
+    .status(200)
+    .json(responseSuccess(cinema, 'Cập nhật chi nhánh thành công'));
 };
 
 export const remove = async (req: Request, res: Response) => {

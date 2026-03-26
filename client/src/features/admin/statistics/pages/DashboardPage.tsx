@@ -178,8 +178,9 @@ export default function DashboardPage() {
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className={`border-b w-full h-px ${i === 4 ? 'border-[#424656]/10' : 'border-[#424656]/5'
-                      }`}
+                    className={`border-b w-full h-px ${
+                      i === 4 ? 'border-[#424656]/10' : 'border-[#424656]/5'
+                    }`}
                   ></div>
                 ))}
               </div>
@@ -350,12 +351,13 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-8 py-6">
                         <span
-                          className={`px-3 py-1 text-[10px] font-extrabold rounded-full border ${String(item.format) === 'IMAX 4K'
+                          className={`px-3 py-1 text-[10px] font-extrabold rounded-full border ${
+                            String(item.format) === 'IMAX 4K'
                               ? 'bg-[#0066ff]/10 text-[#0066ff] border-[#0066ff]/20'
                               : String(item.format) === 'Dolby Atmos'
                                 ? 'bg-[#ffb4ac]/10 text-[#ffb4ac] border-[#ffb4ac]/20'
                                 : 'bg-[#222a3d] text-[#8c90a1]'
-                            }`}
+                          }`}
                         >
                           {String(item.format)}
                         </span>
@@ -378,12 +380,13 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-8 py-6 text-right">
                         <span
-                          className={`flex items-center justify-end gap-1.5 text-xs font-bold ${String(item.statusType) === 'live'
+                          className={`flex items-center justify-end gap-1.5 text-xs font-bold ${
+                            String(item.statusType) === 'live'
                               ? 'text-[#0066ff]'
                               : String(item.statusType) === 'soldout'
                                 ? 'text-[#ffb4ac]'
                                 : 'text-[#8c90a1]'
-                            }`}
+                          }`}
                         >
                           {String(item.statusType) === 'live' && (
                             <span className="w-1.5 h-1.5 bg-[#0066ff] rounded-full animate-pulse"></span>

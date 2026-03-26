@@ -4,8 +4,15 @@
 import { useSearchParams, Link, useLocation } from 'react-router-dom';
 import { Select, Pagination, Container, Badge, Loader } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { getPersons, getNationalities, type PersonResponse } from '../services/persons.service';
-import { getNowShowing, type MovieResponse } from '../../movies/services/movies.service';
+import {
+  getPersons,
+  getNationalities,
+  type PersonResponse,
+} from '../services/persons.service';
+import {
+  getNowShowing,
+  type MovieResponse,
+} from '../../movies/services/movies.service';
 
 const SORT_OPTIONS = [
   { value: 'viewCount:desc', label: 'Xem nhiều nhất' },
@@ -77,7 +84,9 @@ export default function PersonsListPage() {
       <Container size="xl" className="py-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-8 bg-blue-800 rounded-full" />
-          <h1 className="text-2xl font-bold text-gray-900 uppercase">{title}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 uppercase">
+            {title}
+          </h1>
         </div>
 
         <div className="flex gap-8">
@@ -113,7 +122,11 @@ export default function PersonsListPage() {
             ) : (
               <div className="space-y-6">
                 {persons.map((person) => (
-                  <PersonListItem key={person._id} person={person} isActor={isActor} />
+                  <PersonListItem
+                    key={person._id}
+                    person={person}
+                    isActor={isActor}
+                  />
                 ))}
               </div>
             )}
@@ -141,7 +154,11 @@ export default function PersonsListPage() {
               </div>
               <div className="p-3 flex flex-col gap-4">
                 {nowShowingMovies.map((movie) => (
-                  <Link key={movie._id} to={`/phim/${movie.slug}`} className="block group no-underline">
+                  <Link
+                    key={movie._id}
+                    to={`/phim/${movie.slug}`}
+                    className="block group no-underline"
+                  >
                     <div className="relative overflow-hidden rounded-lg">
                       <img
                         src={movie.poster}
@@ -149,13 +166,22 @@ export default function PersonsListPage() {
                         className="w-full h-[160px] object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute bottom-2 right-2 flex items-center gap-1">
-                        {movie.rating > 0 && <Badge color="yellow" size="sm" variant="filled">
-                          <span className="flex items-center gap-1">
-                            <svg className="w-3 h-3 text-white fill-white" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                            {movie.rating}
-                          </span>
-                        </Badge>}
-                        <Badge color="orange" size="sm" variant="filled">{movie.ageRating}</Badge>
+                        {movie.rating > 0 && (
+                          <Badge color="yellow" size="sm" variant="filled">
+                            <span className="flex items-center gap-1">
+                              <svg
+                                className="w-3 h-3 text-white fill-white"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                              {movie.rating}
+                            </span>
+                          </Badge>
+                        )}
+                        <Badge color="orange" size="sm" variant="filled">
+                          {movie.ageRating}
+                        </Badge>
                       </div>
                     </div>
                     <p className="mt-2 text-sm font-semibold text-gray-800 group-hover:text-blue-700 transition-colors line-clamp-1">
@@ -172,9 +198,20 @@ export default function PersonsListPage() {
   );
 }
 
-function PersonListItem({ person, isActor }: { person: PersonResponse; isActor: boolean }) {
-  const fallbackAvatar = "https://ui-avatars.com/api/?name=" + encodeURIComponent(person.name) + "&background=random";
-  const path = isActor ? `/dien-vien/${person.slug}` : `/dao-dien/${person.slug}`;
+function PersonListItem({
+  person,
+  isActor,
+}: {
+  person: PersonResponse;
+  isActor: boolean;
+}) {
+  const fallbackAvatar =
+    'https://ui-avatars.com/api/?name=' +
+    encodeURIComponent(person.name) +
+    '&background=random';
+  const path = isActor
+    ? `/dien-vien/${person.slug}`
+    : `/dao-dien/${person.slug}`;
 
   return (
     <Link
@@ -195,8 +232,44 @@ function PersonListItem({ person, isActor }: { person: PersonResponse; isActor: 
         </h3>
 
         <div className="flex flex-wrap items-center gap-2 mb-3">
-          <Badge color="blue" variant="filled" size="sm" leftSection={<svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" /></svg>}>Thích</Badge>
-          <Badge color="gray" variant="outline" size="sm" leftSection={<svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>}>
+          <Badge
+            color="blue"
+            variant="filled"
+            size="sm"
+            leftSection={
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+              </svg>
+            }
+          >
+            Thích
+          </Badge>
+          <Badge
+            color="gray"
+            variant="outline"
+            size="sm"
+            leftSection={
+              <svg
+                className="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+            }
+          >
             {person.viewCount?.toLocaleString() || 0}
           </Badge>
         </div>

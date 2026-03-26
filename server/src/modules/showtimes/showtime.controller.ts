@@ -49,9 +49,7 @@ export const getShowtimesByMovie = async (req: Request, res: Response) => {
     req.params.movieId as string,
     cinemaId,
   );
-  res
-    .status(200)
-    .json(responseSuccess(data, 'Lấy lịch chiếu phim thành công'));
+  res.status(200).json(responseSuccess(data, 'Lấy lịch chiếu phim thành công'));
 };
 
 /**
@@ -88,10 +86,12 @@ export const updateShowtime = async (req: Request, res: Response) => {
  */
 export const cancelShowtime = async (req: Request, res: Response) => {
   const result = await showtimeService.cancel(req.params.id as string);
-  res.status(200).json(
-    responseSuccess(
-      result,
-      `Huỷ suất chiếu thành công. ${result.cancelledBookings} vé đã được huỷ.`,
-    ),
-  );
+  res
+    .status(200)
+    .json(
+      responseSuccess(
+        result,
+        `Huỷ suất chiếu thành công. ${result.cancelledBookings} vé đã được huỷ.`,
+      ),
+    );
 };
