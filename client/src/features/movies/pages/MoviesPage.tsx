@@ -10,11 +10,7 @@
 import { useState } from 'react';
 import { Container, Loader } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import {
-  useNowShowing,
-  useUpcoming,
-  useCinemaCities,
-} from '../hooks/useMovies';
+import { useNowShowing, useUpcoming, useCinemaCities } from '../hooks/useMovies';
 import MovieCard from '../../../components/common/MovieCard';
 import CitySelector from '../components/CitySelector';
 import type { MovieResponse } from '../services/movies.service';
@@ -28,8 +24,7 @@ export default function MoviesPage() {
     useDisclosure(false);
 
   // Fetch data
-  const { data: nowShowingData, isLoading: nowShowingLoading } =
-    useNowShowing(20);
+  const { data: nowShowingData, isLoading: nowShowingLoading } = useNowShowing(20);
   const { data: upcomingData, isLoading: upcomingLoading } = useUpcoming(20);
   const { data: citiesData } = useCinemaCities();
 
@@ -50,7 +45,7 @@ export default function MoviesPage() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       <Container size="xl" className="py-8">
         {/* Header: PHIM + Tabs + City Filter */}
         <div className="flex items-center gap-6 mb-8 border-b border-gray-200 pb-4">
@@ -68,11 +63,10 @@ export default function MoviesPage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-                  activeTab === tab.key
+                className={`px-4 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${activeTab === tab.key
                     ? 'text-blue-800 border-b-2 border-blue-800 bg-transparent'
                     : 'text-gray-500 hover:text-gray-700'
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>

@@ -12,26 +12,24 @@ interface ValidationSchema {
 
 type SchemaLike = ParseAsyncSchema;
 
-const isPlainObject = (value: unknown): value is Record<string, unknown> => {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-};
-
-const replaceObjectContent = (
+/**
+ * Express 5: req.query & req.params là read-only getter
+ * → Không gán lại được → phải merge vào object gốc
+ */
+const mergeInto = (
   target: Record<string, unknown>,
-  nextValue: unknown,
+  source: unknown,
 ) => {
-  if (!isPlainObject(nextValue)) return;
+  if (typeof source !== 'object' || source === null) return;
 
-  Object.keys(target).forEach((key) => {
-    delete target[key];
-  });
-
-  Object.assign(target, nextValue);
+  Object.keys(target).forEach((k) => delete target[k]);
+  Object.assign(target, source);
 };
 
 export const validate = (schema: SchemaLike | ValidationSchema) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // schema đơn → validate body
       if (
         'parseAsync' in schema &&
         typeof schema.parseAsync === 'function' &&
@@ -41,6 +39,7 @@ export const validate = (schema: SchemaLike | ValidationSchema) => {
       ) {
         req.body = await schema.parseAsync(req.body);
       } else {
+        // schema object
         const s = schema as ValidationSchema;
 
         if (s.body) {
@@ -48,18 +47,18 @@ export const validate = (schema: SchemaLike | ValidationSchema) => {
         }
 
         if (s.query) {
-          const parsedQuery = await s.query.parseAsync(req.query);
-          replaceObjectContent(
+          const parsed = await s.query.parseAsync(req.query);
+          mergeInto(
             req.query as unknown as Record<string, unknown>,
-            parsedQuery,
+            parsed,
           );
         }
 
         if (s.params) {
-          const parsedParams = await s.params.parseAsync(req.params);
-          replaceObjectContent(
+          const parsed = await s.params.parseAsync(req.params);
+          mergeInto(
             req.params as unknown as Record<string, unknown>,
-            parsedParams,
+            parsed,
           );
         }
       }

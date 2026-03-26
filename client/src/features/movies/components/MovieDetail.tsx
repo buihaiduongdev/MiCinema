@@ -11,7 +11,9 @@
 
 import { useState } from 'react';
 import { Badge, Container } from '@mantine/core';
+import { Link } from 'react-router-dom';
 import { getYouTubeEmbedUrl } from './TrailerModal';
+import RatingModal from './RatingModal';
 import type { MovieResponse } from '../services/movies.service';
 
 // Màu sắc theo age rating
@@ -28,6 +30,7 @@ interface MovieDetailProps {
 
 export default function MovieDetail({ movie }: MovieDetailProps) {
   const [isPlayingTrailer, setIsPlayingTrailer] = useState(false);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
 
   const embedUrl = movie.trailer ? getYouTubeEmbedUrl(movie.trailer) : null;
   const ageRating = AGE_RATING_COLORS[movie.ageRating] || {
@@ -164,27 +167,41 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
                 </div>
 
                 {/* Rating */}
-                <div className="flex items-center gap-2 mb-4">
-                  <svg
-                    className="w-5 h-5 text-yellow-400 fill-yellow-400"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                  <span className="text-lg font-bold text-gray-900">
-                    {movie.rating.toFixed(1)}
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    ({movie.viewCount} votes)
-                  </span>
+                <div className="flex flex-col gap-2 mb-4">
+                  <div className="flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 text-yellow-400 fill-yellow-400"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    <span className="text-lg font-bold text-gray-900">
+                      {movie.rating.toFixed(1)}
+                    </span>
+                    <span className="text-sm text-gray-500 mr-2">
+                      ({movie.viewCount} votes)
+                    </span>
+
+                    <button
+                      onClick={() => setIsRatingModalOpen(true)}
+                      className="text-xs bg-orange-100 text-orange-600 hover:bg-orange-200 border border-orange-200 font-semibold py-1 px-3 rounded shadow-sm transition-colors uppercase tracking-wide cursor-pointer flex items-center gap-1"
+                    >
+                      <span>★</span> Đánh giá
+                    </button>
+                  </div>
                 </div>
+
+                <RatingModal
+                  opened={isRatingModalOpen}
+                  onClose={() => setIsRatingModalOpen(false)}
+                  movieTitle={movie.title}
+                  movieRating={movie.rating}
+                />
 
                 {/* Country */}
                 {movie.country && (
                   <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                    <span className="text-gray-400 min-w-[80px]">
-                      Quốc gia:
-                    </span>
+                    <span className="text-gray-400 min-w-[80px]">Quốc gia:</span>
                     <span>{movie.country}</span>
                   </div>
                 )}
@@ -194,7 +211,9 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
                   <span className="text-gray-400 min-w-[80px]">Ngôn ngữ:</span>
                   <span>
                     {movie.language}{' '}
-                    {movie.audioType === 'DUBBED' ? '(Lồng tiếng)' : '(Phụ đề)'}
+                    {movie.audioType === 'DUBBED'
+                      ? '(Lồng tiếng)'
+                      : '(Phụ đề)'}
                   </span>
                 </div>
 
@@ -203,15 +222,17 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
                   <span className="text-gray-400 min-w-[80px]">Thể loại:</span>
                   <div className="flex flex-wrap gap-2">
                     {movie.genres.map((genre) => (
-                      <Badge
-                        key={genre._id}
-                        variant="outline"
-                        color="gray"
-                        size="sm"
-                        radius="sm"
-                      >
-                        {genre.name}
-                      </Badge>
+                      <Link to={`/dien-anh?genre=${genre._id}`} key={genre._id} className="no-underline">
+                        <Badge
+                          variant="outline"
+                          color="gray"
+                          size="sm"
+                          radius="sm"
+                          className="hover:bg-gray-100 cursor-pointer"
+                        >
+                          {genre.name}
+                        </Badge>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -219,20 +240,20 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
                 {/* Directors */}
                 {movie.directors.length > 0 && (
                   <div className="flex items-center gap-2 text-sm mb-2">
-                    <span className="text-gray-400 min-w-[80px]">
-                      Đạo diễn:
-                    </span>
+                    <span className="text-gray-400 min-w-[80px]">Đạo diễn:</span>
                     <div className="flex flex-wrap gap-2">
                       {movie.directors.map((d) => (
-                        <Badge
-                          key={d._id}
-                          variant="light"
-                          color="blue"
-                          size="sm"
-                          radius="sm"
-                        >
-                          {d.name}
-                        </Badge>
+                        <Link to={`/dao-dien/${d.slug}`} key={d._id} className="no-underline">
+                          <Badge
+                            variant="light"
+                            color="blue"
+                            size="sm"
+                            radius="sm"
+                            className="hover:bg-blue-100 cursor-pointer"
+                          >
+                            {d.name}
+                          </Badge>
+                        </Link>
                       ))}
                     </div>
                   </div>
@@ -241,20 +262,20 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
                 {/* Actors */}
                 {movie.actors.length > 0 && (
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-gray-400 min-w-[80px]">
-                      Diễn viên:
-                    </span>
+                    <span className="text-gray-400 min-w-[80px]">Diễn viên:</span>
                     <div className="flex flex-wrap gap-2">
                       {movie.actors.map((a) => (
-                        <Badge
-                          key={a._id}
-                          variant="light"
-                          color="blue"
-                          size="sm"
-                          radius="sm"
-                        >
-                          {a.name}
-                        </Badge>
+                        <Link to={`/dien-vien/${a.slug}`} key={a._id} className="no-underline">
+                          <Badge
+                            variant="light"
+                            color="blue"
+                            size="sm"
+                            radius="sm"
+                            className="hover:bg-blue-100 cursor-pointer"
+                          >
+                            {a.name}
+                          </Badge>
+                        </Link>
                       ))}
                     </div>
                   </div>
