@@ -22,7 +22,8 @@ export default function MovieDetailPage() {
   const { data: nowShowingData } = useNowShowing(6);
 
   const movie: MovieResponse | null = (movieData as any)?.data || null;
-  const nowShowingMovies: MovieResponse[] = (nowShowingData as any)?.data || [];
+  const nowShowingMovies: MovieResponse[] =
+    (nowShowingData as any)?.data || [];
 
   // Loading State
   if (isLoading) {
@@ -81,7 +82,7 @@ export default function MovieDetailPage() {
               </div>
 
               {/* Movie Cards (vertical list) */}
-              <div className="space-y-4">
+              <div className="flex flex-col gap-4">
                 {nowShowingMovies
                   .filter((m) => m._id !== movie._id)
                   .slice(0, 4)
