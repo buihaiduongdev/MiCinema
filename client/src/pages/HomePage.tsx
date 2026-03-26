@@ -104,7 +104,10 @@ export default function HomePage() {
     return [];
   }, [moviesResponse]);
 
-  const getMovieImage = (movie: HomeMovie, variant: ImageVariant = 'poster') => {
+  const getMovieImage = (
+    movie: HomeMovie,
+    variant: ImageVariant = 'poster',
+  ) => {
     if (movie.poster && movie.poster.trim().length > 0) {
       return optimizeImageUrl(movie.poster, variant);
     }
@@ -121,7 +124,9 @@ export default function HomePage() {
 
   const heroCandidates = useMemo(() => {
     return [...normalizedMovies]
-      .filter((movie) => movie.status === 'RELEASED' || movie.status === 'UPCOMING')
+      .filter(
+        (movie) => movie.status === 'RELEASED' || movie.status === 'UPCOMING',
+      )
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))
       .slice(0, 8);
   }, [normalizedMovies]);
@@ -136,8 +141,8 @@ export default function HomePage() {
     if (heroCandidates.length <= 1) return;
 
     const intervalId = window.setInterval(() => {
-      setActiveHeroIndex((currentIndex) =>
-        (currentIndex + 1) % heroCandidates.length,
+      setActiveHeroIndex(
+        (currentIndex) => (currentIndex + 1) % heroCandidates.length,
       );
     }, 10000);
 
@@ -196,7 +201,9 @@ export default function HomePage() {
           heroMovie?.description ||
           'Khám phá những bộ phim mới nhất đang được chiếu tại MiCinema.'
         }
-        backgroundImage={heroMovie ? getMovieImage(heroMovie, 'hero') : fallbackHero}
+        backgroundImage={
+          heroMovie ? getMovieImage(heroMovie, 'hero') : fallbackHero
+        }
         releaseTag={heroMovie?.status || 'UPCOMING'}
         releaseDate={
           heroMovie

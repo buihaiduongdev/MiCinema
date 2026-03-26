@@ -3,6 +3,7 @@ import { Showtime } from '../../models/Showtime.model.js';
 import { CreateBooking } from '@shared/schemas/booking.schema.js';
 import { BOOKING_STATUS } from '@shared/constants/statuses.js';
 import { getSkip, getPaginationData } from '../../utils/pagination.js';
+import { BookingStatus } from '@shared/constants/statuses.js';
 
 export const getAllByUser = async (userId: string, page = 1, limit = 10) => {
   const skip = getSkip(page, limit);
@@ -26,7 +27,12 @@ export const getById = async (id: string) => {
 };
 
 export const getSeatMap = async (showtimeId: string) => {
-  const showtime = await Showtime.findById(showtimeId).populate('roomId');
+  await cleanupExpiredBookings();
+
+  const showtime = await Showtime.findById(showtimeId).populate([
+    'roomId',
+    'movieId',
+  ]);
   if (!showtime) throw new Error('Không tìm thấy suất chiếu');
 
   const bookedTickets = await Booking.find({
@@ -82,4 +88,24 @@ export const createBooking = async (userId: string, data: CreateBooking) => {
   });
 
   return booking;
+};
+
+export const cleanupExpiredBookings = async () => {
+  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+
+  const result = await Booking.updateMany(
+    {
+      status: BOOKING_STATUS.PENDING,
+      createdAt: { $lt: tenMinutesAgo },
+    },
+    {
+      $set: { status: BOOKING_STATUS.CANCELLED },
+    },
+  );
+
+  if (result.modifiedCount > 0) {
+    console.log(
+      `Đã giải phóng bàn cho ${result.modifiedCount} đơn hàng hết hạn.`,
+    );
+  }
 };

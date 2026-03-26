@@ -174,8 +174,9 @@ export default function DashboardPage() {
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className={`border-b w-full h-px ${i === 4 ? 'border-[#424656]/10' : 'border-[#424656]/5'
-                      }`}
+                    className={`border-b w-full h-px ${
+                      i === 4 ? 'border-[#424656]/10' : 'border-[#424656]/5'
+                    }`}
                   ></div>
                 ))}
               </div>

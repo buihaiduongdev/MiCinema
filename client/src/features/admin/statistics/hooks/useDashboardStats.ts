@@ -20,17 +20,17 @@ export const useDashboardOverview = () => {
  * GET /api/statistics/revenue
  */
 export const useRevenueStats = (
-    groupBy: 'day' | 'week' | 'month' = 'day',
-    startDate?: Date,
-    endDate?: Date,
+  groupBy: 'day' | 'week' | 'month' = 'day',
+  startDate?: Date,
+  endDate?: Date,
 ) => {
-    return useQuery({
-        queryKey: ['statistics', 'revenue', groupBy, startDate, endDate],
-        queryFn: async () => {
-            const params = new URLSearchParams();
-            params.append('groupBy', groupBy);
-            if (startDate) params.append('startDate', startDate.toISOString());
-            if (endDate) params.append('endDate', endDate.toISOString());
+  return useQuery({
+    queryKey: ['statistics', 'revenue', groupBy, startDate, endDate],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.append('groupBy', groupBy);
+      if (startDate) params.append('startDate', startDate.toISOString());
+      if (endDate) params.append('endDate', endDate.toISOString());
 
             const response = await apiClient.get(`/statistics/revenue?${params}`);
             return response;
@@ -57,12 +57,12 @@ export const useOccupancyByRoom = () => {
  * GET /api/statistics/bookings
  */
 export const useBookingStats = (startDate?: Date, endDate?: Date) => {
-    return useQuery({
-        queryKey: ['statistics', 'bookings', startDate, endDate],
-        queryFn: async () => {
-            const params = new URLSearchParams();
-            if (startDate) params.append('startDate', startDate.toISOString());
-            if (endDate) params.append('endDate', endDate.toISOString());
+  return useQuery({
+    queryKey: ['statistics', 'bookings', startDate, endDate],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (startDate) params.append('startDate', startDate.toISOString());
+      if (endDate) params.append('endDate', endDate.toISOString());
 
             const response = await apiClient.get(`/statistics/bookings?${params}`);
             return response;

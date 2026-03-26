@@ -52,6 +52,17 @@ export const movieFilterSchema = z.object({
   limit: z.coerce.number().min(1).max(100).default(10),
 });
 
+export const movieSchema = createMovieSchema.extend({
+  _id: z.string(),
+  slug: z.string(),
+  rating: z.number().default(0),
+  viewCount: z.number().default(0),
+  status: z.nativeEnum(MOVIE_STATUS).default(MOVIE_STATUS.UPCOMING),
+  createdAt: z.date().or(z.string()),
+  updatedAt: z.date().or(z.string()),
+});
+
 export type CreateMovieInput = z.infer<typeof createMovieSchema>;
 export type UpdateMovieInput = z.infer<typeof updateMovieSchema>;
 export type MovieFilter = z.infer<typeof movieFilterSchema>;
+export type MovieType = z.infer<typeof movieSchema>;

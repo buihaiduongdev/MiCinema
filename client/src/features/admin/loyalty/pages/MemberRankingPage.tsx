@@ -264,8 +264,8 @@ export const MemberRankingPage = () => {
                       <td className="px-6 py-5 text-on-surface-variant">
                         {member.memberSince
                           ? new Date(member.memberSince).toLocaleDateString(
-                            'vi-VN',
-                          )
+                              'vi-VN',
+                            )
                           : 'N/A'}
                       </td>
                       <td className="px-6 py-5 text-right">
