@@ -160,8 +160,7 @@ export default function ManageBookingsPage() {
     refund.mutate(
       {
         ticketId: refundTicketId.trim(),
-        refundAmount:
-          refundAmount === '' ? undefined : Number(refundAmount),
+        refundAmount: refundAmount === '' ? undefined : Number(refundAmount),
         reason: refundReason.trim() || undefined,
       },
       {
@@ -236,8 +235,7 @@ export default function ManageBookingsPage() {
             }}
             classNames={{
               label: 'text-[#c2c6d8]',
-              input:
-                'bg-[#060e20] border-[#2a3142] text-[#dae2fd]',
+              input: 'bg-[#060e20] border-[#2a3142] text-[#dae2fd]',
             }}
           />
         </div>
@@ -252,8 +250,7 @@ export default function ManageBookingsPage() {
             }}
             classNames={{
               label: 'text-[#c2c6d8]',
-              input:
-                'bg-[#060e20] border-[#2a3142] text-[#dae2fd]',
+              input: 'bg-[#060e20] border-[#2a3142] text-[#dae2fd]',
             }}
           />
         </div>
@@ -268,8 +265,7 @@ export default function ManageBookingsPage() {
             }}
             classNames={{
               label: 'text-[#c2c6d8]',
-              input:
-                'bg-[#060e20] border-[#2a3142] text-[#dae2fd]',
+              input: 'bg-[#060e20] border-[#2a3142] text-[#dae2fd]',
             }}
           />
         </div>
@@ -417,10 +413,7 @@ export default function ManageBookingsPage() {
             <Button variant="default" onClick={() => setCheckInOpen(false)}>
               Huỷ
             </Button>
-            <Button
-              loading={checkIn.isPending}
-              onClick={submitCheckIn}
-            >
+            <Button loading={checkIn.isPending} onClick={submitCheckIn}>
               Xác nhận check-in
             </Button>
           </Group>

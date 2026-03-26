@@ -4,10 +4,7 @@ import { Showtime } from '../../models/Showtime.model.js';
 import { User } from '../../models/User.model.js';
 import { CreateBooking } from '@shared/schemas/booking.schema.js';
 import type { AdminBookingListQuery } from '@shared/schemas/booking.schema.js';
-import {
-  BOOKING_STATUS,
-  SHOWTIME_STATUS,
-} from '@shared/constants/statuses.js';
+import { BOOKING_STATUS, SHOWTIME_STATUS } from '@shared/constants/statuses.js';
 import { getSkip, getPaginationData } from '../../utils/pagination.js';
 import { issueTicketsForPaidBooking } from '../tickets/ticket.service.js';
 

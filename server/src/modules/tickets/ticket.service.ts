@@ -3,10 +3,7 @@ import { Ticket } from '../../models/Ticket.model.js';
 import { Booking } from '../../models/Booking.model.js';
 import type { IBooking } from '../../models/Booking.model.js';
 import type { TicketRefundBody } from '@shared/schemas/ticket.schema.js';
-import {
-  BOOKING_STATUS,
-  TICKET_STATUS,
-} from '@shared/constants/statuses.js';
+import { BOOKING_STATUS, TICKET_STATUS } from '@shared/constants/statuses.js';
 
 function newTicketCode(): string {
   return randomBytes(12).toString('base64url').replace(/=/g, '');
@@ -43,9 +40,7 @@ export const checkInByTicketCode = async (ticketCode: string) => {
   if (!ticket) throw httpError('Không tìm thấy vé', 404);
 
   if (ticket.status === TICKET_STATUS.USED) {
-    const populated = await loadTicketForCheckInResponse(
-      ticket._id.toString(),
-    );
+    const populated = await loadTicketForCheckInResponse(ticket._id.toString());
     return { ticket: populated, alreadyCheckedIn: true as const };
   }
 
@@ -79,7 +74,10 @@ export const checkInByTicketCode = async (ticketCode: string) => {
  * UC-26: Huỷ vé + hoàn tiền — REFUNDED, gỡ ghế khỏi Booking, giảm totalPrice;
  * hết ghế → Booking CANCELLED. Thống kê dùng totalPrice & $size seats nên tự khớp.
  */
-export const refundTicket = async (ticketId: string, body: TicketRefundBody) => {
+export const refundTicket = async (
+  ticketId: string,
+  body: TicketRefundBody,
+) => {
   const ticket = await Ticket.findById(ticketId);
   if (!ticket) throw httpError('Không tìm thấy vé', 404);
 

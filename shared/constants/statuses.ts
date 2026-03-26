@@ -27,8 +27,7 @@ export const TICKET_STATUS = {
   REFUNDED: 'REFUNDED',
 } as const;
 
-export type TicketStatus =
-  (typeof TICKET_STATUS)[keyof typeof TICKET_STATUS];
+export type TicketStatus = (typeof TICKET_STATUS)[keyof typeof TICKET_STATUS];
 
 export const SHOWTIME_STATUS = {
   OPEN: 'OPEN',
