@@ -35,6 +35,7 @@ import personRoutes from './modules/persons/person.routes.js';
 import genreRoutes from './modules/genres/genre.routes.js';
 import cinemaRoutes from './modules/cinemas/cinema.routes.js';
 import showtimeRoutes from './modules/showtimes/showtime.routes.js';
+import statisticsRoutes from './modules/statistics/statistics.routes.js';
 
 import { errorHandler } from './middlewares/error.middleware.js';
 
@@ -59,6 +60,7 @@ app.use('/api/persons', personRoutes);
 app.use('/api/genres', genreRoutes);
 app.use('/api/cinemas', cinemaRoutes);
 app.use('/api/showtimes', showtimeRoutes);
+app.use('/api/statistics', statisticsRoutes);
 
 app.use(errorHandler);
 

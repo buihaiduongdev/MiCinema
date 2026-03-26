@@ -28,11 +28,9 @@ type GetAllOptions = {
 };
 
 export const create = async (data: CreateLoyaltyInput) => {
-  // Verify user exists
   const user = await User.findById(data.userId);
   if (!user) throw new Error('Người dùng không tồn tại');
 
-  // Create loyalty history record
   const loyaltyRecord = await LoyaltyHistory.create({
     userId: data.userId,
     points: data.points,
@@ -41,7 +39,6 @@ export const create = async (data: CreateLoyaltyInput) => {
     ...(data.bookingId && { bookingId: data.bookingId }),
   });
 
-  // Update user's loyalty points
   user.loyaltyPoints = Math.max(0, user.loyaltyPoints + data.points);
   await user.save();
 
@@ -79,7 +76,6 @@ export const getByUserId = async (userId: string, opts: GetAllOptions = {}) => {
   const page = Math.max(1, Number(opts.page) || 1);
   const limit = Math.max(1, Number(opts.limit) || 10);
 
-  // Verify user exists
   const user = await User.findById(userId);
   if (!user) throw new Error('Người dùng không tồn tại');
 
@@ -106,7 +102,6 @@ export const update = async (
   const record = await LoyaltyHistory.findById(id);
   if (!record) throw new Error('Bản ghi lịch sử không tồn tại');
 
-  // If points are being updated, adjust user's loyalty points
   if (payload.points !== undefined && payload.points !== record.points) {
     const pointsDifference = payload.points - record.points;
     const user = await User.findById(record.userId);
@@ -128,7 +123,6 @@ export const remove = async (id: string) => {
   const record = await LoyaltyHistory.findById(id);
   if (!record) throw new Error('Bản ghi lịch sử không tồn tại');
 
-  // Reverse the points impact on user
   const user = await User.findById(record.userId);
   if (user) {
     user.loyaltyPoints = Math.max(0, user.loyaltyPoints - record.points);
@@ -145,7 +139,6 @@ export const expirePoints = async (userId: string, expiryPoints: number) => {
   const user = await User.findById(userId);
   if (!user) throw new Error('Người dùng không tồn tại');
 
-  // Create expiry record
   const expireRecord = await LoyaltyHistory.create({
     userId,
     points: -expiryPoints,
@@ -153,17 +146,12 @@ export const expirePoints = async (userId: string, expiryPoints: number) => {
     description: `${expiryPoints} điểm đã hết hạn`,
   });
 
-  // Update user's loyalty points
   user.loyaltyPoints = Math.max(0, user.loyaltyPoints - expiryPoints);
   await user.save();
 
   return expireRecord.populate('userId');
 };
 
-/**
- * Get member ranking by loyalty points
- * Xem bảng xếp hạng thành viên - Top khách hàng theo điểm
- */
 export const getMemberRankingByPoints = async (limit = 10) => {
   const ranking = await User.find({ isActive: true })
     .select('_id fullName email loyaltyPoints membershipTier avatar')
@@ -187,19 +175,18 @@ export const getMemberRankingByPoints = async (limit = 10) => {
  * Xem bảng xếp hạng thành viên - Top khách hàng theo hạng
  */
 export const getMemberRankingByTier = async (limit = 100) => {
-  // MEMBERSHIP_TIER order: GOLD > SILVER > BRONZE
-  const tierOrder = { GOLD: 3, SILVER: 2, BRONZE: 1 };
-
-  const ranking = await User.find({ isActive: true })
+  const users = await User.find({ isActive: true })
     .select('_id fullName email loyaltyPoints membershipTier avatar')
-    .sort({
-      membershipTier: -1, // GOLD first
-      loyaltyPoints: -1, // Then by points within same tier
-    })
-    .limit(limit)
     .lean();
 
-  return ranking.map((user, index) => ({
+  const tierPriority: Record<string, number> = { GOLD: 3, SILVER: 2, BRONZE: 1 };
+  const ranking = users.sort((a: any, b: any) => {
+    const tierDiff = (tierPriority[b.membershipTier] || 0) - (tierPriority[a.membershipTier] || 0);
+    if (tierDiff !== 0) return tierDiff;
+    return (b.loyaltyPoints || 0) - (a.loyaltyPoints || 0); 
+  }).slice(0, limit);
+
+  return ranking.map((user: any, index) => ({
     rank: index + 1,
     userId: user._id,
     fullName: user.fullName,
@@ -210,9 +197,6 @@ export const getMemberRankingByTier = async (limit = 100) => {
   }));
 };
 
-/**
- * Get detailed member ranking with tier progression info
- */
 export const getMemberRankingDetailed = async (
   limit = 10,
   sortBy: 'points' | 'tier' = 'points',
@@ -221,9 +205,9 @@ export const getMemberRankingDetailed = async (
     sortBy === 'points'
       ? { loyaltyPoints: -1 }
       : {
-          membershipTier: -1,
-          loyaltyPoints: -1,
-        };
+        membershipTier: -1,
+        loyaltyPoints: -1,
+      };
 
   const ranking = await User.find({ isActive: true })
     .select('_id fullName email loyaltyPoints membershipTier avatar createdAt')

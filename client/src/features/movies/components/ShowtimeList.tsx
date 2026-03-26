@@ -91,12 +91,15 @@ export default function ShowtimeSection({ movieId }: ShowtimeSectionProps) {
   // Lọc theo ngày đã chọn
   const showtimesByDate = (showtimesData as any)?.data || [];
   const currentDateShowtimes: any[] =
-    showtimesByDate.find?.((d: any) => d.date === selectedDate)?.showtimes || [];
+    showtimesByDate.find?.((d: any) => d.date === selectedDate)?.showtimes ||
+    [];
 
   // Nhóm theo cinema
   const groupedByCinema = useMemo(() => {
-    const groups: Record<string, { cinema: any; rooms: Record<string, any[]> }> =
-      {};
+    const groups: Record<
+      string,
+      { cinema: any; rooms: Record<string, any[]> }
+    > = {};
 
     for (const st of currentDateShowtimes) {
       const cinemaId = st.cinemaId?._id || st.cinemaId || 'unknown';
@@ -155,10 +158,11 @@ export default function ShowtimeSection({ movieId }: ShowtimeSectionProps) {
           <button
             key={tab.date}
             onClick={() => setSelectedDate(tab.date)}
-            className={`flex flex-col items-center px-4 py-2 rounded-lg transition-all duration-200 min-w-[70px] cursor-pointer ${selectedDate === tab.date
-              ? 'bg-blue-800 text-white shadow-md'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+            className={`flex flex-col items-center px-4 py-2 rounded-lg transition-all duration-200 min-w-[70px] cursor-pointer ${
+              selectedDate === tab.date
+                ? 'bg-blue-800 text-white shadow-md'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
           >
             <span className="text-xs font-medium">{tab.label}</span>
             <span

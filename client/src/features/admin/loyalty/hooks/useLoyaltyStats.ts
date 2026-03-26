@@ -10,6 +10,7 @@ export interface RankingMember {
     membershipTier: 'BRONZE' | 'SILVER' | 'GOLD';
     avatar?: string;
     memberSince?: string;
+    isActive?: boolean;
 }
 
 export interface TierOverview {
@@ -28,7 +29,7 @@ export const useMemberRankingByPoints = (limit = 10) => {
             const response = await apiClient.get('/loyalty/ranking/points', {
                 params: { limit },
             });
-            return response.data.data as RankingMember[];
+            return response.data as RankingMember[];
         },
     });
 };
@@ -43,7 +44,7 @@ export const useMemberRankingByTier = (limit = 100) => {
             const response = await apiClient.get('/loyalty/ranking/tier', {
                 params: { limit },
             });
-            return response.data.data as RankingMember[];
+            return response.data as RankingMember[];
         },
     });
 };
