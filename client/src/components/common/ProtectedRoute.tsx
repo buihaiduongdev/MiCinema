@@ -12,10 +12,11 @@ export const ProtectedRoute = ({
   children,
   allowedRoles,
 }: ProtectedRouteProps) => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading, isError } = useAuth();
+  const token = localStorage.getItem('accessToken');
   const location = useLocation();
 
-  if (isLoading) {
+  if (isLoading || (token && !user && !isError)) {
     return (
       <Center style={{ height: '100vh' }}>
         <Loader color="red" size="xl" />
