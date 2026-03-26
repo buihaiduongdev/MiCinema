@@ -6,7 +6,8 @@ import LoginPage from './features/auth/pages/LoginPage';
 import RegisterPage from './features/auth/pages/RegisterPage';
 import MoviesPage from './features/movies/pages/MoviesPage';
 import MovieDetailPage from './features/movies/pages/MovieDetailPage';
-// import BookingPage from './features/booking/pages/BookingPage';
+import BookingPage from './features/booking/pages/BookingPage';
+import { ProtectedRoute } from './components/common/ProtectedRoute';
 
 function App() {
   return (
@@ -30,6 +31,18 @@ function App() {
       {/* Movies */}
       <Route path="/phim" element={<MoviesPage />} />
       <Route path="/phim/:slug" element={<MovieDetailPage />} />
+
+      {/* Booking */}
+      <Route
+        path="/booking/:showtimeId"
+        element={
+          <ProtectedRoute>
+            <BookingPage />
+          </ProtectedRoute>
+        }
+      />
+      {/* Default redirect */}
+      <Route path="/" element={<Navigate to="/phim" replace />} />
     </Routes>
   );
 }
