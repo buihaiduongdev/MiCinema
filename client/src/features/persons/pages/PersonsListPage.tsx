@@ -139,7 +139,7 @@ export default function PersonsListPage() {
               <div className="bg-blue-800 text-white text-center py-3 font-bold text-sm uppercase">
                 Phim Đang Chiếu
               </div>
-              <div className="p-3 space-y-4">
+              <div className="p-3 flex flex-col gap-4">
                 {nowShowingMovies.map((movie) => (
                   <Link key={movie._id} to={`/phim/${movie.slug}`} className="block group no-underline">
                     <div className="relative overflow-hidden rounded-lg">

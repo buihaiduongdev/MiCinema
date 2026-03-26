@@ -82,7 +82,7 @@ export default function MovieDetailPage() {
               </div>
 
               {/* Movie Cards (vertical list) */}
-              <div className="space-y-4">
+              <div className="flex flex-col gap-4">
                 {nowShowingMovies
                   .filter((m) => m._id !== movie._id)
                   .slice(0, 4)

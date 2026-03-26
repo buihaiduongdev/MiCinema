@@ -151,7 +151,7 @@ export default function PersonDetailPage() {
                       <img
                         src={movie.poster}
                         alt={movie.title}
-                        className="w-[100px] h-[150px] object-cover rounded shadow-sm group-hover:shadow-md transition-shadow border border-gray-200"
+                        className="w-[100px] h-[150px] shrink-0 object-cover rounded shadow-sm group-hover:shadow-md transition-shadow border border-gray-200"
                       />
                       <div className="flex flex-col justify-center">
                         <h3 className="text-md font-bold text-gray-800 group-hover:text-blue-700 transition-colors line-clamp-2 uppercase">
@@ -190,7 +190,7 @@ export default function PersonDetailPage() {
                 <div className="bg-blue-800 text-white text-center py-3 font-bold text-sm uppercase">
                   Phim Đang Chiếu
                 </div>
-                <div className="p-3 space-y-4">
+                <div className="p-3 flex flex-col gap-4">
                   {nowShowingMovies.map((movie) => (
                     <Link
                       key={movie._id}
