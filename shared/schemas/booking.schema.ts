@@ -20,6 +20,7 @@ export const cancelBookingSchema = z.object({
   reason: z.string().optional(),
 });
 export const bookingSchema = createBookingSchema.extend({
+  _id: z.string(),
   userId: z.string(),
   status: z.nativeEnum(BOOKING_STATUS),
   totalPrice: z.number(),

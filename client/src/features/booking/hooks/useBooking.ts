@@ -1,7 +1,9 @@
 import type { CreateBooking } from '@shared/index';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createBookingApi } from '../services/booking.service';
-
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  createBookingApi,
+  getBookingDetailApi,
+} from '../services/booking.service';
 export const useCreateBooking = () => {
   const queryClient = useQueryClient();
 
@@ -11,5 +13,12 @@ export const useCreateBooking = () => {
       queryClient.invalidateQueries({ queryKey: ['seats'] });
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
     },
+  });
+};
+export const useBookingDetail = (id: string) => {
+  return useQuery({
+    queryKey: ['booking', id],
+    queryFn: () => getBookingDetailApi(id).then((res) => res.data),
+    enabled: !!id,
   });
 };
