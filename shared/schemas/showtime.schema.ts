@@ -27,9 +27,9 @@ export const showtimeFilterSchema = z.object({
   movieId: z.string().optional(),
   cinemaId: z.string().optional(),
   roomId: z.string().optional(),
-  date: z.string().optional(), // YYYY-MM-DD — lọc theo ngày
+  date: z.string().optional(),           // YYYY-MM-DD — lọc theo ngày
   status: z.nativeEnum(SHOWTIME_STATUS).optional(),
-  fromDate: z.string().optional(), // Lọc khoảng thời gian
+  fromDate: z.string().optional(),       // Lọc khoảng thời gian
   toDate: z.string().optional(),
   sortBy: z
     .enum(['startTime', 'ticketPrice', 'createdAt'])

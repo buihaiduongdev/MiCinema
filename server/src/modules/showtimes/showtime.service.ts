@@ -169,7 +169,9 @@ export const getAll = async (filter: ShowtimeFilter) => {
  * Lấy chi tiết suất chiếu theo ID
  */
 export const getById = async (id: string) => {
-  const showtime = await Showtime.findById(id).populate(POPULATE_FIELDS).lean();
+  const showtime = await Showtime.findById(id)
+    .populate(POPULATE_FIELDS)
+    .lean();
 
   if (!showtime) throw new Error('Không tìm thấy suất chiếu');
   return showtime;
@@ -282,9 +284,7 @@ export const update = async (id: string, data: UpdateShowtimeInput) => {
           (conflictMovie.duration + BUFFER_MINUTES) * 60 * 1000,
       );
       if (newStartTime < conflictEnd) {
-        throw new Error(
-          'Phòng đã có suất chiếu trùng giờ. Vui lòng chọn giờ khác.',
-        );
+        throw new Error('Phòng đã có suất chiếu trùng giờ. Vui lòng chọn giờ khác.');
       }
     }
   }
@@ -343,7 +343,12 @@ const groupShowtimesByDate = (showtimes: any[]) => {
   const grouped: Record<string, any[]> = {};
 
   for (const showtime of showtimes) {
-    const dateKey = new Date(showtime.startTime).toISOString().split('T')[0];
+    // Dùng local date (UTC+7) thay vì UTC để tránh lệch ngày
+    const d = new Date(showtime.startTime);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    const dateKey = `${year}-${month}-${day}`;
     if (!grouped[dateKey]) grouped[dateKey] = [];
     grouped[dateKey].push(showtime);
   }

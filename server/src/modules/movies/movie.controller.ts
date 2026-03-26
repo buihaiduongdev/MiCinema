@@ -39,7 +39,9 @@ export const getMovies = async (req: Request, res: Response) => {
 export const getNowShowing = async (req: Request, res: Response) => {
   const limit = req.query.limit ? Number(req.query.limit) : 10;
   const data = await movieService.getNowShowing(limit);
-  res.status(200).json(responseSuccess(data, 'Lấy phim đang chiếu thành công'));
+  res
+    .status(200)
+    .json(responseSuccess(data, 'Lấy phim đang chiếu thành công'));
 };
 
 /**
@@ -49,7 +51,9 @@ export const getNowShowing = async (req: Request, res: Response) => {
 export const getUpcoming = async (req: Request, res: Response) => {
   const limit = req.query.limit ? Number(req.query.limit) : 10;
   const data = await movieService.getUpcoming(limit);
-  res.status(200).json(responseSuccess(data, 'Lấy phim sắp chiếu thành công'));
+  res
+    .status(200)
+    .json(responseSuccess(data, 'Lấy phim sắp chiếu thành công'));
 };
 
 /**
@@ -57,7 +61,7 @@ export const getUpcoming = async (req: Request, res: Response) => {
  * UC-03: Xem poster, trailer, mô tả, đạo diễn, diễn viên
  */
 export const getMovieById = async (req: Request, res: Response) => {
-  const movie = await movieService.getById(req.params.id);
+  const movie = await movieService.getById(req.params.id as string);
   res.status(200).json(responseSuccess(movie));
 };
 
@@ -65,7 +69,7 @@ export const getMovieById = async (req: Request, res: Response) => {
  * GET /api/movies/slug/:slug — Chi tiết phim theo slug (SEO)
  */
 export const getMovieBySlug = async (req: Request, res: Response) => {
-  const movie = await movieService.getBySlug(req.params.slug);
+  const movie = await movieService.getBySlug(req.params.slug as string);
   res.status(200).json(responseSuccess(movie));
 };
 
@@ -75,8 +79,10 @@ export const getMovieBySlug = async (req: Request, res: Response) => {
  */
 export const getRelatedMovies = async (req: Request, res: Response) => {
   const limit = req.query.limit ? Number(req.query.limit) : 6;
-  const data = await movieService.getRelated(req.params.id, limit);
-  res.status(200).json(responseSuccess(data, 'Lấy phim liên quan thành công'));
+  const data = await movieService.getRelated(req.params.id as string, limit);
+  res
+    .status(200)
+    .json(responseSuccess(data, 'Lấy phim liên quan thành công'));
 };
 
 /**
@@ -84,7 +90,7 @@ export const getRelatedMovies = async (req: Request, res: Response) => {
  * UC-19: Cập nhật thông tin, đổi poster, thay đổi trạng thái
  */
 export const updateMovie = async (req: Request, res: Response) => {
-  const movie = await movieService.update(req.params.id, req.body);
+  const movie = await movieService.update(req.params.id as string, req.body);
   res.status(200).json(responseSuccess(movie, 'Cập nhật phim thành công'));
 };
 
@@ -93,6 +99,22 @@ export const updateMovie = async (req: Request, res: Response) => {
  * UC-20: Xóa phim (chỉ khi chưa có suất chiếu)
  */
 export const deleteMovie = async (req: Request, res: Response) => {
-  await movieService.remove(req.params.id);
+  await movieService.remove(req.params.id as string);
   res.status(200).json(responseSuccess(null, 'Xóa phim thành công'));
+};
+
+/**
+ * GET /api/movies/countries — Danh sách quốc gia (cho dropdown filter)
+ */
+export const getCountries = async (_req: Request, res: Response) => {
+  const countries = await movieService.getCountries();
+  res.status(200).json(responseSuccess(countries));
+};
+
+/**
+ * GET /api/movies/years — Danh sách năm (cho dropdown filter)
+ */
+export const getYears = async (_req: Request, res: Response) => {
+  const years = await movieService.getYears();
+  res.status(200).json(responseSuccess(years));
 };

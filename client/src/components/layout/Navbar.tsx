@@ -6,14 +6,14 @@ export default function Navbar() {
 
   const navItems = [
     { label: 'LỊCH CHIẾU', href: '/schedule' },
-    { label: 'PHIM', href: '/movies' },
+    { label: 'PHIM', href: '/phim' },
     { label: 'ƯU ĐÃI', href: '/offers' },
     { label: 'TIN TỨC PHIM', href: '/news' },
     { label: 'THÀNH VIÊN', href: '/member' },
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 w-full z-50 border-b border-white/10 bg-transparent text-white backdrop-blur-md">
+    <nav className="sticky top-0 left-0 right-0 w-full z-50 border-b border-white/10 bg-slate-950 text-white shadow-lg">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-16 items-center justify-between py-2">
           {/* Logo */}

@@ -35,7 +35,9 @@ export const create = async (data: CreateGenreInput) => {
  * Lấy tất cả Genre (không phân trang — thường ít dữ liệu)
  */
 export const getAll = async () => {
-  const data = await Genre.find({ isActive: true }).sort({ name: 1 }).lean();
+  const data = await Genre.find({ isActive: true })
+    .sort({ name: 1 })
+    .lean();
   return data;
 };
 

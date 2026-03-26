@@ -87,11 +87,11 @@ const movieSchema = new Schema<IMovie>(
 // Text search theo title + description
 movieSchema.index(
   { title: 'text', description: 'text' },
-  { language_override: 'dummyLanguageField' },
+  { language_override: 'dummyLanguageField' }
 );
 // Lọc nhanh theo status, genres, releaseDate
-movieSchema.index({ directors: 1 });
-movieSchema.index({ genres: 1 });
+movieSchema.index({ 'directors': 1 });
+movieSchema.index({ 'genres': 1 });
 movieSchema.index({ status: 1 });
 
 export const Movie = mongoose.model<IMovie>('Movie', movieSchema);
