@@ -5,11 +5,6 @@ import HomePage from './pages/HomePage';
 import { RoomsPage } from './pages/RoomsPage';
 import LoginPage from './features/auth/pages/LoginPage';
 import RegisterPage from './features/auth/pages/RegisterPage';
-import MoviesPage from './features/movies/pages/MoviesPage';
-import MovieDetailPage from './features/movies/pages/MovieDetailPage';
-import CinemaBrowsePage from './features/movies/pages/CinemaBrowsePage';
-import PersonsListPage from './features/persons/pages/PersonsListPage';
-import PersonDetailPage from './features/persons/pages/PersonDetailPage';
 import { BookingPage } from './features/booking/pages/BookingPage';
 import { BookingConfirmPage } from './features/booking/pages/BookingConfirmPage';
 import { BookingSuccessPage } from './features/booking/pages/BookingSuccessPage';
@@ -49,20 +44,6 @@ function App() {
 
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-
-      {/* Movies / Cinema */}
-      <Route path="/phim" element={<MoviesPage />} />
-      <Route path="/phim/:slug" element={<MovieDetailPage />} />
-      <Route path="/dien-anh" element={<CinemaBrowsePage />} />
-
-      {/* Persons */}
-      <Route path="/dien-vien" element={<PersonsListPage />} />
-      <Route path="/dao-dien" element={<PersonsListPage />} />
-      <Route path="/dien-vien/:slug" element={<PersonDetailPage />} />
-      <Route path="/dao-dien/:slug" element={<PersonDetailPage />} />
-
-      {/* Default redirect */}
-      <Route path="/" element={<Navigate to="/phim" replace />} />
       <Route path="/booking/:showtimeId" element={<BookingPage />} />
       <Route path="/booking/:bookingId/confirm" element={<BookingConfirmPage />} />
       <Route path="/booking/:bookingId/success" element={<BookingSuccessPage />} />
