@@ -1,6 +1,5 @@
 import { Person } from '../../models/Person.model.js';
 import { getSkip, getPaginationData } from '../../utils/pagination.js';
-import { slugify } from '../../utils/slugify.js';
 import type {
   CreatePersonInput,
   UpdatePersonInput,
@@ -19,19 +18,13 @@ export const create = async (data: CreatePersonInput) => {
       isActive: true,
     });
     if (existing) {
-      throw new Error(`Người này (${data.name}) với ngày sinh đã chọn đã tồn tại.`);
+      throw new Error(
+        `Người này (${data.name}) với ngày sinh đã chọn đã tồn tại.`,
+      );
     }
   }
 
-  const baseSlug = slugify(data.name);
-  let slug = baseSlug;
-  let counter = 1;
-  while (await Person.exists({ slug })) {
-    slug = `${baseSlug}-${counter}`;
-    counter++;
-  }
-
-  const person = await Person.create({ ...data, slug });
+  const person = await Person.create(data);
   return person;
 };
 
@@ -39,18 +32,20 @@ export const create = async (data: CreatePersonInput) => {
  * Lấy danh sách Person - Dùng Text Index để tìm kiếm
  */
 export const getAll = async (filter: PersonFilter) => {
-  const { page, limit, search, role, nationality, sortBy, sortOrder } = filter;
+  const { page, limit, search, role, nationality } = filter;
 
   const query: any = { isActive: true };
 
   if (search) {
+    // Quay lại dùng $text index
+    // Lưu ý: Model Person phải được đánh index: personSchema.index({ name: 'text' })
     query.$text = { $search: search };
   }
-  
+
   if (role) {
     query.roles = role;
   }
-  
+
   if (nationality) {
     query.nationality = nationality;
   }
@@ -58,11 +53,10 @@ export const getAll = async (filter: PersonFilter) => {
   const totalItems = await Person.countDocuments(query);
   const skip = getSkip(page, limit);
 
-  const sortParam = sortBy || 'viewCount';
-  const orderParam = sortOrder === 'asc' ? 1 : -1;
-
+  // Nếu dùng $text, thường người ta sẽ sort theo độ liên quan (score)
+  // nhưng ở đây bạn đang muốn sort theo tên (A-Z) nên mình giữ nguyên sort name
   const data = await Person.find(query)
-    .sort(search ? { score: { $meta: 'textScore' } } : { [sortParam]: orderParam }) 
+    .sort(search ? { score: { $meta: 'textScore' } } : { name: 1 })
     .skip(skip)
     .limit(limit)
     .lean();
@@ -73,36 +67,12 @@ export const getAll = async (filter: PersonFilter) => {
 };
 
 /**
- * Lấy chi tiết Person bằng ID
+ * Lấy chi tiết Person
  */
 export const getById = async (id: string) => {
   const person = await Person.findById(id).lean();
   if (!person) throw new Error('Không tìm thấy người này');
   return person;
-};
-
-/**
- * Lấy chi tiết Person bằng slug
- */
-export const getBySlug = async (slug: string) => {
-  const person = await Person.findOneAndUpdate(
-    { slug, isActive: true },
-    { $inc: { viewCount: 1 } },
-    { new: true }
-  ).lean();
-  if (!person) throw new Error('Không tìm thấy người này');
-  return person;
-};
-
-/**
- * Lấy danh sách Quốc Tịch dựa trên Roles (ACTOR/DIRECTOR)
- */
-export const getNationalities = async (role?: string) => {
-  const query: any = { isActive: true, nationality: { $exists: true, $ne: '' } };
-  if (role) query.roles = role;
-  
-  const results = await Person.distinct('nationality', query);
-  return results.filter(Boolean).sort();
 };
 
 /**
@@ -123,7 +93,8 @@ export const update = async (id: string, data: UpdatePersonInput) => {
         _id: { $ne: id },
         isActive: true,
       });
-      if (duplicate) throw new Error('Thông tin này trùng với một người khác đã có.');
+      if (duplicate)
+        throw new Error('Thông tin này trùng với một người khác đã có.');
     }
   }
 

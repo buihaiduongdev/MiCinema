@@ -1,7 +1,7 @@
 /**
  * ShowtimeSection — Lịch chiếu theo ngày + chi nhánh
  *
- * UI: Date tabs (Hôm nay, T4, T5...) + dropdown "Toàn quốc" + dropdown "Tất cả rạp"
+ * UI: Date tabs (Hôm nay, T4, T5...) + dropdown chọn "Toàn quốc" / "Tất cả rạp"
  * Data: Grouped by cinema → room → time slots
  */
 
@@ -9,7 +9,6 @@ import { useState, useMemo } from 'react';
 import { Select } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '../../../lib/api-client';
-import { getCinemaCities, getCinemas } from '../services/movies.service';
 
 interface ShowtimeSectionProps {
   movieId: string;
@@ -27,12 +26,11 @@ const generateDateTabs = () => {
     const date = new Date(today);
     date.setDate(today.getDate() + i);
 
-    const year = date.getFullYear();
-    const monthNum = (date.getMonth() + 1).toString().padStart(2, '0');
     const dayNum = date.getDate().toString().padStart(2, '0');
+    const monthNum = (date.getMonth() + 1).toString().padStart(2, '0');
 
     tabs.push({
-      date: `${year}-${monthNum}-${dayNum}`, // Local YYYY-MM-DD (không dùng UTC)
+      date: date.toISOString().split('T')[0], // YYYY-MM-DD
       label: i === 0 ? 'Hôm Nay' : DAY_NAMES[date.getDay()],
       subLabel: `${dayNum}/${monthNum}`,
       isToday: i === 0,
@@ -46,43 +44,13 @@ export default function ShowtimeSection({ movieId }: ShowtimeSectionProps) {
   const dateTabs = useMemo(() => generateDateTabs(), []);
   const [selectedDate, setSelectedDate] = useState(dateTabs[0].date);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(null);
 
-  // Fetch danh sách thành phố từ API
-  const { data: citiesData } = useQuery({
-    queryKey: ['cinemas', 'cities'],
-    queryFn: getCinemaCities,
-    staleTime: 30 * 60 * 1000,
-  });
-
-  // Fetch danh sách rạp (lọc theo city nếu có)
-  const { data: cinemasData } = useQuery({
-    queryKey: ['cinemas', 'list', selectedCity],
-    queryFn: () => getCinemas(selectedCity ? { city: selectedCity } : {}),
-    staleTime: 10 * 60 * 1000,
-  });
-
-  const cities: string[] = (citiesData as any)?.data || [];
-  const cinemas: { _id: string; name: string; city: string }[] =
-    (cinemasData as any)?.data?.data || (cinemasData as any)?.data || [];
-
-  // Chuẩn bị data cho Select dropdown
-  const cityOptions = [
-    { value: '', label: 'Toàn quốc' },
-    ...cities.map((c) => ({ value: c, label: c })),
-  ];
-
-  const cinemaOptions = [
-    { value: '', label: 'Tất cả rạp' },
-    ...cinemas.map((c) => ({ value: c._id, label: c.name })),
-  ];
-
-  // Fetch showtimes cho phim này, lọc theo cinema nếu có
+  // Fetch showtimes cho phim này
   const { data: showtimesData, isLoading } = useQuery({
-    queryKey: ['showtimes', 'movie', movieId, selectedCinemaId],
+    queryKey: ['showtimes', 'movie', movieId, selectedCity],
     queryFn: () =>
       apiClient.get(`/showtimes/movie/${movieId}`, {
-        params: selectedCinemaId ? { cinemaId: selectedCinemaId } : {},
+        params: selectedCity ? { cinemaId: selectedCity } : {},
       }),
     enabled: !!movieId,
     staleTime: 2 * 60 * 1000,
@@ -90,22 +58,24 @@ export default function ShowtimeSection({ movieId }: ShowtimeSectionProps) {
 
   // Lọc theo ngày đã chọn
   const showtimesByDate = (showtimesData as any)?.data || [];
-  const currentDateShowtimes: any[] =
-    showtimesByDate.find?.((d: any) => d.date === selectedDate)?.showtimes || [];
+  const currentDateShowtimes =
+    showtimesByDate.find((d: any) => d.date === selectedDate)?.showtimes || [];
 
   // Nhóm theo cinema
   const groupedByCinema = useMemo(() => {
-    const groups: Record<string, { cinema: any; rooms: Record<string, any[]> }> =
-      {};
+    const groups: Record<
+      string,
+      { cinema: any; rooms: Record<string, any[]> }
+    > = {};
 
     for (const st of currentDateShowtimes) {
-      const cinemaId = st.cinemaId?._id || st.cinemaId || 'unknown';
+      const cinemaId = st.cinemaId?._id || 'unknown';
       const roomName = st.roomId?.name || 'Phòng';
       const roomType = st.roomId?.roomType || '';
 
       if (!groups[cinemaId]) {
         groups[cinemaId] = {
-          cinema: typeof st.cinemaId === 'object' ? st.cinemaId : null,
+          cinema: st.cinemaId,
           rooms: {},
         };
       }
@@ -119,12 +89,6 @@ export default function ShowtimeSection({ movieId }: ShowtimeSectionProps) {
 
     return Object.values(groups);
   }, [currentDateShowtimes]);
-
-  // Handler khi đổi city → reset cinema
-  const handleCityChange = (value: string | null) => {
-    setSelectedCity(value || null);
-    setSelectedCinemaId(null); // Reset rạp khi đổi tỉnh
-  };
 
   return (
     <div className="mb-8">
@@ -190,26 +154,15 @@ export default function ShowtimeSection({ movieId }: ShowtimeSectionProps) {
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* City Filter Dropdown */}
+        {/* City Filter */}
         <Select
           placeholder="Toàn quốc"
-          data={cityOptions}
-          value={selectedCity || ''}
-          onChange={handleCityChange}
+          data={[{ value: '', label: 'Toàn quốc' }]}
+          value={selectedCity}
+          onChange={setSelectedCity}
+          clearable
           size="sm"
-          className="w-[160px]"
-          allowDeselect={false}
-        />
-
-        {/* Cinema Filter Dropdown */}
-        <Select
-          placeholder="Tất cả rạp"
-          data={cinemaOptions}
-          value={selectedCinemaId || ''}
-          onChange={(val) => setSelectedCinemaId(val || null)}
-          size="sm"
-          className="w-[240px]"
-          allowDeselect={false}
+          className="w-[140px]"
         />
       </div>
 

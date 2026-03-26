@@ -21,8 +21,8 @@ import type {
 
 // Populate fields dùng chung
 const POPULATE_FIELDS = [
-  { path: 'directors', select: 'name slug avatar nationality' },
-  { path: 'actors', select: 'name slug avatar nationality' },
+  { path: 'directors', select: 'name avatar nationality' },
+  { path: 'actors', select: 'name avatar nationality' },
   { path: 'genres', select: 'name slug' },
 ];
 
@@ -94,8 +94,6 @@ export const getAll = async (filter: MovieFilter) => {
     status,
     ageRating,
     audioType,
-    country,
-    year,
     sortBy,
     sortOrder,
   } = filter;
@@ -137,18 +135,6 @@ export const getAll = async (filter: MovieFilter) => {
     query.audioType = audioType;
   }
 
-  // Lọc theo quốc gia
-  if (country) {
-    query.country = country;
-  }
-
-  // Lọc theo năm phát hành
-  if (year) {
-    const startOfYear = new Date(year, 0, 1);
-    const endOfYear = new Date(year + 1, 0, 1);
-    query.releaseDate = { $gte: startOfYear, $lt: endOfYear };
-  }
-
   const totalItems = await Movie.countDocuments(query);
   const skip = getSkip(page, limit);
 
@@ -173,9 +159,7 @@ export const getAll = async (filter: MovieFilter) => {
  * UC-03: Xem poster, trailer, mô tả, đạo diễn, diễn viên, đánh giá
  */
 export const getById = async (id: string) => {
-  const movie = await Movie.findById(id)
-    .populate(POPULATE_FIELDS)
-    .lean();
+  const movie = await Movie.findById(id).populate(POPULATE_FIELDS).lean();
 
   if (!movie) throw new Error('Không tìm thấy phim');
 
@@ -189,9 +173,7 @@ export const getById = async (id: string) => {
  * Lấy chi tiết phim theo slug (cho URL SEO-friendly)
  */
 export const getBySlug = async (slug: string) => {
-  const movie = await Movie.findOne({ slug })
-    .populate(POPULATE_FIELDS)
-    .lean();
+  const movie = await Movie.findOne({ slug }).populate(POPULATE_FIELDS).lean();
 
   if (!movie) throw new Error('Không tìm thấy phim');
 
@@ -340,21 +322,4 @@ export const getNowShowing = async (limitCount = 10) => {
     .lean();
 
   return data;
-};
-
-/**
- * Lấy danh sách quốc gia (cho dropdown filter)
- */
-export const getCountries = async () => {
-  const countries = await Movie.distinct('country');
-  return countries.filter(Boolean).sort();
-};
-
-/**
- * Lấy danh sách năm phát hành (cho dropdown filter)
- */
-export const getYears = async () => {
-  const movies = await Movie.find({}, { releaseDate: 1 }).lean();
-  const years = [...new Set(movies.map((m) => new Date(m.releaseDate).getFullYear()))];
-  return years.sort((a, b) => b - a); // Mới nhất trước
 };

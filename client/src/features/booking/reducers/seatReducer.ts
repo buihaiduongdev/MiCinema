@@ -1,48 +1,13 @@
-import type { Seat } from '@/types/seat';
-
-export interface SeatState {
-  selectedSeats: Seat[];
-}
-
-export type SeatAction =
-  | { type: 'SELECT_SEAT'; payload: Seat }
-  | { type: 'DESELECT_SEAT'; payload: string }
-  | { type: 'CLEAR_SEATS' };
-
-export const initialSeatState: SeatState = {
-  selectedSeats: [],
-};
-
-export function seatReducer(state: SeatState, action: SeatAction): SeatState {
-  switch (action.type) {
-    case 'SELECT_SEAT': {
-      const exists = state.selectedSeats.some(
-        (s) => s.id === action.payload.id
-      );
-      if (exists) return state;
-      return {
-        ...state,
-        selectedSeats: [...state.selectedSeats, action.payload],
-      };
-    }
-
-    case 'DESELECT_SEAT': {
-      return {
-        ...state,
-        selectedSeats: state.selectedSeats.filter(
-          (s) => s.id !== action.payload
-        ),
-      };
-    }
-
-    case 'CLEAR_SEATS': {
-      return {
-        ...state,
-        selectedSeats: [],
-      };
-    }
-
-    default:
-      return state;
-  }
-}
+/**
+ * seatReducer — Quản lý state chọn ghế (useReducer)
+ *
+ * State: { selectedSeats: Map<string, Seat>, totalPrice: number, maxSeats: number }
+ *
+ * Actions:
+ * - SELECT_SEAT: thêm ghế vào Map, cập nhật totalPrice
+ * - DESELECT_SEAT: xoá ghế khỏi Map, cập nhật totalPrice
+ * - RESET: xoá tất cả ghế đã chọn
+ * - SET_MAX_SEATS: set giới hạn số ghế tối đa
+ *
+ * Lý do dùng useReducer: nhiều action phụ thuộc nhau, state phức tạp (Map + computed)
+ */

@@ -69,8 +69,7 @@ export default function CitySelector({
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 py-4">
         {allCities.map((city) => {
           const isSelected =
-            (city === 'Toàn quốc' && !selectedCity) ||
-            city === selectedCity;
+            (city === 'Toàn quốc' && !selectedCity) || city === selectedCity;
 
           return (
             <button

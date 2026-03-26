@@ -1,21 +1,32 @@
 import { Request, Response, NextFunction } from 'express';
 
+type ParseAsyncSchema = {
+  parseAsync: (data: unknown) => Promise<any>;
+};
+
 interface ValidationSchema {
-  body?: { parseAsync: (data: any) => Promise<any> };
-  query?: { parseAsync: (data: any) => Promise<any> };
-  params?: { parseAsync: (data: any) => Promise<any> };
+  body?: ParseAsyncSchema;
+  query?: ParseAsyncSchema;
+  params?: ParseAsyncSchema;
 }
 
-type SchemaLike = { parseAsync: (data: any) => Promise<any> };
+type SchemaLike = ParseAsyncSchema;
 
-/**
- * Express 5: req.query & req.params là read-only getter
- * → Không thể gán lại (req.query = parsed)
- * → Dùng Object.assign để merge parsed data vào object gốc
- */
-const mergeInto = (target: Record<string, any>, source: Record<string, any>) => {
-  Object.keys(target).forEach((k) => delete target[k]);
-  Object.assign(target, source);
+const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+};
+
+const replaceObjectContent = (
+  target: Record<string, unknown>,
+  nextValue: unknown,
+) => {
+  if (!isPlainObject(nextValue)) return;
+
+  Object.keys(target).forEach((key) => {
+    delete target[key];
+  });
+
+  Object.assign(target, nextValue);
 };
 
 export const validate = (schema: SchemaLike | ValidationSchema) => {
@@ -28,21 +39,31 @@ export const validate = (schema: SchemaLike | ValidationSchema) => {
         !('query' in schema) &&
         !('params' in schema)
       ) {
-        // Schema đơn (Zod schema trực tiếp) → validate body
-        req.body = await (schema as SchemaLike).parseAsync(req.body);
+        req.body = await schema.parseAsync(req.body);
       } else {
-        // Schema phức tạp { body?, query?, params? }
         const s = schema as ValidationSchema;
-        if (s.body) req.body = await s.body.parseAsync(req.body);
-        if (s.query) {
-          const parsed = await s.query.parseAsync(req.query);
-          mergeInto(req.query as Record<string, any>, parsed);
+
+        if (s.body) {
+          req.body = await s.body.parseAsync(req.body);
         }
+
+        if (s.query) {
+          const parsedQuery = await s.query.parseAsync(req.query);
+          replaceObjectContent(
+            req.query as unknown as Record<string, unknown>,
+            parsedQuery,
+          );
+        }
+
         if (s.params) {
-          const parsed = await s.params.parseAsync(req.params);
-          mergeInto(req.params as Record<string, any>, parsed);
+          const parsedParams = await s.params.parseAsync(req.params);
+          replaceObjectContent(
+            req.params as unknown as Record<string, unknown>,
+            parsedParams,
+          );
         }
       }
+
       return next();
     } catch (error) {
       return next(error);

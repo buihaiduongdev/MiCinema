@@ -1,13 +1,16 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
-export function useLogout() {
+export const useLogout = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  return () => {
-    localStorage.removeItem('accessToken');
-    queryClient.removeQueries({ queryKey: ['me'] });
-    navigate('/login');
-  };
-}
+  return useMutation({
+    mutationFn: () => Promise.resolve(),
+    onSuccess: () => {
+      localStorage.removeItem('accessToken');
+      queryClient.clear();
+      navigate('/login', { replace: true });
+    },
+  });
+};

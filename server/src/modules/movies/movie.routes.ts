@@ -31,8 +31,6 @@ const router = Router();
 // ⚠️ Đặt named routes TRƯỚC /:id để tránh bị Express nhầm
 router.get('/now-showing', movieController.getNowShowing);
 router.get('/upcoming', movieController.getUpcoming);
-router.get('/countries', movieController.getCountries);
-router.get('/years', movieController.getYears);
 router.get('/slug/:slug', movieController.getMovieBySlug);
 
 router.get(
@@ -40,7 +38,6 @@ router.get(
   validate({ query: movieFilterSchema }),
   movieController.getMovies,
 );
-
 router.get('/:id', movieController.getMovieById);
 router.get('/:id/related', movieController.getRelatedMovies);
 

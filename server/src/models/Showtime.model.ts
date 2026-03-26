@@ -43,12 +43,10 @@ const showtimeSchema = new Schema<IShowtime>(
       enum: Object.values(SHOWTIME_STATUS),
       default: SHOWTIME_STATUS.OPEN,
     },
-    seatStatus: [SeatStatusSchema],
   },
   {
     timestamps: true,
-    optimisticConcurrency: true,
-  }
+  },
 );
 
 // Lọc suất chiếu theo phim + thời gian

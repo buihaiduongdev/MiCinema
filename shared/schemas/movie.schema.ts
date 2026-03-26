@@ -10,18 +10,18 @@ import { objectIdSchema } from './common.schema.js';
 export const createMovieSchema = z.object({
   title: z.string().min(1, 'Tên phim là bắt buộc').max(300),
   description: z.string().min(1, 'Mô tả là bắt buộc').max(5000),
-  directors: z
-    .array(objectIdSchema)
-    .min(1, 'Phải có ít nhất 1 đạo diễn'),
+  directors: z.array(objectIdSchema).min(1, 'Phải có ít nhất 1 đạo diễn'),
   actors: z.array(objectIdSchema).default([]),
-  genres: z
-    .array(objectIdSchema)
-    .min(1, 'Phải có ít nhất 1 thể loại'),
+  genres: z.array(objectIdSchema).min(1, 'Phải có ít nhất 1 thể loại'),
   duration: z.number().int().min(1, 'Thời lượng phải > 0 phút'),
   releaseDate: z.string().datetime('Ngày khởi chiếu không hợp lệ'),
   endDate: z.string().datetime().optional(),
   poster: z.string().url('URL poster không hợp lệ'),
-  trailer: z.string().url('URL trailer không hợp lệ').optional().or(z.literal('')),
+  trailer: z
+    .string()
+    .url('URL trailer không hợp lệ')
+    .optional()
+    .or(z.literal('')),
   language: z.string().min(1, 'Ngôn ngữ gốc là bắt buộc'),
   audioType: z.nativeEnum(AUDIO_TYPE).default(AUDIO_TYPE.SUBTITLED),
   ageRating: z.nativeEnum(AGE_RATING).default(AGE_RATING.P),
@@ -36,14 +36,12 @@ export const updateMovieSchema = createMovieSchema.partial();
  */
 export const movieFilterSchema = z.object({
   search: z.string().optional(),
-  genre: z.string().optional(),       // genreId
-  director: z.string().optional(),    // personId
-  actor: z.string().optional(),       // personId
+  genre: z.string().optional(), // genreId
+  director: z.string().optional(), // personId
+  actor: z.string().optional(), // personId
   status: z.nativeEnum(MOVIE_STATUS).optional(),
   ageRating: z.nativeEnum(AGE_RATING).optional(),
   audioType: z.nativeEnum(AUDIO_TYPE).optional(),
-  country: z.string().optional(),     // Lọc theo quốc gia
-  year: z.coerce.number().optional(), // Lọc theo năm phát hành
   sortBy: z
     .enum(['title', 'releaseDate', 'rating', 'viewCount', 'createdAt'])
     .default('createdAt'),

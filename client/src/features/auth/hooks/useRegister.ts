@@ -19,7 +19,7 @@ export function useRegister() {
   return useMutation({
     mutationFn: (data: RegisterInput) => registerApi(data),
     onSuccess: (res) => {
-      localStorage.setItem('accessToken', res.token);
+      localStorage.setItem('accessToken', res.data.token);
       queryClient.invalidateQueries({ queryKey: ['me'] });
       notifications.show({
         title: 'Thành công',

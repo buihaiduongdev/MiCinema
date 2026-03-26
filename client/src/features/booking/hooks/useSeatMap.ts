@@ -1,57 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import apiClient from '@/lib/api-client';
-import { useSocket } from '@/hooks/useSocket';
-import type { SeatMapData, Seat, SeatUpdateEvent } from '@/types/seat';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { getSeatMapApi } from '../services/booking.service';
 
-export function useSeatMap(showtimeId: string) {
-  const [seats, setSeats] = useState<Seat[]>([]);
-  const socket = useSocket();
-
-  const query = useQuery<SeatMapData>({
-    queryKey: ['seatMap', showtimeId],
-    queryFn: () => apiClient.get(`/showtimes/${showtimeId}/seats`),
-    refetchInterval: 30000,
-    staleTime: 10000,
+export const useSeatMap = (showtimeId: string) => {
+  return useQuery({
+    queryKey: ['seats', showtimeId],
+    queryFn: () => getSeatMapApi(showtimeId).then((res) => res.data),
+    staleTime: 10 * 1000,
+    refetchInterval: 30 * 1000,
     enabled: !!showtimeId,
+    placeholderData: keepPreviousData,
   });
-
-  useEffect(() => {
-    if (query.data?.seats) {
-      setSeats(query.data.seats);
-    }
-  }, [query.data]);
-
-  useEffect(() => {
-    if (!socket || !showtimeId) return;
-
-    socket.emit('join-showtime', showtimeId);
-
-    const handleSeatUpdate = (update: SeatUpdateEvent) => {
-      setSeats((prev) =>
-        prev.map((seat) =>
-          seat.id === update.seatId
-            ? { ...seat, status: update.status, heldUntil: update.heldUntil }
-            : seat
-        )
-      );
-    };
-
-    socket.on('seat-updated', handleSeatUpdate);
-
-    return () => {
-      socket.emit('leave-showtime', showtimeId);
-      socket.off('seat-updated', handleSeatUpdate);
-    };
-  }, [socket, showtimeId]);
-
-  return {
-    seats,
-    room: query.data?.room,
-    ticketPrice: query.data?.ticketPrice,
-    priceMultiplier: query.data?.priceMultiplier,
-    isLoading: query.isLoading,
-    error: query.error,
-    refetch: query.refetch,
-  };
-}
+};
