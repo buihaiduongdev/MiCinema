@@ -1,8 +1,5 @@
 /**
- * Payments Service — Business logic
- *
- * Dùng: Mongoose models từ models/
- * Tách business logic ra khỏi controller
- * Export các function: create, getAll, getById, update, delete
- * Xử lý: pagination (utils/pagination), error throwing
+ * Payments — tích hợp cổng thanh toán / quầy.
+ * Hiện dùng chung logic xác nhận booking PAID với module bookings.
  */
+export { markBookingPaid as applySuccessfulPayment } from '../bookings/booking.service.js';

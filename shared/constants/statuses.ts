@@ -19,6 +19,17 @@ export const BOOKING_STATUS = {
 export type BookingStatus =
   (typeof BOOKING_STATUS)[keyof typeof BOOKING_STATUS];
 
+/** Vé đơn lẻ (sau khi booking PAID) — check-in / huỷ / hoàn tiền */
+export const TICKET_STATUS = {
+  ISSUED: 'ISSUED',
+  USED: 'USED',
+  CANCELLED: 'CANCELLED',
+  REFUNDED: 'REFUNDED',
+} as const;
+
+export type TicketStatus =
+  (typeof TICKET_STATUS)[keyof typeof TICKET_STATUS];
+
 export const SHOWTIME_STATUS = {
   OPEN: 'OPEN',
   FINISHED: 'FINISHED',
