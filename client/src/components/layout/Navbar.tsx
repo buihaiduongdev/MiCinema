@@ -6,7 +6,7 @@ export default function Navbar() {
 
   const navItems = [
     { label: 'LỊCH CHIẾU', href: '/schedule' },
-    { label: 'PHIM', href: '/movies' },
+    { label: 'PHIM', href: '/phim' },
     { label: 'ƯU ĐÃI', href: '/offers' },
     { label: 'TIN TỨC PHIM', href: '/news' },
     { label: 'THÀNH VIÊN', href: '/member' },
