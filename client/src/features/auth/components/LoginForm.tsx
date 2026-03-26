@@ -1,12 +1,11 @@
 import { Button, Stack } from '@mantine/core';
 import { useForm } from '@tanstack/react-form';
-import { zodValidator } from '@tanstack/zod-form-adapter';
 import { loginSchema, type LoginInput } from '@shared/index';
 import { FormInputText } from '@/components/form/FormInputText';
 import { FormPasswordInputText } from '@/components/form/FormPasswordInputText';
 import { useLogin } from '../hooks/useLogin';
 
-export function LoginForm() {
+export function LoginForm({ onSuccess }: { onSuccess: () => void }) {
   const { mutate: login, isPending } = useLogin();
 
   const form = useForm({
@@ -14,10 +13,14 @@ export function LoginForm() {
       email: '',
       password: '',
     } as LoginInput,
-    onSubmit: async ({ value }) => {
-      login(value);
+    validators: { onChange: loginSchema },
+    onSubmit: ({ value }) => {
+      login(value, {
+        onSuccess: () => {
+          onSuccess();
+        },
+      });
     },
-    validatorAdapter: zodValidator(),
   });
 
   return (
@@ -29,8 +32,9 @@ export function LoginForm() {
       }}
     >
       <Stack>
-        <form.Field name="email">
-          {(field) => (
+        <form.Field
+          name="email"
+          children={(field) => (
             <FormInputText
               field={field}
               label="Email"
@@ -38,10 +42,10 @@ export function LoginForm() {
               required
             />
           )}
-        </form.Field>
-        
-        <form.Field name="password">
-          {(field) => (
+        />
+        <form.Field
+          name="password"
+          children={(field) => (
             <FormPasswordInputText
               field={field}
               label="Mật khẩu"
@@ -49,7 +53,7 @@ export function LoginForm() {
               required
             />
           )}
-        </form.Field>
+        />
 
         <Button type="submit" mt="md" loading={isPending} fullWidth>
           Đăng nhập

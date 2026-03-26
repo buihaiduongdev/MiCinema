@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { defaultBookingPath } from '@/constants/booking';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const bookHref = defaultBookingPath() ?? '/schedule';
 
   const navItems = [
     { label: 'LỊCH CHIẾU', href: '/schedule' },
-    { label: 'PHÒNG CHIẾU', href: '/rooms' },
     { label: 'PHIM', href: '/movies' },
     { label: 'ƯU ĐÃI', href: '/offers' },
     { label: 'TIN TỨC PHIM', href: '/news' },
@@ -16,7 +13,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-transparent text-white backdrop-blur-md">
+    <nav className="fixed top-0 left-0 right-0 w-full z-50 border-b border-white/10 bg-transparent text-white backdrop-blur-md">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-16 items-center justify-between py-2">
           {/* Logo */}
@@ -42,12 +39,6 @@ export default function Navbar() {
 
           {/* Right Section */}
           <div className="ml-auto flex shrink-0 items-center gap-2 lg:gap-3">
-            <Link
-              to={bookHref}
-              className="hidden sm:flex h-10 items-center whitespace-nowrap rounded-full bg-yellow-500 px-4 text-sm font-bold text-black transition hover:bg-yellow-400"
-            >
-              Đặt vé
-            </Link>
             {/* Search */}
             <input
               type="text"
@@ -96,13 +87,6 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden border-t border-white/15 bg-slate-900/90 backdrop-blur-md">
-            <Link
-              to={bookHref}
-              className="block px-4 py-3 font-bold text-yellow-400 hover:bg-white/10"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Đặt vé
-            </Link>
             {navItems.map((item) => (
               <Link
                 key={item.href}
