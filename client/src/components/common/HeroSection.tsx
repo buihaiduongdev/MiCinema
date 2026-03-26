@@ -1,5 +1,8 @@
 import { Play, Info } from 'lucide-react';
 
+const HERO_FALLBACK_IMAGE =
+  'https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=1920&h=1080&fit=crop';
+
 interface HeroSectionProps {
   title: string;
   subtitle?: string;
@@ -22,13 +25,19 @@ export default function HeroSection({
   onInfo,
 }: HeroSectionProps) {
   return (
-    <header className="relative w-full h-[500px] md:h-[650px] overflow-hidden">
+    <header className="relative isolate w-full h-[560px] md:h-[700px] overflow-hidden">
       {/* Hero Background with Overlays */}
-      <div className="absolute inset-0 -z-10 w-full h-full">
+      <div className="absolute inset-0 z-0 w-full h-full">
         <img
           alt="Hero Background"
           className="w-full h-full object-cover"
           src={backgroundImage}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          onError={(event) => {
+            event.currentTarget.src = HERO_FALLBACK_IMAGE;
+          }}
         />
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
@@ -36,7 +45,7 @@ export default function HeroSection({
       </div>
 
       {/* Hero Content Container */}
-      <div className="relative w-full h-full flex items-end">
+      <div className="relative z-10 w-full h-full flex items-end pt-16 md:pt-20">
         <div className="w-full px-6 md:px-12 lg:px-16 pb-12 md:pb-20">
           <div className="max-w-3xl space-y-6">
             {/* Tags */}
@@ -51,7 +60,7 @@ export default function HeroSection({
 
             {/* Title */}
             <div>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none text-white drop-shadow-2xl">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-none text-white drop-shadow-2xl">
                 {title}
               </h1>
               {subtitle && (
@@ -73,7 +82,7 @@ export default function HeroSection({
                 className="bg-white text-black px-8 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-white/90 transition-all scale-100 hover:scale-105 active:scale-95 duration-200 shadow-lg"
               >
                 <Play className="w-5 h-5 fill-current" />
-                Play Now
+                Buy Tickets Now
               </button>
 
               <button
