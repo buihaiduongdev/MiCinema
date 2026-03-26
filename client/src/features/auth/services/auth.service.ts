@@ -17,4 +17,5 @@ export const registerApi = (
 ): Promise<ApiResponse<AuthResponseData>> =>
   apiClient.post('/auth/register', data);
 
-export const getMeApi = (): Promise<ApiResponse<User>> => apiClient.get('/auth/me');
+export const getMeApi = (): Promise<ApiResponse<User>> =>
+  apiClient.get('/auth/me');

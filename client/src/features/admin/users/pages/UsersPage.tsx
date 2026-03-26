@@ -45,8 +45,9 @@ export default function UsersPage() {
 
   const usersData = usersResponse?.data?.data;
   const totalUsers =
-    Number((usersResponse?.data as unknown as { total?: number } | undefined)?.total) ||
-    0;
+    Number(
+      (usersResponse?.data as unknown as { total?: number } | undefined)?.total,
+    ) || 0;
   const pageSize = 10;
   const totalPages = Math.max(1, Math.ceil(totalUsers / pageSize));
   const { mutate: lockUser, isPending: isLocking } = useLockUser();
@@ -81,7 +82,7 @@ export default function UsersPage() {
       { value: ROLES.STAFF, label: 'Nhân viên' },
       { value: ROLES.CUSTOMER, label: 'Khách hàng' },
     ],
-    []
+    [],
   );
 
   const getRoleLabel = (role: string): string => {
@@ -155,7 +156,9 @@ export default function UsersPage() {
           <div className="lg:col-span-3 bg-[#131b2e] p-7 rounded-xl">
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-[#8c90a1]">Vai trò</label>
+                <label className="text-xs font-bold text-[#8c90a1]">
+                  Vai trò
+                </label>
                 <div className="flex gap-2 flex-wrap">
                   {roleOptions.map((r) => {
                     const isActive = activeRole === r.value;
@@ -183,7 +186,9 @@ export default function UsersPage() {
               <div className="h-12 w-[1px] bg-[#424656]/20 mx-2 hidden lg:block"></div>
 
               <div className="flex flex-col gap-2 flex-1 min-w-[220px]">
-                <label className="text-xs font-bold text-[#8c90a1]">Trạng thái</label>
+                <label className="text-xs font-bold text-[#8c90a1]">
+                  Trạng thái
+                </label>
                 <Select
                   placeholder="Tất cả trạng thái"
                   data={[
@@ -210,7 +215,9 @@ export default function UsersPage() {
               </div>
 
               <div className="flex flex-col gap-2 flex-1 min-w-[240px]">
-                <label className="text-xs font-bold text-[#8c90a1]">Tìm kiếm</label>
+                <label className="text-xs font-bold text-[#8c90a1]">
+                  Tìm kiếm
+                </label>
                 <TextInput
                   placeholder="Tìm kiếm tài khoản, email..."
                   value={searchInput}
@@ -351,7 +358,9 @@ export default function UsersPage() {
                             <Tooltip label="Sửa thông tin">
                               <button
                                 type="button"
-                                onClick={() => userId && setEditingUserId(userId)}
+                                onClick={() =>
+                                  userId && setEditingUserId(userId)
+                                }
                                 className="p-2 rounded-lg bg-[#060e20] text-[#c2c6d8] hover:text-[#b3c5ff] transition-colors"
                                 disabled={!userId}
                               >
@@ -363,7 +372,9 @@ export default function UsersPage() {
                               <Tooltip label="Khoá tài khoản">
                                 <button
                                   type="button"
-                                  onClick={() => userId && setLockConfirmId(userId)}
+                                  onClick={() =>
+                                    userId && setLockConfirmId(userId)
+                                  }
                                   className="p-2 rounded-lg bg-[#060e20] text-[#c2c6d8] hover:text-[#ffb4ac] transition-colors"
                                   disabled={!userId}
                                 >
@@ -374,7 +385,9 @@ export default function UsersPage() {
                               <Tooltip label="Mở khoá tài khoản">
                                 <button
                                   type="button"
-                                  onClick={() => userId && setUnlockConfirmId(userId)}
+                                  onClick={() =>
+                                    userId && setUnlockConfirmId(userId)
+                                  }
                                   className="p-2 rounded-lg bg-[#060e20] text-green-500 hover:text-green-400 transition-colors"
                                   disabled={!userId}
                                 >
@@ -427,7 +440,9 @@ export default function UsersPage() {
                   );
                 })}
 
-                {totalPages > 4 && <span className="text-[#8c90a1] mx-1">...</span>}
+                {totalPages > 4 && (
+                  <span className="text-[#8c90a1] mx-1">...</span>
+                )}
 
                 {totalPages > 3 && (
                   <button

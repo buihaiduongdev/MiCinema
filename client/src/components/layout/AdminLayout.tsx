@@ -59,7 +59,9 @@ export default function AdminLayout() {
 
                                 <div className="flex items-center gap-2">
                                     <div className="text-right hidden sm:block">
-                                        <p className="text-xs font-bold text-[#dae2fd]">Admin Profile</p>
+                                        <p className="text-xs font-bold text-[#dae2fd]">
+                                            Admin Profile
+                                        </p>
                                         <p className="text-[10px] text-[#8c90a1]">{displayName}</p>
                                     </div>
                                     <Avatar color="blue" radius="xl">

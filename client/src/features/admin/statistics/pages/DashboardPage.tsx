@@ -15,9 +15,8 @@ import { LoadingSpinner } from '../../../../components/ui/LoadingSpinner';
 export default function DashboardPage() {
   const { data: overviewData, isLoading: overviewLoading } =
     useDashboardOverview();
-  const { data: revenueData, isLoading: revenueLoading } = useRevenueStats(
-    'day'
-  );
+  const { data: revenueData, isLoading: revenueLoading } =
+    useRevenueStats('day');
   const { data: occupancyData, isLoading: occupancyLoading } =
     useOccupancyByRoom();
   useTopMoviesByRevenue(4); // Fetch nhưng chưa dùng
@@ -120,13 +119,10 @@ export default function DashboardPage() {
         trendUp: true,
       },
     ],
-    [overviewData]
+    [overviewData],
   );
 
-  const isLoading =
-    overviewLoading ||
-    revenueLoading ||
-    occupancyLoading;
+  const isLoading = overviewLoading || revenueLoading || occupancyLoading;
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -149,12 +145,16 @@ export default function DashboardPage() {
           {/* Revenue Trends Chart */}
           <div className="bg-[#131b2e] rounded-2xl p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#0066ff]/5 rounded-full blur-[80px] -mr-32 -mt-32"></div>
-            
+
             {/* Chart Header */}
             <div className="flex items-center justify-between mb-8 relative z-10">
               <div>
-                <h3 className="text-xl font-bold text-[#dae2fd]">Xu Hướng Doanh Thu</h3>
-                <p className="text-sm text-[#8c90a1]">Doanh thu vé vs. Doanh thu thực phẩm</p>
+                <h3 className="text-xl font-bold text-[#dae2fd]">
+                  Xu Hướng Doanh Thu
+                </h3>
+                <p className="text-sm text-[#8c90a1]">
+                  Doanh thu vé vs. Doanh thu thực phẩm
+                </p>
               </div>
               <div className="flex gap-4">
                 <div className="flex items-center gap-2">
@@ -178,31 +178,39 @@ export default function DashboardPage() {
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className={`border-b w-full h-px ${
-                      i === 4 ? 'border-[#424656]/10' : 'border-[#424656]/5'
-                    }`}
+                    className={`border-b w-full h-px ${i === 4 ? 'border-[#424656]/10' : 'border-[#424656]/5'
+                      }`}
                   ></div>
                 ))}
               </div>
 
               {/* Bars */}
               <div className="flex-grow flex items-end justify-between px-4 h-full relative z-10 gap-1">
-                {revenueChartData.map((item: Record<string, unknown>, idx: number) => (
-                  <div key={idx} className="group relative w-full flex flex-col items-center">
-                    <div className="w-1/2 bg-[#0066ff]/20 rounded-t-lg h-32 transition-all group-hover:bg-[#0066ff]/40"></div>
-                    <div className="w-full bg-[#0066ff] rounded-t-lg h-48 shadow-[0_-4px_15px_rgba(0,102,255,0.2)]"></div>
-                    <span className="text-[10px] mt-2 font-bold opacity-40">{String(item.day)}</span>
-                  </div>
-                ))}
+                {revenueChartData.map(
+                  (item: Record<string, unknown>, idx: number) => (
+                    <div
+                      key={idx}
+                      className="group relative w-full flex flex-col items-center"
+                    >
+                      <div className="w-1/2 bg-[#0066ff]/20 rounded-t-lg h-32 transition-all group-hover:bg-[#0066ff]/40"></div>
+                      <div className="w-full bg-[#0066ff] rounded-t-lg h-48 shadow-[0_-4px_15px_rgba(0,102,255,0.2)]"></div>
+                      <span className="text-[10px] mt-2 font-bold opacity-40">
+                        {String(item.day)}
+                      </span>
+                    </div>
+                  ),
+                )}
               </div>
             </div>
           </div>
 
-            {/* Lower Grid Section */}
-            <div className="grid grid-cols-2 gap-6">
-              {/* Revenue by Genre */}
-              <div className="bg-[#131b2e] rounded-2xl p-8">
-                <h3 className="text-lg font-bold text-[#dae2fd] mb-6">Doanh Thu Theo Thể Loại</h3>
+          {/* Lower Grid Section */}
+          <div className="grid grid-cols-2 gap-6">
+            {/* Revenue by Genre */}
+            <div className="bg-[#131b2e] rounded-2xl p-8">
+              <h3 className="text-lg font-bold text-[#dae2fd] mb-6">
+                Doanh Thu Theo Thể Loại
+              </h3>
               <div className="flex items-center gap-8">
                 {/* Donut Chart */}
                 <div className="relative w-32 h-32 flex items-center justify-center flex-shrink-0">
@@ -266,8 +274,12 @@ export default function DashboardPage() {
                       className="flex items-center justify-between"
                     >
                       <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${item.color}`}></div>
-                        <span className="text-xs text-[#8c90a1]">{item.label}</span>
+                        <div
+                          className={`w-2 h-2 rounded-full ${item.color}`}
+                        ></div>
+                        <span className="text-xs text-[#8c90a1]">
+                          {item.label}
+                        </span>
                       </div>
                       <span className="text-xs font-bold">{item.value}%</span>
                     </div>
@@ -329,18 +341,21 @@ export default function DashboardPage() {
                       className="hover:bg-[#222a3d]/20 transition-colors"
                     >
                       <td className="px-8 py-6">
-                        <p className="font-bold text-[#dae2fd]">{String(item.name)}</p>
-                        <p className="text-xs text-[#8c90a1]">{String(item.location)}</p>
+                        <p className="font-bold text-[#dae2fd]">
+                          {String(item.name)}
+                        </p>
+                        <p className="text-xs text-[#8c90a1]">
+                          {String(item.location)}
+                        </p>
                       </td>
                       <td className="px-8 py-6">
                         <span
-                          className={`px-3 py-1 text-[10px] font-extrabold rounded-full border ${
-                            String(item.format) === 'IMAX 4K'
+                          className={`px-3 py-1 text-[10px] font-extrabold rounded-full border ${String(item.format) === 'IMAX 4K'
                               ? 'bg-[#0066ff]/10 text-[#0066ff] border-[#0066ff]/20'
                               : String(item.format) === 'Dolby Atmos'
                                 ? 'bg-[#ffb4ac]/10 text-[#ffb4ac] border-[#ffb4ac]/20'
                                 : 'bg-[#222a3d] text-[#8c90a1]'
-                          }`}
+                            }`}
                         >
                           {String(item.format)}
                         </span>
@@ -363,13 +378,12 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-8 py-6 text-right">
                         <span
-                          className={`flex items-center justify-end gap-1.5 text-xs font-bold ${
-                            String(item.statusType) === 'live'
+                          className={`flex items-center justify-end gap-1.5 text-xs font-bold ${String(item.statusType) === 'live'
                               ? 'text-[#0066ff]'
                               : String(item.statusType) === 'soldout'
                                 ? 'text-[#ffb4ac]'
                                 : 'text-[#8c90a1]'
-                          }`}
+                            }`}
                         >
                           {String(item.statusType) === 'live' && (
                             <span className="w-1.5 h-1.5 bg-[#0066ff] rounded-full animate-pulse"></span>
@@ -390,16 +404,33 @@ export default function DashboardPage() {
           {/* Recent Bookings */}
           <div className="bg-[#131b2e] rounded-2xl p-8">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-xl font-bold text-[#dae2fd]">Đặt Vé Gần Đây</h3>
+              <h3 className="text-xl font-bold text-[#dae2fd]">
+                Đặt Vé Gần Đây
+              </h3>
               <button className="w-8 h-8 flex items-center justify-center rounded-full bg-[#222a3d] hover:bg-[#2d3449] transition-colors">
                 <span className="text-lg">⋯</span>
               </button>
             </div>
             <div className="space-y-6">
               {[
-                { title: 'Nebula Protocol', hall: 'Hall 01', tickets: '2', time: '2 mins' },
-                { title: 'The Last Waltz', hall: 'Hall 05', tickets: '4', time: '14 mins' },
-                { title: 'Neon Drift', hall: 'Hall 02', tickets: '1', time: '21 mins' },
+                {
+                  title: 'Nebula Protocol',
+                  hall: 'Hall 01',
+                  tickets: '2',
+                  time: '2 mins',
+                },
+                {
+                  title: 'The Last Waltz',
+                  hall: 'Hall 05',
+                  tickets: '4',
+                  time: '14 mins',
+                },
+                {
+                  title: 'Neon Drift',
+                  hall: 'Hall 02',
+                  tickets: '1',
+                  time: '21 mins',
+                },
               ].map((booking, idx) => (
                 <div key={idx} className="flex gap-4 group cursor-pointer">
                   <div className="w-12 h-16 rounded-lg bg-[#222a3d] flex-shrink-0 flex items-center justify-center text-2xl">
