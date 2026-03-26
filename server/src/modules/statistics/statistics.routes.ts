@@ -42,4 +42,5 @@ router.get('/movies/detailed', statisticsController.getMovieDetailedStats);
 // GET /api/statistics/users — user growth
 router.get('/users', statisticsController.getUserGrowth);
 
+
 export default router;
