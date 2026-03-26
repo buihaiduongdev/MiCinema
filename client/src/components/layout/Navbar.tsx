@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import LoginPage from '../../features/auth/pages/LoginPage';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
