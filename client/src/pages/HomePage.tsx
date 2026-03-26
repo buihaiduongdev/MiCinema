@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import HeroSection from '@/components/common/HeroSection';
 import TrendingCard from '@/components/common/TrendingCard';
 import HorizontalScrollSection from '@/components/common/HorizontalScrollSection';
@@ -18,6 +18,8 @@ type HomeMovie = MovieResponse & {
   viewCount?: number;
   directors?: unknown[];
 };
+
+type ImageVariant = 'hero' | 'poster' | 'thumb';
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null;
@@ -45,6 +47,25 @@ const getListLabels = (values: unknown, fallback = 'N/A'): string => {
     .slice(0, 3);
 
   return labels.length > 0 ? labels.join(' • ') : fallback;
+};
+
+const optimizeImageUrl = (url: string, variant: ImageVariant): string => {
+  let optimized = url.trim();
+
+  // TMDB: đổi size nhỏ (w500) lên size lớn hơn cho Hero để hạn chế vỡ ảnh.
+  if (optimized.includes('image.tmdb.org/t/p/')) {
+    if (variant === 'hero') {
+      return optimized.replace(/\/w\d+\//, '/original/');
+    }
+
+    if (variant === 'thumb') {
+      return optimized.replace(/\/w\d+\//, '/w342/');
+    }
+
+    return optimized.replace(/\/w\d+\//, '/w780/');
+  }
+
+  return optimized;
 };
 
 export default function HomePage() {
@@ -83,8 +104,12 @@ export default function HomePage() {
     return [];
   }, [moviesResponse]);
 
-  const getMovieImage = (movie: HomeMovie) => {
-    if (movie.poster && movie.poster.trim().length > 0) return movie.poster;
+  const getMovieImage = (movie: HomeMovie, variant: ImageVariant = 'poster') => {
+    if (movie.poster && movie.poster.trim().length > 0) {
+      return optimizeImageUrl(movie.poster, variant);
+    }
+
+    if (variant === 'hero') return fallbackHero;
     return fallbackPoster;
   };
 
@@ -93,6 +118,31 @@ export default function HomePage() {
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))
       .slice(0, 8);
   }, [normalizedMovies]);
+
+  const heroCandidates = useMemo(() => {
+    return [...normalizedMovies]
+      .filter((movie) => movie.status === 'RELEASED' || movie.status === 'UPCOMING')
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 8);
+  }, [normalizedMovies]);
+
+  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
+
+  useEffect(() => {
+    setActiveHeroIndex(0);
+  }, [heroCandidates.length]);
+
+  useEffect(() => {
+    if (heroCandidates.length <= 1) return;
+
+    const intervalId = window.setInterval(() => {
+      setActiveHeroIndex((currentIndex) =>
+        (currentIndex + 1) % heroCandidates.length,
+      );
+    }, 10000);
+
+    return () => window.clearInterval(intervalId);
+  }, [heroCandidates.length]);
 
   const recentlyAddedMovies = useMemo(() => {
     return [...normalizedMovies]
@@ -124,7 +174,8 @@ export default function HomePage() {
     });
   }, [trendingMovies]);
 
-  const heroMovie = trendingMovies[0] || normalizedMovies[0];
+  const heroMovie =
+    heroCandidates[activeHeroIndex] || trendingMovies[0] || normalizedMovies[0];
 
   const handlePlay = () => {
     if (!heroMovie) return;
@@ -145,7 +196,7 @@ export default function HomePage() {
           heroMovie?.description ||
           'Khám phá những bộ phim mới nhất đang được chiếu tại MiCinema.'
         }
-        backgroundImage={heroMovie ? getMovieImage(heroMovie) : fallbackHero}
+        backgroundImage={heroMovie ? getMovieImage(heroMovie, 'hero') : fallbackHero}
         releaseTag={heroMovie?.status || 'UPCOMING'}
         releaseDate={
           heroMovie
@@ -155,6 +206,41 @@ export default function HomePage() {
         onPlay={handlePlay}
         onInfo={handleInfo}
       />
+
+      {heroCandidates.length > 1 && (
+        <section className="relative z-20 -mt-20 px-6 md:px-12 lg:px-16">
+          <div className="ml-auto w-fit max-w-full">
+            <div className="flex items-center gap-3 overflow-x-auto overflow-y-hidden pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              {heroCandidates.map((movie, index) => {
+                const isActive = index === activeHeroIndex;
+                return (
+                  <button
+                    key={movie._id || `${movie.title}-${index}`}
+                    type="button"
+                    onClick={() => setActiveHeroIndex(index)}
+                    className={`group relative flex-none w-24 sm:w-28 md:w-32 aspect-[16/9] rounded-lg overflow-hidden border transition-all duration-300 ${
+                      isActive
+                        ? 'border-yellow-500 shadow-[0_0_0_2px_rgba(234,179,8,0.35)]'
+                        : 'border-white/20 opacity-80 hover:opacity-100 hover:border-white/50'
+                    }`}
+                    aria-label={`Chọn phim ${movie.title}`}
+                  >
+                    <img
+                      alt={movie.title}
+                      src={getMovieImage(movie, 'thumb')}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                    <span className="absolute left-2 bottom-1 text-[10px] md:text-[11px] text-white font-medium truncate max-w-[85%]">
+                      {movie.title}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       <main className="w-full relative z-10 space-y-0 pb-20">
         <HorizontalScrollSection title="Trending Now">
@@ -214,115 +300,6 @@ export default function HomePage() {
             </div>
           ))}
         </HorizontalScrollSection>
-
-        <section className="w-full bg-slate-950 px-6 md:px-12 lg:px-16 py-8 md:py-12">
-          <div className="mb-6 md:mb-8">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
-                Movie Model Data
-              </h2>
-              <div className="w-12 h-0.5 bg-yellow-600"></div>
-            </div>
-            <p className="text-sm text-gray-400 mt-2">
-              Hiển thị các trường chính từ model phim trên backend.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-            {normalizedMovies.map((movie) => (
-              <article
-                key={movie._id || movie.title}
-                className="rounded-xl border border-white/10 bg-slate-900 p-4 md:p-5"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-lg font-semibold text-white line-clamp-2">
-                    {movie.title}
-                  </h3>
-                  <span className="shrink-0 rounded-md bg-yellow-600/90 text-black text-xs font-bold px-2 py-1">
-                    {movie.status || 'N/A'}
-                  </span>
-                </div>
-
-                <p className="text-sm text-gray-300 mt-2 line-clamp-3">
-                  {movie.description || 'Chưa có mô tả'}
-                </p>
-
-                <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
-                  <p className="text-gray-400">Rating</p>
-                  <p className="text-white text-right">
-                    {movie.rating.toFixed(1)}/10
-                  </p>
-
-                  <p className="text-gray-400">Duration</p>
-                  <p className="text-white text-right">
-                    {formatDuration(movie.duration)}
-                  </p>
-
-                  <p className="text-gray-400">Release</p>
-                  <p className="text-white text-right">
-                    {movie.releaseDate ? formatDate(movie.releaseDate) : 'N/A'}
-                  </p>
-
-                  <p className="text-gray-400">Language</p>
-                  <p className="text-white text-right">
-                    {movie.language || 'N/A'}
-                  </p>
-
-                  <p className="text-gray-400">Audio</p>
-                  <p className="text-white text-right">
-                    {movie.audioType || 'N/A'}
-                  </p>
-
-                  <p className="text-gray-400">Age</p>
-                  <p className="text-white text-right">
-                    {movie.ageRating || 'N/A'}
-                  </p>
-
-                  <p className="text-gray-400">Country</p>
-                  <p className="text-white text-right">
-                    {movie.country || 'N/A'}
-                  </p>
-
-                  <p className="text-gray-400">Views</p>
-                  <p className="text-white text-right">
-                    {(movie.viewCount ?? 0).toLocaleString('vi-VN')}
-                  </p>
-                </div>
-
-                <div className="mt-4 space-y-2 text-xs">
-                  <p className="text-gray-400">
-                    Directors:{' '}
-                    <span className="text-gray-200">
-                      {getListLabels(movie.directors)}
-                    </span>
-                  </p>
-                  <p className="text-gray-400">
-                    Actors:{' '}
-                    <span className="text-gray-200">
-                      {getListLabels(movie.actors)}
-                    </span>
-                  </p>
-                  <p className="text-gray-400">
-                    Genres:{' '}
-                    <span className="text-gray-200">
-                      {getListLabels(movie.genres)}
-                    </span>
-                  </p>
-                </div>
-
-                {movie.slug && (
-                  <p className="mt-3 text-[11px] text-gray-500 truncate">
-                    slug: {movie.slug}
-                  </p>
-                )}
-              </article>
-            ))}
-          </div>
-
-          {!isLoading && !isError && normalizedMovies.length === 0 && (
-            <p className="text-gray-400">Chưa có phim nào để hiển thị.</p>
-          )}
-        </section>
       </main>
     </div>
   );
