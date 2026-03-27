@@ -10,7 +10,7 @@ export const useDashboardOverview = () => {
     queryKey: ['statistics', 'overview'],
     queryFn: async () => {
       const response = await apiClient.get('/statistics/overview');
-      return response.data;
+      return response;
     },
   });
 };
@@ -33,7 +33,7 @@ export const useRevenueStats = (
       if (endDate) params.append('endDate', endDate.toISOString());
 
       const response = await apiClient.get(`/statistics/revenue?${params}`);
-      return response.data;
+      return response;
     },
   });
 };
@@ -47,7 +47,7 @@ export const useOccupancyByRoom = () => {
     queryKey: ['statistics', 'occupancy', 'by-room'],
     queryFn: async () => {
       const response = await apiClient.get('/statistics/occupancy/by-room');
-      return response.data;
+      return response;
     },
   });
 };
@@ -65,7 +65,7 @@ export const useBookingStats = (startDate?: Date, endDate?: Date) => {
       if (endDate) params.append('endDate', endDate.toISOString());
 
       const response = await apiClient.get(`/statistics/bookings?${params}`);
-      return response.data;
+      return response;
     },
   });
 };
@@ -79,7 +79,7 @@ export const useMoviePerformance = (limit: number = 10) => {
     queryKey: ['statistics', 'movies', limit],
     queryFn: async () => {
       const response = await apiClient.get(`/statistics/movies?limit=${limit}`);
-      return response.data;
+      return response;
     },
   });
 };
@@ -95,7 +95,7 @@ export const useTopMoviesByRevenue = (limit: number = 5) => {
       const response = await apiClient.get(
         `/statistics/top-movies?limit=${limit}`,
       );
-      return response.data;
+      return response;
     },
   });
 };
@@ -111,7 +111,7 @@ export const useRecentShowtimes = (limit: number = 10) => {
       const response = await apiClient.get(
         `/showtimes?limit=${limit}&sort=-startTime`,
       );
-      return response.data;
+      return response;
     },
   });
 };
@@ -127,7 +127,7 @@ export const useRecentBookings = (limit: number = 3, page: number = 1) => {
       const response = await apiClient.get(
         `/bookings/my-bookings?limit=${limit}&page=${page}`,
       );
-      return response.data;
+      return response;
     },
   });
 };

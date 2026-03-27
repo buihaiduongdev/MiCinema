@@ -106,7 +106,12 @@ export const getById = async (id: string) => {
 };
 
 export const getSeatMap = async (showtimeId: string) => {
-  const showtime = await Showtime.findById(showtimeId).populate('roomId');
+  await cleanupExpiredBookings();
+
+  const showtime = await Showtime.findById(showtimeId).populate([
+    'roomId',
+    'movieId',
+  ]);
   if (!showtime) throw new Error('Không tìm thấy suất chiếu');
 
   const bookedTickets = await Booking.find({
@@ -207,4 +212,24 @@ export const markBookingPaid = async (bookingId: string) => {
   const updated = await getById(bookingId);
   if (!updated) throw httpError('Không tìm thấy đặt vé', 404);
   return updated;
+};
+
+export const cleanupExpiredBookings = async () => {
+  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+
+  const result = await Booking.updateMany(
+    {
+      status: BOOKING_STATUS.PENDING,
+      createdAt: { $lt: tenMinutesAgo },
+    },
+    {
+      $set: { status: BOOKING_STATUS.CANCELLED },
+    },
+  );
+
+  if (result.modifiedCount > 0) {
+    console.log(
+      `Đã giải phóng bàn cho ${result.modifiedCount} đơn hàng hết hạn.`,
+    );
+  }
 };

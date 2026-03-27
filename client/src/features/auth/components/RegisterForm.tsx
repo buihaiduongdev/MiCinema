@@ -38,6 +38,7 @@ export function RegisterForm() {
               label="Email"
               placeholder="example@gmail.com"
               required
+              styles={{ label: { color: 'white' } }}
             />
           )}
         />
@@ -49,6 +50,7 @@ export function RegisterForm() {
               label="Mật khẩu"
               placeholder="********"
               required
+              styles={{ label: { color: 'white' } }}
             />
           )}
         />
@@ -60,6 +62,7 @@ export function RegisterForm() {
               label="Họ tên"
               placeholder="Nguyễn Văn A"
               required
+              styles={{ label: { color: 'white' } }}
             />
           )}
         />
@@ -70,10 +73,25 @@ export function RegisterForm() {
               field={field}
               label="Số điện thoại"
               placeholder="09xxx"
+              styles={{ label: { color: 'white' } }}
             />
           )}
         />
-        <Button type="submit" mt="md" loading={isPending} fullWidth>
+        <Button
+          type="submit"
+          mt="xl"
+          size="md"
+          loading={isPending}
+          fullWidth
+          variant="gradient"
+          gradient={{ from: '#e11d48', to: '#be123c', deg: 90 }}
+          style={{
+            boxShadow: '0 10px 15px -3px rgba(225, 29, 72, 0.3)',
+            height: 48,
+            fontSize: 16,
+            fontWeight: 700,
+          }}
+        >
           Đăng ký
         </Button>
       </Stack>
