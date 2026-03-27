@@ -29,8 +29,8 @@ export const MemberRankingPage = () => {
     filterTier === 'all'
       ? currentRanking?.filter((m) => m.isActive !== false)
       : currentRanking?.filter(
-        (m) => m.membershipTier === filterTier && m.isActive !== false,
-      );
+          (m) => m.membershipTier === filterTier && m.isActive !== false,
+        );
 
   const getTierBgColor = (tier: string) => {
     switch (tier) {

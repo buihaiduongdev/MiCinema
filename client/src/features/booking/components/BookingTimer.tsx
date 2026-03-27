@@ -81,10 +81,7 @@ export function BookingTimer({ duration = 600, onExpire, expiresAt }: Props) {
           ]}
           label={
             <Center>
-              <Hourglass
-                size={16}
-                color={isUrgent ? '#e11d48' : '#fab005'}
-              />
+              <Hourglass size={16} color={isUrgent ? '#e11d48' : '#fab005'} />
             </Center>
           }
         />

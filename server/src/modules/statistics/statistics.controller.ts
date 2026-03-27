@@ -41,7 +41,13 @@ export const getRevenue = async (req: Request, res: Response) => {
       .status(200)
       .json(responseSuccess(data, 'Lấy dữ liệu doanh thu thành công'));
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Internal server error', error: (error as any).message });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: 'Internal server error',
+        error: (error as any).message,
+      });
   }
 };
 
@@ -144,4 +150,3 @@ export const getUserGrowth = async (req: Request, res: Response) => {
       responseSuccess(data, 'Lấy thống kê tăng trưởng người dùng thành công'),
     );
 };
-

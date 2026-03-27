@@ -1,51 +1,51 @@
 import { useState } from 'react';
 import { Button, TextInput, Select, Modal } from '@mantine/core';
 import { Plus, Search, Home, ChevronRight } from 'lucide-react';
-import { MovieForm, MovieTable, DeleteMovieDialog } from '../components';
-import { useMovies, type Movie } from '../hooks';
+import { PersonForm, PersonTable, DeletePersonDialog } from '../components';
+import { usePersons, type Person } from '../hooks';
 import { LoadingSpinner } from '../../../../components/ui/LoadingSpinner';
 import { useDebounce } from '../../../../hooks/useDebounce';
 
-export default function ManageMoviesPage() {
+export default function ManagePersonsPage() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearch = useDebounce(searchInput, 500);
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [roleFilter, setRoleFilter] = useState<string | null>(null);
   const [openFormModal, setOpenFormModal] = useState(false);
-  const [editingMovieId, setEditingMovieId] = useState<string | null>(null);
-  const [deletingMovie, setDeletingMovie] = useState<Movie | null>(null);
+  const [editingPersonId, setEditingPersonId] = useState<string | null>(null);
+  const [deletingPerson, setDeletingPerson] = useState<Person | null>(null);
 
-  const { data: moviesResponse, isLoading } = useMovies({
+  const { data: personsResponse, isLoading } = usePersons({
     page,
     limit: 10,
     search: debouncedSearch,
-    status: statusFilter as any,
+    role: roleFilter as any,
     sortBy: 'createdAt',
     sortOrder: 'desc',
   });
 
   // API trả về: { success, data: { data: [...], pagination: {...} }, message }
-  const moviesData = moviesResponse?.data;
-  const movies = moviesData?.data || [];
-  const total = moviesData?.pagination?.total || moviesData?.total || 0;
+  const personsData = (personsResponse as any)?.data;
+  const persons = personsData?.data || [];
+  const total = personsData?.pagination?.total || 0;
   const totalPages = Math.max(1, Math.ceil(total / 10));
 
-  const handleEdit = (movie: Movie) => {
-    setEditingMovieId(movie._id);
+  const handleEdit = (person: Person) => {
+    setEditingPersonId(person._id);
     setOpenFormModal(true);
   };
 
-  const handleDelete = (movie: Movie) => {
-    setDeletingMovie(movie);
+  const handleDelete = (person: Person) => {
+    setDeletingPerson(person);
   };
 
   const handleCloseFormModal = () => {
     setOpenFormModal(false);
-    setEditingMovieId(null);
+    setEditingPersonId(null);
   };
 
   const handleCloseDeleteDialog = () => {
-    setDeletingMovie(null);
+    setDeletingPerson(null);
   };
 
   if (isLoading) {
@@ -59,13 +59,13 @@ export default function ManageMoviesPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-6 mb-8">
           <div className="min-w-0">
             <h1 className="text-4xl font-extrabold tracking-tight text-[#dae2fd] mb-2">
-              Quản lý phim
+              Quản lý đạo diễn & diễn viên
             </h1>
             <p className="text-[#c2c6d8] flex items-center gap-2 text-sm">
               <Home size={14} />
               <span>Hệ thống</span>
               <ChevronRight size={14} />
-              <span className="text-[#b3c5ff]">Danh sách phim</span>
+              <span className="text-[#b3c5ff]">Danh sách người</span>
             </p>
           </div>
 
@@ -84,7 +84,7 @@ export default function ManageMoviesPage() {
               },
             }}
           >
-            Thêm phim mới
+            Thêm mới
           </Button>
         </div>
 
@@ -92,7 +92,7 @@ export default function ManageMoviesPage() {
         <div className="bg-[#131b2e] p-6 rounded-xl mb-6">
           <div className="flex gap-4 flex-wrap">
             <TextInput
-              placeholder="Tìm kiếm phim..."
+              placeholder="Tìm kiếm theo tên..."
               leftSection={<Search size={16} />}
               value={searchInput}
               onChange={(e) => setSearchInput(e.currentTarget.value)}
@@ -106,15 +106,14 @@ export default function ManageMoviesPage() {
               }}
             />
             <Select
-              placeholder="Trạng thái"
+              placeholder="Vai trò"
               clearable
               data={[
-                { value: 'UPCOMING', label: 'Sắp chiếu' },
-                { value: 'RELEASED', label: 'Đang chiếu' },
-                { value: 'ENDED', label: 'Đã kết thúc' },
+                { value: 'DIRECTOR', label: 'Đạo diễn' },
+                { value: 'ACTOR', label: 'Diễn viên' },
               ]}
-              value={statusFilter}
-              onChange={setStatusFilter}
+              value={roleFilter}
+              onChange={setRoleFilter}
               styles={{
                 input: {
                   backgroundColor: '#060e20',
@@ -129,14 +128,14 @@ export default function ManageMoviesPage() {
 
         {/* Table */}
         <div className="bg-[#131b2e] rounded-xl overflow-hidden">
-          {movies.length === 0 ? (
+          {persons.length === 0 ? (
             <div className="p-12 text-center">
-              <p className="text-[#8c90a1]">Không tìm thấy phim nào</p>
+              <p className="text-[#8c90a1]">Không tìm thấy kết quả nào</p>
             </div>
           ) : (
             <>
-              <MovieTable
-                movies={movies}
+              <PersonTable
+                persons={persons}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
               />
@@ -167,20 +166,23 @@ export default function ManageMoviesPage() {
       <Modal
         opened={openFormModal}
         onClose={handleCloseFormModal}
-        title={editingMovieId ? 'Sửa phim' : 'Thêm phim mới'}
-        size="xl"
+        title={editingPersonId ? 'Sửa thông tin' : 'Thêm mới'}
+        size="lg"
         styles={{
           content: { backgroundColor: '#131b2e' },
           header: { backgroundColor: '#131b2e', color: '#dae2fd' },
           title: { fontWeight: 'bold', fontSize: '1.25rem' },
         }}
       >
-        <MovieForm movieId={editingMovieId} onSuccess={handleCloseFormModal} />
+        <PersonForm
+          personId={editingPersonId}
+          onSuccess={handleCloseFormModal}
+        />
       </Modal>
 
-      <DeleteMovieDialog
-        movie={deletingMovie}
-        opened={!!deletingMovie}
+      <DeletePersonDialog
+        person={deletingPerson}
+        opened={!!deletingPerson}
         onClose={handleCloseDeleteDialog}
       />
     </div>
