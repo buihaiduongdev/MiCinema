@@ -7,6 +7,8 @@
 import { DashboardPage } from './statistics/pages';
 import { UsersPage } from './users/pages';
 import { MemberRankingPage } from './loyalty/pages';
+import { ManageMoviesPage } from './movies/pages';
+import { ManagePersonsPage } from './persons/pages';
 import ManageBookingsPage from './bookings/pages/ManageBookingsPage';
 
 export const adminRoutes = [
@@ -18,6 +20,18 @@ export const adminRoutes = [
         element: <DashboardPage />,
         name: 'Dashboard',
         icon: 'BarChart3',
+      },
+      {
+        path: 'movies',
+        element: <ManageMoviesPage />,
+        name: 'Quản lý phim',
+        icon: 'Film',
+      },
+      {
+        path: 'persons',
+        element: <ManagePersonsPage />,
+        name: 'Đạo diễn & Diễn viên',
+        icon: 'UserCircle',
       },
       {
         path: 'users',

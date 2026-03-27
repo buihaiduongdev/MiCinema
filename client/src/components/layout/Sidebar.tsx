@@ -1,10 +1,12 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { adminRoutes } from '../../features/admin/routes';
 import {
-  BarChart3,
+BarChart3,
   Users,
   Trophy,
-  Ticket,
+  Film,        
+  UserCircle,   
+  Ticket,      
   LayoutDashboard,
   Settings,
   LogOut,
@@ -12,10 +14,12 @@ import {
 import { useAuth } from '../../hooks/useAuth';
 
 const iconMap = {
-  BarChart3,
+BarChart3,
   Users,
   Trophy,
-  Ticket,
+  Film,         
+  UserCircle,
+  Ticket,       
 };
 
 const getIcon = (icon?: string) => {
