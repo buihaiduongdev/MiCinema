@@ -50,9 +50,7 @@ export const useMovieById = (id?: string) => {
     queryKey: ['admin-movies', id],
     queryFn: async () => {
       if (!id) return null;
-      const response = await apiClient.get<ApiResponse<Movie>>(
-        `/movies/${id}`,
-      );
+      const response = await apiClient.get<ApiResponse<Movie>>(`/movies/${id}`);
       return response.data;
     },
     enabled: !!id,

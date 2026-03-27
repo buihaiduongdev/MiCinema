@@ -15,7 +15,9 @@ import { LoadingSpinner } from '../../../../components/ui/LoadingSpinner';
 export default function DashboardPage() {
   const [occupancyPage, setOccupancyPage] = useState(1);
   const occupancyPageSize = 3;
-  const [revenueGroupBy, setRevenueGroupBy] = useState<'day' | 'week' | 'month'>('day');
+  const [revenueGroupBy, setRevenueGroupBy] = useState<
+    'day' | 'week' | 'month'
+  >('day');
   const { data: overviewData, isLoading: overviewLoading } =
     useDashboardOverview();
   const { data: revenueData, isLoading: revenueLoading } =
@@ -46,7 +48,6 @@ export default function DashboardPage() {
       1,
     );
   }, [revenueChartData]);
-
 
   // Screening performance từ occupancy data
   const screeningData = useMemo(() => {
@@ -139,7 +140,8 @@ export default function DashboardPage() {
                   Thống Kê Doanh Thu
                 </h3>
                 <p className="text-sm text-[#8c90a1]">
-                  Doanh thu theo {revenueGroupBy === 'day'
+                  Doanh thu theo{' '}
+                  {revenueGroupBy === 'day'
                     ? 'ngày'
                     : revenueGroupBy === 'week'
                       ? 'tuần'
@@ -150,13 +152,18 @@ export default function DashboardPage() {
                 {(['day', 'week', 'month'] as const).map((option) => (
                   <button
                     key={option}
-                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${revenueGroupBy === option
-                      ? 'bg-[#0066ff] text-white'
-                      : 'bg-[#222a3d] text-[#8c90a1] hover:bg-[#2d3449]'
-                      }`}
+                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                      revenueGroupBy === option
+                        ? 'bg-[#0066ff] text-white'
+                        : 'bg-[#222a3d] text-[#8c90a1] hover:bg-[#2d3449]'
+                    }`}
                     onClick={() => setRevenueGroupBy(option)}
                   >
-                    {option === 'day' ? 'Ngày' : option === 'week' ? 'Tuần' : 'Tháng'}
+                    {option === 'day'
+                      ? 'Ngày'
+                      : option === 'week'
+                        ? 'Tuần'
+                        : 'Tháng'}
                   </button>
                 ))}
                 <div className="flex items-center gap-2">
@@ -297,7 +304,9 @@ export default function DashboardPage() {
                   <button
                     className="px-3 py-1 rounded-md bg-[#222a3d] hover:bg-[#2d3449] disabled:opacity-50"
                     onClick={() =>
-                      setOccupancyPage((p) => Math.min(totalOccupancyPages, p + 1))
+                      setOccupancyPage((p) =>
+                        Math.min(totalOccupancyPages, p + 1),
+                      )
                     }
                     disabled={occupancyPage === totalOccupancyPages}
                   >
@@ -334,9 +343,7 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-
         </div>
-
       </div>
 
       {/* Top Movies by Revenue Section - Full Width */}
@@ -350,7 +357,9 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="flex gap-6 overflow-x-auto pb-2">
-            {topMoviesData?.data && Array.isArray(topMoviesData.data) && topMoviesData.data.length > 0 ? (
+            {topMoviesData?.data &&
+            Array.isArray(topMoviesData.data) &&
+            topMoviesData.data.length > 0 ? (
               topMoviesData.data.map((movie: any, idx: number) => (
                 <div
                   key={movie.movieId || idx}
@@ -376,25 +385,33 @@ export default function DashboardPage() {
                     </h4>
                     <div className="space-y-3 mb-4 bg-[#131b2e] rounded-lg p-4">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-[#8c90a1] font-medium">Doanh Thu:</span>
+                        <span className="text-xs text-[#8c90a1] font-medium">
+                          Doanh Thu:
+                        </span>
                         <span className="text-lg font-bold text-[#0066ff]">
                           ${(movie.totalRevenue / 1000).toFixed(1)}k
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-[#8c90a1] font-medium">Vé Bán:</span>
+                        <span className="text-xs text-[#8c90a1] font-medium">
+                          Vé Bán:
+                        </span>
                         <span className="text-base font-bold text-[#dae2fd]">
                           {movie.totalBookings || 0} vé
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-[#8c90a1] font-medium">Lượt Xem:</span>
+                        <span className="text-xs text-[#8c90a1] font-medium">
+                          Lượt Xem:
+                        </span>
                         <span className="text-base font-bold text-[#dae2fd]">
                           {Math.round((movie.viewCount || 0) / 1000)}k
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-[#8c90a1] font-medium">Giá TB:</span>
+                        <span className="text-xs text-[#8c90a1] font-medium">
+                          Giá TB:
+                        </span>
                         <span className="text-base font-bold text-[#dae2fd]">
                           ${(movie.averageTicketPrice || 0).toFixed(2)}
                         </span>

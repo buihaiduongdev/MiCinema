@@ -30,12 +30,7 @@ export default function DeleteMovieDialog({
   };
 
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title="Xác nhận xóa phim"
-      centered
-    >
+    <Modal opened={opened} onClose={onClose} title="Xác nhận xóa phim" centered>
       <Alert icon={<AlertTriangle size={16} />} color="red" mb="md">
         Hành động này không thể hoàn tác!
       </Alert>

@@ -94,7 +94,9 @@ export default function MovieTable({
                   {STATUS_LABELS[movie.status]}
                 </Badge>
               </td>
-              <td className="px-4 py-3 text-[#dae2fd]">{movie.duration} phút</td>
+              <td className="px-4 py-3 text-[#dae2fd]">
+                {movie.duration} phút
+              </td>
               <td className="px-4 py-3 text-[#dae2fd]">
                 {new Date(movie.releaseDate).toLocaleDateString('vi-VN')}
               </td>

@@ -42,7 +42,9 @@ export const usePersons = (options?: Partial<PersonFilter>) => {
   return useQuery({
     queryKey: ['admin-persons', options],
     queryFn: async () => {
-      const response = await apiClient.get<ApiResponse<PaginatedResponse<Person>>>('/persons', {
+      const response = await apiClient.get<
+        ApiResponse<PaginatedResponse<Person>>
+      >('/persons', {
         params: options,
       });
       return response;
@@ -58,7 +60,9 @@ export const usePersonById = (id?: string) => {
     queryKey: ['admin-persons', id],
     queryFn: async () => {
       if (!id) return null;
-      const response = await apiClient.get<ApiResponse<Person>>(`/persons/${id}`);
+      const response = await apiClient.get<ApiResponse<Person>>(
+        `/persons/${id}`,
+      );
       return (response as ApiResponse<Person>).data;
     },
     enabled: !!id,

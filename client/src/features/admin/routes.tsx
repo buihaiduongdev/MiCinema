@@ -10,6 +10,7 @@ import { MemberRankingPage } from './loyalty/pages';
 import { ManageMoviesPage } from './movies/pages';
 import { ManagePersonsPage } from './persons/pages';
 import ManageBookingsPage from './bookings/pages/ManageBookingsPage';
+import ManageRoomsPage from './rooms/pages/ManageRoomsPage';
 
 export const adminRoutes = [
   {
@@ -26,6 +27,12 @@ export const adminRoutes = [
         element: <ManageMoviesPage />,
         name: 'Quản lý phim',
         icon: 'Film',
+      },
+      {
+        path: 'rooms',
+        element: <ManageRoomsPage />,
+        name: 'Quản lý phòng chiếu',
+        icon: 'Armchair',
       },
       {
         path: 'persons',

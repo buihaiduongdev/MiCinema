@@ -45,8 +45,8 @@ export default function UsersPage() {
   const totalUsers =
     Number(
       (usersResponse?.data as any)?.pagination?.totalItems ??
-      (usersResponse?.data as any)?.total ??
-      0,
+        (usersResponse?.data as any)?.total ??
+        0,
     ) || 0;
   const pageSize = 10;
   const totalPages = Math.max(1, Math.ceil(totalUsers / pageSize));

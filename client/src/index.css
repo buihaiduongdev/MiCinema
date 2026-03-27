@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 
-<<<<<<< HEAD
-
 * {
   box-sizing: border-box;
 }
@@ -12,7 +10,7 @@ body {
   padding: 0;
   width: 100%;
 
-  min-height: 100vh; 
+  min-height: 100vh;
   overflow-x: hidden;
 }
 
@@ -20,6 +18,3 @@ body {
   width: 100%;
   min-height: 100vh;
 }
-=======
-/* Global Reset */
->>>>>>> main

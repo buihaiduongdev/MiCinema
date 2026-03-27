@@ -179,12 +179,20 @@ export const getMemberRankingByTier = async (limit = 100) => {
     .select('_id fullName email loyaltyPoints membershipTier avatar')
     .lean();
 
-  const tierPriority: Record<string, number> = { GOLD: 3, SILVER: 2, BRONZE: 1 };
-  const ranking = users.sort((a: any, b: any) => {
-    const tierDiff = (tierPriority[b.membershipTier] || 0) - (tierPriority[a.membershipTier] || 0);
-    if (tierDiff !== 0) return tierDiff;
-    return (b.loyaltyPoints || 0) - (a.loyaltyPoints || 0); 
-  }).slice(0, limit);
+  const tierPriority: Record<string, number> = {
+    GOLD: 3,
+    SILVER: 2,
+    BRONZE: 1,
+  };
+  const ranking = users
+    .sort((a: any, b: any) => {
+      const tierDiff =
+        (tierPriority[b.membershipTier] || 0) -
+        (tierPriority[a.membershipTier] || 0);
+      if (tierDiff !== 0) return tierDiff;
+      return (b.loyaltyPoints || 0) - (a.loyaltyPoints || 0);
+    })
+    .slice(0, limit);
 
   return ranking.map((user: any, index) => ({
     rank: index + 1,
@@ -205,9 +213,9 @@ export const getMemberRankingDetailed = async (
     sortBy === 'points'
       ? { loyaltyPoints: -1 }
       : {
-        membershipTier: -1,
-        loyaltyPoints: -1,
-      };
+          membershipTier: -1,
+          loyaltyPoints: -1,
+        };
 
   const ranking = await User.find({ isActive: true })
     .select('_id fullName email loyaltyPoints membershipTier avatar createdAt')

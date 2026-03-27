@@ -38,6 +38,7 @@ import showtimeRoutes from './modules/showtimes/showtime.routes.js';
 import ticketRoutes from './modules/tickets/ticket.routes.js';
 import paymentRoutes from './modules/payments/payment.routes.js';
 import statisticsRoutes from './modules/statistics/statistics.routes.js';
+import roomRoutes from './modules/rooms/room.routes.js';
 
 import { errorHandler } from './middlewares/error.middleware.js';
 
@@ -65,6 +66,7 @@ app.use('/api/showtimes', showtimeRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/statistics', statisticsRoutes);
+app.use('/api/rooms', roomRoutes);
 
 app.use(errorHandler);
 

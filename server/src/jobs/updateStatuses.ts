@@ -27,7 +27,7 @@ async function updateMovieStatuses() {
       status: MOVIE_STATUS.UPCOMING,
       releaseDate: { $lte: today },
     },
-    { $set: { status: MOVIE_STATUS.RELEASED } }
+    { $set: { status: MOVIE_STATUS.RELEASED } },
   );
 
   // RELEASED → ENDED: endDate đã qua
@@ -36,11 +36,11 @@ async function updateMovieStatuses() {
       status: MOVIE_STATUS.RELEASED,
       endDate: { $lt: today, $exists: true },
     },
-    { $set: { status: MOVIE_STATUS.ENDED } }
+    { $set: { status: MOVIE_STATUS.ENDED } },
   );
 
   console.log(
-    `[updateMovieStatuses] UPCOMING→RELEASED: ${upcomingToReleased.modifiedCount}, RELEASED→ENDED: ${releasedToEnded.modifiedCount}`
+    `[updateMovieStatuses] UPCOMING→RELEASED: ${upcomingToReleased.modifiedCount}, RELEASED→ENDED: ${releasedToEnded.modifiedCount}`,
   );
 }
 
@@ -50,16 +50,16 @@ async function updateMovieStatuses() {
 async function updateShowtimeStatuses() {
   const now = new Date();
 
-  // OPEN → ENDED: startTime đã qua
+  // OPEN → FINISHED: startTime đã qua
   const result = await Showtime.updateMany(
     {
       status: SHOWTIME_STATUS.OPEN,
       startTime: { $lt: now },
     },
-    { $set: { status: SHOWTIME_STATUS.ENDED } }
+    { $set: { status: SHOWTIME_STATUS.FINISHED } },
   );
 
-  console.log(`[updateShowtimeStatuses] OPEN→ENDED: ${result.modifiedCount}`);
+  console.log(`[updateShowtimeStatuses] OPEN→FINISHED: ${result.modifiedCount}`);
 }
 
 /**
