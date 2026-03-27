@@ -4,13 +4,13 @@ import { createVNPayUrl } from './payment.service';
 import { responseSuccess, responseError } from '../../utils/response';
 
 /**
- * API: POST /api/payments/pay
+ * POST /api/payments/pay — Tạo URL thanh toán VNPay.
+ * Xác nhận booking PAID (quầy/online): PATCH /api/booking/:id/confirm-payment (STAFF/ADMIN).
  */
 export const handlePayment = async (req: Request, res: Response) => {
   try {
     const { bookingId } = req.body;
 
-    // 1. Tìm đơn đặt vé trong DB
     const booking = await Booking.findById(bookingId);
     if (!booking) {
       return res
@@ -31,7 +31,8 @@ export const handlePayment = async (req: Request, res: Response) => {
     );
 
     res.json(responseSuccess({ paymentUrl }));
-  } catch (error: any) {
-    res.status(500).json(responseError(error.message));
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Lỗi hệ thống';
+    res.status(500).json(responseError(message));
   }
 };

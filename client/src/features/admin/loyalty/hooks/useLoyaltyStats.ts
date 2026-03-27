@@ -62,7 +62,7 @@ export const useMemberRankingDetailed = (
       const response = await apiClient.get('/loyalty/ranking', {
         params: { sortBy, limit },
       });
-      return response.data.data as RankingMember[];
+      return response.data as RankingMember[];
     },
   });
 };

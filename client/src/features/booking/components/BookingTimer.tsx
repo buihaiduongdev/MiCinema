@@ -1,5 +1,5 @@
 import { Group, Text, RingProgress, Center, Stack, Paper } from '@mantine/core';
-import { IconHourglassLow } from '@tabler/icons-react';
+import { Hourglass } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
 type Props = {
@@ -81,7 +81,7 @@ export function BookingTimer({ duration = 600, onExpire, expiresAt }: Props) {
           ]}
           label={
             <Center>
-              <IconHourglassLow
+              <Hourglass
                 size={16}
                 color={isUrgent ? '#e11d48' : '#fab005'}
               />

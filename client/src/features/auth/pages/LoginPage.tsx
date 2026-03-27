@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { LoginForm } from '../components/LoginForm';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { IconMovie } from '@tabler/icons-react';
+import { Film } from 'lucide-react';
 
 export default function LoginPage() {
   const location = useLocation();
@@ -67,7 +67,7 @@ export default function LoginPage() {
         <Stack gap="xl">
           <Center>
             <Group gap="xs">
-              <IconMovie size={32} color="#e11d48" />
+              <Film size={32} color="#e11d48" />
               <Title order={2} fw={900} lts={-1} c="white">
                 MICINEMA
               </Title>

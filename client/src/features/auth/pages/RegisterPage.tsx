@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { RegisterForm } from '../components/RegisterForm';
 import { Link } from 'react-router-dom';
-import { IconMovie } from '@tabler/icons-react';
+import { Film } from 'lucide-react';
 
 export default function RegisterPage() {
   return (
@@ -59,7 +59,7 @@ export default function RegisterPage() {
         <Stack gap="xl">
           <Center>
             <Group gap="xs">
-              <IconMovie size={32} color="#e11d48" />
+              <Film size={32} color="#e11d48" />
               <Title order={2} fw={900} lts={-1} c="white">
                 MICINEMA
               </Title>

@@ -12,9 +12,13 @@ import { Movie } from '../../models/Movie.model.js';
 import { Cinema } from '../../models/Cinema.model.js';
 import { CinemaRoom } from '../../models/CinemaRoom.model.js';
 import { Booking } from '../../models/Booking.model.js';
+import { Ticket } from '../../models/Ticket.model.js';
 import { getSkip, getPaginationData } from '../../utils/pagination.js';
-import { SHOWTIME_STATUS } from '@shared/constants/statuses.js';
-import { BOOKING_STATUS } from '@shared/constants/statuses.js';
+import {
+  SHOWTIME_STATUS,
+  BOOKING_STATUS,
+  TICKET_STATUS,
+} from '@shared/constants/statuses.js';
 import type {
   CreateShowtimeInput,
   UpdateShowtimeInput,
@@ -324,6 +328,11 @@ export const cancel = async (id: string) => {
       status: { $in: [BOOKING_STATUS.PENDING, BOOKING_STATUS.PAID] },
     },
     { status: BOOKING_STATUS.CANCELLED },
+  );
+
+  await Ticket.updateMany(
+    { showtimeId: id, status: TICKET_STATUS.ISSUED },
+    { status: TICKET_STATUS.CANCELLED },
   );
 
   // Cập nhật trạng thái suất chiếu

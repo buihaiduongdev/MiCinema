@@ -1,9 +1,88 @@
+import mongoose from 'mongoose';
 import { Booking } from '../../models/Booking.model.js';
 import { Showtime } from '../../models/Showtime.model.js';
+import { User } from '../../models/User.model.js';
 import { CreateBooking } from '@shared/schemas/booking.schema.js';
-import { BOOKING_STATUS } from '@shared/constants/statuses.js';
+import type { AdminBookingListQuery } from '@shared/schemas/booking.schema.js';
+import { BOOKING_STATUS, SHOWTIME_STATUS } from '@shared/constants/statuses.js';
 import { getSkip, getPaginationData } from '../../utils/pagination.js';
-import { BookingStatus } from '@shared/constants/statuses.js';
+import { issueTicketsForPaidBooking } from '../tickets/ticket.service.js';
+
+const httpError = (message: string, statusCode: number) => {
+  const e = new Error(message) as Error & { statusCode: number };
+  e.statusCode = statusCode;
+  return e;
+};
+
+const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * UC-24: Danh sách đặt vé (admin/staff), lọc theo suất / trạng thái / khách.
+ */
+export const getAdminList = async (query: AdminBookingListQuery) => {
+  const { page, limit, showtimeId, status, userId, customerSearch } = query;
+  const skip = getSkip(page, limit);
+
+  const filter: Record<string, unknown> = {};
+  if (showtimeId) filter.showtimeId = showtimeId;
+  if (status) filter.status = status;
+
+  const searchTerm = customerSearch?.trim();
+  let searchUserIds: mongoose.Types.ObjectId[] | null = null;
+  if (searchTerm) {
+    const rx = new RegExp(escapeRegex(searchTerm), 'i');
+    const users = await User.find({
+      $or: [{ email: rx }, { fullName: rx }],
+    })
+      .select('_id')
+      .limit(300)
+      .lean();
+    searchUserIds = users.map((u) => u._id as mongoose.Types.ObjectId);
+    if (searchUserIds.length === 0) {
+      return {
+        bookings: [],
+        meta: getPaginationData(0, page, limit),
+      };
+    }
+  }
+
+  if (userId) {
+    const uid = new mongoose.Types.ObjectId(userId);
+    if (searchUserIds) {
+      const ok = searchUserIds.some((id) => id.equals(uid));
+      if (!ok) {
+        return {
+          bookings: [],
+          meta: getPaginationData(0, page, limit),
+        };
+      }
+    }
+    filter.userId = uid;
+  } else if (searchUserIds) {
+    filter.userId = { $in: searchUserIds };
+  }
+
+  const [bookings, totalItems] = await Promise.all([
+    Booking.find(filter)
+      .populate({ path: 'userId', select: 'email fullName phone' })
+      .populate({
+        path: 'showtimeId',
+        populate: [
+          { path: 'movieId', select: 'title poster slug' },
+          { path: 'roomId', select: 'name' },
+        ],
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Booking.countDocuments(filter),
+  ]);
+
+  return {
+    bookings,
+    meta: getPaginationData(totalItems, page, limit),
+  };
+};
 
 export const getAllByUser = async (userId: string, page = 1, limit = 10) => {
   const skip = getSkip(page, limit);
@@ -88,6 +167,51 @@ export const createBooking = async (userId: string, data: CreateBooking) => {
   });
 
   return booking;
+};
+
+/**
+ * Xác nhận thanh toán: PENDING → PAID (quầy / staff, hoặc gọi từ tích hợp cổng thanh toán).
+ * Idempotent: đã PAID thì trả về booking hiện tại.
+ */
+export const markBookingPaid = async (bookingId: string) => {
+  const booking = await Booking.findById(bookingId);
+  if (!booking) throw httpError('Không tìm thấy đặt vé', 404);
+
+  if (booking.status === BOOKING_STATUS.PAID) {
+    await issueTicketsForPaidBooking(booking);
+    const paid = await getById(bookingId);
+    if (!paid) throw httpError('Không tìm thấy đặt vé', 404);
+    return paid;
+  }
+
+  if (booking.status !== BOOKING_STATUS.PENDING) {
+    throw httpError(
+      'Chỉ có thể xác nhận thanh toán khi đặt vé đang ở trạng thái chờ thanh toán',
+      400,
+    );
+  }
+
+  const showtime = await Showtime.findById(booking.showtimeId);
+  if (!showtime) throw httpError('Suất chiếu không tồn tại', 400);
+
+  if (
+    showtime.status === SHOWTIME_STATUS.CANCELLED ||
+    showtime.status === SHOWTIME_STATUS.FINISHED
+  ) {
+    throw httpError(
+      'Suất chiếu đã kết thúc hoặc đã huỷ, không thể xác nhận thanh toán',
+      400,
+    );
+  }
+
+  booking.status = BOOKING_STATUS.PAID;
+  await booking.save();
+
+  await issueTicketsForPaidBooking(booking);
+
+  const updated = await getById(bookingId);
+  if (!updated) throw httpError('Không tìm thấy đặt vé', 404);
+  return updated;
 };
 
 export const cleanupExpiredBookings = async () => {

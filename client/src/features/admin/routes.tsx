@@ -7,6 +7,7 @@
 import { DashboardPage } from './statistics/pages';
 import { UsersPage } from './users/pages';
 import { MemberRankingPage } from './loyalty/pages';
+import ManageBookingsPage from './bookings/pages/ManageBookingsPage';
 
 export const adminRoutes = [
   {
@@ -23,6 +24,12 @@ export const adminRoutes = [
         element: <UsersPage />,
         name: 'Quản lý tài khoản',
         icon: 'Users',
+      },
+      {
+        path: 'bookings',
+        element: <ManageBookingsPage />,
+        name: 'Quản lý đặt vé',
+        icon: 'Ticket',
       },
       {
         path: 'loyalty/ranking',

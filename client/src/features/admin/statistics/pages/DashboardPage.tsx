@@ -249,12 +249,13 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-8 py-6">
                         <span
-                          className={`px-3 py-1 text-[10px] font-extrabold rounded-full border ${String(item.format) === 'IMAX 4K'
-                            ? 'bg-[#0066ff]/10 text-[#0066ff] border-[#0066ff]/20'
-                            : String(item.format) === 'Dolby Atmos'
-                              ? 'bg-[#ffb4ac]/10 text-[#ffb4ac] border-[#ffb4ac]/20'
-                              : 'bg-[#222a3d] text-[#8c90a1]'
-                            }`}
+                          className={`px-3 py-1 text-[10px] font-extrabold rounded-full border ${
+                            String(item.format) === 'IMAX 4K'
+                              ? 'bg-[#0066ff]/10 text-[#0066ff] border-[#0066ff]/20'
+                              : String(item.format) === 'Dolby Atmos'
+                                ? 'bg-[#ffb4ac]/10 text-[#ffb4ac] border-[#ffb4ac]/20'
+                                : 'bg-[#222a3d] text-[#8c90a1]'
+                          }`}
                         >
                           {String(item.format)}
                         </span>
