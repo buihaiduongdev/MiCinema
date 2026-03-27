@@ -39,9 +39,7 @@ export const getMovies = async (req: Request, res: Response) => {
 export const getNowShowing = async (req: Request, res: Response) => {
   const limit = req.query.limit ? Number(req.query.limit) : 10;
   const data = await movieService.getNowShowing(limit);
-  res
-    .status(200)
-    .json(responseSuccess(data, 'Lấy phim đang chiếu thành công'));
+  res.status(200).json(responseSuccess(data, 'Lấy phim đang chiếu thành công'));
 };
 
 /**
@@ -51,9 +49,7 @@ export const getNowShowing = async (req: Request, res: Response) => {
 export const getUpcoming = async (req: Request, res: Response) => {
   const limit = req.query.limit ? Number(req.query.limit) : 10;
   const data = await movieService.getUpcoming(limit);
-  res
-    .status(200)
-    .json(responseSuccess(data, 'Lấy phim sắp chiếu thành công'));
+  res.status(200).json(responseSuccess(data, 'Lấy phim sắp chiếu thành công'));
 };
 
 /**
@@ -80,9 +76,7 @@ export const getMovieBySlug = async (req: Request, res: Response) => {
 export const getRelatedMovies = async (req: Request, res: Response) => {
   const limit = req.query.limit ? Number(req.query.limit) : 6;
   const data = await movieService.getRelated(req.params.id as string, limit);
-  res
-    .status(200)
-    .json(responseSuccess(data, 'Lấy phim liên quan thành công'));
+  res.status(200).json(responseSuccess(data, 'Lấy phim liên quan thành công'));
 };
 
 /**

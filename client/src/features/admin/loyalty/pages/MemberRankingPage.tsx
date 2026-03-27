@@ -27,8 +27,10 @@ export const MemberRankingPage = () => {
   // Filter by tier
   const filteredRanking =
     filterTier === 'all'
-      ? currentRanking
-      : currentRanking?.filter((m) => m.membershipTier === filterTier);
+      ? currentRanking?.filter((m) => m.isActive !== false)
+      : currentRanking?.filter(
+        (m) => m.membershipTier === filterTier && m.isActive !== false,
+      );
 
   const getTierBgColor = (tier: string) => {
     switch (tier) {
@@ -191,9 +193,6 @@ export const MemberRankingPage = () => {
                 <option value="SILVER">Chỉ Silver</option>
                 <option value="BRONZE">Chỉ Bronze</option>
               </select>
-              <button className="bg-surface-container p-2.5 rounded-full hover:bg-surface-container-highest transition-colors border border-outline/20">
-                <span className="material-symbols-outlined">filter_list</span>
-              </button>
             </div>
           </div>
 
@@ -265,8 +264,8 @@ export const MemberRankingPage = () => {
                       <td className="px-6 py-5 text-on-surface-variant">
                         {member.memberSince
                           ? new Date(member.memberSince).toLocaleDateString(
-                            'vi-VN',
-                          )
+                              'vi-VN',
+                            )
                           : 'N/A'}
                       </td>
                       <td className="px-6 py-5 text-right">

@@ -19,7 +19,9 @@ export const create = async (data: CreatePersonInput) => {
       isActive: true,
     });
     if (existing) {
-      throw new Error(`Người này (${data.name}) với ngày sinh đã chọn đã tồn tại.`);
+      throw new Error(
+        `Người này (${data.name}) với ngày sinh đã chọn đã tồn tại.`,
+      );
     }
   }
 
@@ -46,11 +48,11 @@ export const getAll = async (filter: PersonFilter) => {
   if (search) {
     query.$text = { $search: search };
   }
-  
+
   if (role) {
     query.roles = role;
   }
-  
+
   if (nationality) {
     query.nationality = nationality;
   }
@@ -62,7 +64,9 @@ export const getAll = async (filter: PersonFilter) => {
   const orderParam = sortOrder === 'asc' ? 1 : -1;
 
   const data = await Person.find(query)
-    .sort(search ? { score: { $meta: 'textScore' } } : { [sortParam]: orderParam }) 
+    .sort(
+      search ? { score: { $meta: 'textScore' } } : { [sortParam]: orderParam },
+    )
     .skip(skip)
     .limit(limit)
     .lean();
@@ -88,7 +92,7 @@ export const getBySlug = async (slug: string) => {
   const person = await Person.findOneAndUpdate(
     { slug, isActive: true },
     { $inc: { viewCount: 1 } },
-    { new: true }
+    { new: true },
   ).lean();
   if (!person) throw new Error('Không tìm thấy người này');
   return person;
@@ -98,9 +102,12 @@ export const getBySlug = async (slug: string) => {
  * Lấy danh sách Quốc Tịch dựa trên Roles (ACTOR/DIRECTOR)
  */
 export const getNationalities = async (role?: string) => {
-  const query: any = { isActive: true, nationality: { $exists: true, $ne: '' } };
+  const query: any = {
+    isActive: true,
+    nationality: { $exists: true, $ne: '' },
+  };
   if (role) query.roles = role;
-  
+
   const results = await Person.distinct('nationality', query);
   return results.filter(Boolean).sort();
 };
@@ -123,7 +130,8 @@ export const update = async (id: string, data: UpdatePersonInput) => {
         _id: { $ne: id },
         isActive: true,
       });
-      if (duplicate) throw new Error('Thông tin này trùng với một người khác đã có.');
+      if (duplicate)
+        throw new Error('Thông tin này trùng với một người khác đã có.');
     }
   }
 

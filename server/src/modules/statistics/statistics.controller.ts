@@ -27,18 +27,22 @@ export const getOverview = async (req: Request, res: Response) => {
  * GET /api/statistics/revenue?startDate=...&endDate=...&groupBy=day|week|month
  */
 export const getRevenue = async (req: Request, res: Response) => {
-  const { startDate, endDate, groupBy } = req.query;
-  const opts = {
-    startDate: startDate ? new Date(startDate as string) : undefined,
-    endDate: endDate ? new Date(endDate as string) : undefined,
-    groupBy: (['day', 'week', 'month'].includes(groupBy as string)
-      ? (groupBy as 'day' | 'week' | 'month')
-      : 'day') as 'day' | 'week' | 'month',
-  };
-  const data = await statisticsService.getRevenue(opts);
-  res
-    .status(200)
-    .json(responseSuccess(data, 'Lấy dữ liệu doanh thu thành công'));
+  try {
+    const { startDate, endDate, groupBy } = req.query;
+    const opts = {
+      startDate: startDate ? new Date(startDate as string) : undefined,
+      endDate: endDate ? new Date(endDate as string) : undefined,
+      groupBy: (['day', 'week', 'month'].includes(groupBy as string)
+        ? (groupBy as 'day' | 'week' | 'month')
+        : 'day') as 'day' | 'week' | 'month',
+    };
+    const data = await statisticsService.getRevenue(opts);
+    res
+      .status(200)
+      .json(responseSuccess(data, 'Lấy dữ liệu doanh thu thành công'));
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal server error', error: (error as any).message });
+  }
 };
 
 /**
@@ -140,3 +144,4 @@ export const getUserGrowth = async (req: Request, res: Response) => {
       responseSuccess(data, 'Lấy thống kê tăng trưởng người dùng thành công'),
     );
 };
+

@@ -16,10 +16,7 @@ type SchemaLike = ParseAsyncSchema;
  * Express 5: req.query & req.params là read-only getter
  * → Không gán lại được → phải merge vào object gốc
  */
-const mergeInto = (
-  target: Record<string, unknown>,
-  source: unknown,
-) => {
+const mergeInto = (target: Record<string, unknown>, source: unknown) => {
   if (typeof source !== 'object' || source === null) return;
 
   Object.keys(target).forEach((k) => delete target[k]);
@@ -48,18 +45,12 @@ export const validate = (schema: SchemaLike | ValidationSchema) => {
 
         if (s.query) {
           const parsed = await s.query.parseAsync(req.query);
-          mergeInto(
-            req.query as unknown as Record<string, unknown>,
-            parsed,
-          );
+          mergeInto(req.query as unknown as Record<string, unknown>, parsed);
         }
 
         if (s.params) {
           const parsed = await s.params.parseAsync(req.params);
-          mergeInto(
-            req.params as unknown as Record<string, unknown>,
-            parsed,
-          );
+          mergeInto(req.params as unknown as Record<string, unknown>, parsed);
         }
       }
 

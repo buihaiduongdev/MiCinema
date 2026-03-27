@@ -9,7 +9,6 @@ import { useUsers, useLockUser, useUnlockUser } from '../hooks/useUsers';
 import { useDebounce } from '../../../../hooks/useDebounce';
 import { ROLES } from '@shared/constants/roles';
 import {
-  Pencil,
   Lock,
   Unlock,
   Plus,
@@ -31,7 +30,6 @@ export default function UsersPage() {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [isActiveFilter, setIsActiveFilter] = useState<string | null>(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [lockConfirmId, setLockConfirmId] = useState<string | null>(null);
   const [unlockConfirmId, setUnlockConfirmId] = useState<string | null>(null);
 
@@ -46,7 +44,9 @@ export default function UsersPage() {
   const usersData = usersResponse?.data?.data;
   const totalUsers =
     Number(
-      (usersResponse?.data as unknown as { total?: number } | undefined)?.total,
+      (usersResponse?.data as any)?.pagination?.totalItems ??
+      (usersResponse?.data as any)?.total ??
+      0,
     ) || 0;
   const pageSize = 10;
   const totalPages = Math.max(1, Math.ceil(totalUsers / pageSize));
@@ -72,13 +72,13 @@ export default function UsersPage() {
   const getRowId = (row: unknown) => {
     const r = row as Record<string, unknown> | null;
     if (!r) return undefined;
-    return (r.id as string | undefined) || (r._id as string | undefined);
+    return (r._id as string | undefined) || (r.id as string | undefined);
   };
 
   const roleOptions = useMemo(
     () => [
       { value: 'ALL', label: 'Tất cả' },
-      { value: ROLES.ADMIN, label: 'Tất cả' },
+      { value: ROLES.ADMIN, label: 'Admin' },
       { value: ROLES.STAFF, label: 'Nhân viên' },
       { value: ROLES.CUSTOMER, label: 'Khách hàng' },
     ],
@@ -112,9 +112,14 @@ export default function UsersPage() {
         {/* Breadcrumbs & Title */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pt-6 mb-8">
           <div className="min-w-0">
-            <h1 className="text-4xl font-extrabold tracking-tight text-[#dae2fd] mb-2">
-              Quản lý tài khoản
-            </h1>
+            <div className="flex flex-wrap items-center gap-3 mb-2">
+              <h1 className="text-4xl font-extrabold tracking-tight text-[#dae2fd]">
+                Quản lý tài khoản
+              </h1>
+              <span className="px-3 py-1 rounded-full bg-[#222a3d] text-xs font-bold text-[#b3c5ff] border border-[#b3c5ff]/20">
+                Tổng: {totalUsers.toLocaleString('vi-VN')}
+              </span>
+            </div>
             <p className="text-[#c2c6d8] flex items-center gap-2 text-sm">
               <Home size={14} />
               <span>Hệ thống</span>
@@ -355,19 +360,6 @@ export default function UsersPage() {
 
                         <td className="px-9 py-5 text-right">
                           <div className="flex items-center justify-end gap-2 pr-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Tooltip label="Sửa thông tin">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  userId && setEditingUserId(userId)
-                                }
-                                className="p-2 rounded-lg bg-[#060e20] text-[#c2c6d8] hover:text-[#b3c5ff] transition-colors"
-                                disabled={!userId}
-                              >
-                                <Pencil size={16} />
-                              </button>
-                            </Tooltip>
-
                             {isActive ? (
                               <Tooltip label="Khoá tài khoản">
                                 <button
@@ -477,22 +469,17 @@ export default function UsersPage() {
           />
         )}
 
-        {/* Create/Edit User Modal */}
+        {/* Create User Modal */}
         <Modal
-          opened={openCreateModal || !!editingUserId}
+          opened={openCreateModal}
           onClose={() => {
             setOpenCreateModal(false);
-            setEditingUserId(null);
           }}
-          title={
-            editingUserId ? 'Chỉnh sửa tài khoản' : 'Tạo tài khoản nhân viên'
-          }
+          title="Tạo tài khoản nhân viên"
         >
           <UserForm
-            userId={editingUserId}
             onSuccess={() => {
               setOpenCreateModal(false);
-              setEditingUserId(null);
             }}
           />
         </Modal>

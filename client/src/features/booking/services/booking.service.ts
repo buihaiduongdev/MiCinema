@@ -37,3 +37,9 @@ export const getBookingDetailApi = (
 ): Promise<ApiResponse<BookingType>> => {
   return apiClient.get(`/booking/${id}`);
 };
+
+export const createPaymentApi = (
+  bookingId: string,
+): Promise<ApiResponse<{ paymentUrl: string }>> => {
+  return apiClient.post('/payments/pay', { bookingId });
+};

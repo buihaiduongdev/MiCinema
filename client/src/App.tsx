@@ -14,6 +14,7 @@ import CinemaBrowsePage from './features/movies/pages/CinemaBrowsePage';
 import PersonsListPage from './features/persons/pages/PersonsListPage';
 import PersonDetailPage from './features/persons/pages/PersonDetailPage';
 import BookingPage from './features/booking/pages/BookingPage';
+import BookingConfirmPage from './features/booking/pages/BookingConfirmPage';
 function App() {
   const adminChildren =
     adminRoutes.find((route) => route.path === 'admin')?.children || [];
@@ -47,6 +48,10 @@ function App() {
               <BookingPage />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/booking/confirm/:bookingId"
+          element={<BookingConfirmPage />}
         />
         {/* Persons */}
         <Route path="/dien-vien" element={<PersonsListPage />} />
