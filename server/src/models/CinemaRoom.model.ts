@@ -1,9 +1,23 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { ROOM_TYPE, SEAT_TYPE } from '@shared/constants/seat-types.js';
-import { RoomType } from '@shared/schemas/room.schema';
+import type { RoomTypeValue, SeatTypeValue } from '@shared/constants/seat-types.js';
 
-export interface ICinemaRoom extends RoomType, Document {
+export interface ICinemaRoom extends Document {
   cinemaId: mongoose.Types.ObjectId;
+  name: string;
+  roomType: RoomTypeValue;
+  rows: number;
+  cols: number;
+  seats: Array<{
+    seatId: string;
+    row: string;
+    col: number;
+    type: SeatTypeValue;
+    isActive: boolean;
+  }>;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const cinemaRoomSchema = new Schema<ICinemaRoom>(
@@ -13,7 +27,7 @@ const cinemaRoomSchema = new Schema<ICinemaRoom>(
       ref: 'Cinema',
       required: true,
     },
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
     roomType: {
       type: String,
       enum: Object.values(ROOM_TYPE),
@@ -38,6 +52,9 @@ const cinemaRoomSchema = new Schema<ICinemaRoom>(
   },
   { timestamps: true },
 );
+
+cinemaRoomSchema.index({ cinemaId: 1, name: 1 }, { unique: true });
+
 export const CinemaRoom = mongoose.model<ICinemaRoom>(
   'CinemaRoom',
   cinemaRoomSchema,

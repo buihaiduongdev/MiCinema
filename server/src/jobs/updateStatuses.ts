@@ -50,16 +50,16 @@ async function updateMovieStatuses() {
 async function updateShowtimeStatuses() {
   const now = new Date();
 
-  // OPEN → ENDED: startTime đã qua
+  // OPEN → FINISHED: startTime đã qua
   const result = await Showtime.updateMany(
     {
       status: SHOWTIME_STATUS.OPEN,
       startTime: { $lt: now },
     },
-    { $set: { status: SHOWTIME_STATUS.ENDED } },
+    { $set: { status: SHOWTIME_STATUS.FINISHED } },
   );
 
-  console.log(`[updateShowtimeStatuses] OPEN→ENDED: ${result.modifiedCount}`);
+  console.log(`[updateShowtimeStatuses] OPEN→FINISHED: ${result.modifiedCount}`);
 }
 
 /**

@@ -25,6 +25,12 @@ const startServer = async () => {
 
     app.listen(env.PORT, () => {
       console.log(`http://localhost:${env.PORT}`);
+      console.log(
+        'API: /api/auth, /api/movies, /api/cinemas, /api/showtimes, /api/rooms, ...',
+      );
+      console.log(
+        'Nếu client báo 404 /api/rooms: dừng và chạy lại server (npm run dev trong thư mục server).',
+      );
     });
   } catch (errors) {
     console.log('Failed to start: ', errors);
