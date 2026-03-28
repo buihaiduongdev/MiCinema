@@ -161,8 +161,7 @@ export const update = async (id: string, data: PatchRoomInput) => {
 
   const nextRows = data.rows !== undefined ? data.rows : room.rows;
   const nextCols = data.cols !== undefined ? data.cols : room.cols;
-  const gridSizeChanged =
-    nextRows !== room.rows || nextCols !== room.cols;
+  const gridSizeChanged = nextRows !== room.rows || nextCols !== room.cols;
 
   let nextSeats: SeatConfig[] = (room.seats as SeatConfig[]).map((s) => ({
     ...s,
@@ -190,10 +189,7 @@ export const update = async (id: string, data: PatchRoomInput) => {
     gridSizeChanged
   ) {
     if (upcoming) {
-      throw httpError(
-        'Không đổi số hàng/cột khi còn suất chiếu sắp tới',
-        409,
-      );
+      throw httpError('Không đổi số hàng/cột khi còn suất chiếu sắp tới', 409);
     }
     nextSeats = buildDefaultSeats(nextRows, nextCols);
   }

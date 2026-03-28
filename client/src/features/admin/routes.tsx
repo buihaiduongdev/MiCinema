@@ -11,6 +11,7 @@ import { ManageMoviesPage } from './movies/pages';
 import { ManagePersonsPage } from './persons/pages';
 import ManageBookingsPage from './bookings/pages/ManageBookingsPage';
 import ManageRoomsPage from './rooms/pages/ManageRoomsPage';
+import ManageFoodPage from './food/pages/ManageFoodPage';
 
 export const adminRoutes = [
   {
@@ -33,6 +34,12 @@ export const adminRoutes = [
         element: <ManageRoomsPage />,
         name: 'Quản lý phòng chiếu',
         icon: 'Armchair',
+      },
+      {
+        path: 'food',
+        element: <ManageFoodPage />,
+        name: 'Đồ ăn & nước uống',
+        icon: 'UtensilsCrossed',
       },
       {
         path: 'persons',

@@ -59,7 +59,9 @@ async function updateShowtimeStatuses() {
     { $set: { status: SHOWTIME_STATUS.FINISHED } },
   );
 
-  console.log(`[updateShowtimeStatuses] OPEN→FINISHED: ${result.modifiedCount}`);
+  console.log(
+    `[updateShowtimeStatuses] OPEN→FINISHED: ${result.modifiedCount}`,
+  );
 }
 
 /**

@@ -42,10 +42,9 @@ export function useAdminCinemasForRooms() {
   return useQuery({
     queryKey: ['admin-cinemas-for-rooms'],
     queryFn: async (): Promise<AdminCinemaOption[]> => {
-      const res = (await apiClient.get(
-        '/cinemas',
-        { params: { limit: 100, page: 1 } },
-      )) as ApiResponse<{ data: AdminCinemaOption[]; pagination: unknown }>;
+      const res = (await apiClient.get('/cinemas', {
+        params: { limit: 100, page: 1 },
+      })) as ApiResponse<{ data: AdminCinemaOption[]; pagination: unknown }>;
       return res.data?.data ?? [];
     },
   });

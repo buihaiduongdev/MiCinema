@@ -1,6 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { ROOM_TYPE, SEAT_TYPE } from '@shared/constants/seat-types.js';
-import type { RoomTypeValue, SeatTypeValue } from '@shared/constants/seat-types.js';
+import type {
+  RoomTypeValue,
+  SeatTypeValue,
+} from '@shared/constants/seat-types.js';
 
 export interface ICinemaRoom extends Document {
   cinemaId: mongoose.Types.ObjectId;
