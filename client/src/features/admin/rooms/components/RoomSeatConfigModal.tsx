@@ -78,7 +78,9 @@ export function RoomSeatConfigModal({ roomId, opened, onClose }: Props) {
   }, [room, opened]);
 
   const gridOk =
-    draftSeats.length === draftRows * draftCols && draftRows > 0 && draftCols > 0;
+    draftSeats.length === draftRows * draftCols &&
+    draftRows > 0 &&
+    draftCols > 0;
 
   const grid = useMemo(() => {
     const byPos = new Map<string, SeatConfig>();
@@ -133,9 +135,7 @@ export function RoomSeatConfigModal({ roomId, opened, onClose }: Props) {
 
   const toggleSeat = (seat: SeatConfig) => {
     setDraftSeats((prev) =>
-      prev.map((s) =>
-        s.seatId === seat.seatId ? cycleSeat(s) : s,
-      ),
+      prev.map((s) => (s.seatId === seat.seatId ? cycleSeat(s) : s)),
     );
   };
 
@@ -198,8 +198,8 @@ export function RoomSeatConfigModal({ roomId, opened, onClose }: Props) {
           </p>
           {!gridOk && (
             <p className="text-sm text-amber-200/90 bg-amber-950/30 border border-amber-800/40 rounded-lg px-3 py-2">
-              Số ghế hiện tại không khớp {draftRows} × {draftCols}. Nhấn «Áp dụng
-              kích thước» để đồng bộ lưới trước khi lưu.
+              Số ghế hiện tại không khớp {draftRows} × {draftCols}. Nhấn «Áp
+              dụng kích thước» để đồng bộ lưới trước khi lưu.
             </p>
           )}
           <div className="flex flex-wrap items-end gap-3">
@@ -239,7 +239,9 @@ export function RoomSeatConfigModal({ roomId, opened, onClose }: Props) {
               variant="light"
               color="gray"
               onClick={applyGridSize}
-              styles={{ root: { backgroundColor: '#222a3d', color: '#dae2fd' } }}
+              styles={{
+                root: { backgroundColor: '#222a3d', color: '#dae2fd' },
+              }}
             >
               Áp dụng kích thước
             </Button>

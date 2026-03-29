@@ -19,7 +19,7 @@ type SchemaLike = ParseAsyncSchema;
 const mergeInto = (target: Record<string, unknown>, source: unknown) => {
   if (typeof source !== 'object' || source === null) return;
 
-  Object.keys(target).forEach((k) => delete target[k]);
+  /** Không `delete` toàn bộ key của req.params (Express 5) — dễ làm mất tham số route → GET/PATCH/PUT :id → 404. */
   Object.assign(target, source);
 };
 

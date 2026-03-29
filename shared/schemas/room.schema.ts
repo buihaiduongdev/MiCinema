@@ -24,7 +24,10 @@ export const createRoomSchema = z.object({
 });
 
 export const roomFilterSchema = z.object({
-  cinemaId: z.string().regex(/^[a-fA-F0-9]{24}$/).optional(),
+  cinemaId: z
+    .string()
+    .regex(/^[a-fA-F0-9]{24}$/)
+    .optional(),
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(20),
 });

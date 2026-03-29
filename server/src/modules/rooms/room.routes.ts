@@ -19,11 +19,7 @@ const router = Router();
 router.use(protect);
 router.use(restrictTo('ADMIN'));
 
-router.get(
-  '/',
-  validate({ query: roomFilterSchema }),
-  roomController.getAll,
-);
+router.get('/', validate({ query: roomFilterSchema }), roomController.getAll);
 router.post('/', validate(createRoomSchema), roomController.create);
 
 const idParams = validate({ params: roomIdParamsSchema });

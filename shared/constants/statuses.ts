@@ -38,6 +38,16 @@ export const SHOWTIME_STATUS = {
 export type ShowtimeStatus =
   (typeof SHOWTIME_STATUS)[keyof typeof SHOWTIME_STATUS];
 
+/** Đơn đồ ăn (concession) */
+export const FOOD_ORDER_STATUS = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  CANCELLED: 'CANCELLED',
+} as const;
+
+export type FoodOrderStatus =
+  (typeof FOOD_ORDER_STATUS)[keyof typeof FOOD_ORDER_STATUS];
+
 export const MEMBERSHIP_TIER = {
   BRONZE: 'BRONZE',
   SILVER: 'SILVER',

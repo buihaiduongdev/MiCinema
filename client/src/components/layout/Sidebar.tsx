@@ -6,6 +6,7 @@ import {
   Trophy,
   Film,
   Armchair,
+  UtensilsCrossed,
   UserCircle,
   Ticket,
   LayoutDashboard,
@@ -20,6 +21,7 @@ const iconMap = {
   Trophy,
   Film,
   Armchair,
+  UtensilsCrossed,
   UserCircle,
   Ticket,
 };

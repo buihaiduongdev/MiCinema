@@ -21,12 +21,12 @@ export const getById = async (req: Request, res: Response) => {
 
 export const patch = async (req: Request, res: Response) => {
   const room = await roomService.update(req.params.id as string, req.body);
-  res.status(200).json(responseSuccess(room, 'Cập nhật phòng chiếu thành công'));
+  res
+    .status(200)
+    .json(responseSuccess(room, 'Cập nhật phòng chiếu thành công'));
 };
 
 export const remove = async (req: Request, res: Response) => {
   await roomService.deactivate(req.params.id as string);
-  res
-    .status(200)
-    .json(responseSuccess(null, 'Đã vô hiệu hóa phòng chiếu'));
+  res.status(200).json(responseSuccess(null, 'Đã vô hiệu hóa phòng chiếu'));
 };

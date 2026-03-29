@@ -115,8 +115,8 @@ export function EditRoomModal({ room, opened, onClose }: Props) {
           styles={{ label: { color: '#c2c6d8' } }}
         />
         <p className="text-xs text-[#8c90a1]">
-          Tắt hoạt động khi không còn suất chiếu mở trong tương lai. Cấu hình ghế
-          dùng nút &quot;Ghế&quot; trên danh sách.
+          Tắt hoạt động khi không còn suất chiếu mở trong tương lai. Cấu hình
+          ghế dùng nút &quot;Ghế&quot; trên danh sách.
         </p>
         <Button
           fullWidth

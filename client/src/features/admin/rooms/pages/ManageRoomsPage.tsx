@@ -7,7 +7,15 @@ import {
   NumberInput,
   Badge,
 } from '@mantine/core';
-import { Plus, Home, ChevronRight, Pencil, LayoutGrid, Power, PowerOff } from 'lucide-react';
+import {
+  Plus,
+  Home,
+  ChevronRight,
+  Pencil,
+  LayoutGrid,
+  Power,
+  PowerOff,
+} from 'lucide-react';
 import { notifications } from '@mantine/notifications';
 import {
   useAdminCinemasForRooms,
@@ -473,11 +481,16 @@ export default function ManageRoomsPage() {
         }}
       >
         <p className="text-[#c2c6d8] text-sm mb-4">
-          Phòng &quot;{deactivateTarget?.name}&quot; sẽ không dùng cho suất chiếu
-          mới. Chỉ thực hiện được khi không còn suất đang mở trong tương lai.
+          Phòng &quot;{deactivateTarget?.name}&quot; sẽ không dùng cho suất
+          chiếu mới. Chỉ thực hiện được khi không còn suất đang mở trong tương
+          lai.
         </p>
         <div className="flex gap-2 justify-end">
-          <Button variant="subtle" color="gray" onClick={() => setDeactivateTarget(null)}>
+          <Button
+            variant="subtle"
+            color="gray"
+            onClick={() => setDeactivateTarget(null)}
+          >
             Hủy
           </Button>
           <Button
