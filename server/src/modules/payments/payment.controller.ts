@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Booking } from '../../models/Booking.model';
-import { createVNPayUrl } from './payment.service';
+import { generateVietQRUrl } from './payment.service';
 import { responseSuccess, responseError } from '../../utils/response';
 
 /**
@@ -18,17 +18,17 @@ export const handlePayment = async (req: Request, res: Response) => {
         .json(responseError('Không tìm thấy thông tin đặt vé'));
     }
 
-    const ipAddr =
-      req.headers['x-forwarded-for'] ||
-      req.connection.remoteAddress ||
-      '127.0.0.1';
+    let ipAddr =
+      req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+    if (Array.isArray(ipAddr)) {
+      ipAddr = ipAddr[0];
+    }
+    if (typeof ipAddr === 'string') {
+      ipAddr = ipAddr.split(',')[0].trim();
+    }
+    ipAddr = ipAddr.replace('::ffff:', '');
 
-    const paymentUrl = createVNPayUrl(
-      req,
-      booking._id.toString(),
-      booking.totalPrice,
-      ipAddr as string,
-    );
+    const paymentUrl = generateVietQRUrl(booking._id.toString(), 80000);
 
     res.json(responseSuccess({ paymentUrl }));
   } catch (error: unknown) {

@@ -10,9 +10,11 @@ import { Select } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '../../../lib/api-client';
 import { getCinemaCities, getCinemas } from '../services/movies.service';
+import { useNavigate } from 'react-router-dom';
 
 interface ShowtimeSectionProps {
   movieId: string;
+  slug: string;
 }
 
 // Tên ngày tiếng Việt
@@ -42,12 +44,15 @@ const generateDateTabs = () => {
   return tabs;
 };
 
-export default function ShowtimeSection({ movieId }: ShowtimeSectionProps) {
+export default function ShowtimeSection({
+  movieId,
+  slug,
+}: ShowtimeSectionProps) {
   const dateTabs = useMemo(() => generateDateTabs(), []);
   const [selectedDate, setSelectedDate] = useState(dateTabs[0].date);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   // Fetch danh sách thành phố từ API
   const { data: citiesData } = useQuery({
     queryKey: ['cinemas', 'cities'],
@@ -89,10 +94,13 @@ export default function ShowtimeSection({ movieId }: ShowtimeSectionProps) {
   });
 
   // Lọc theo ngày đã chọn
-  const showtimesByDate = (showtimesData as any)?.data || [];
-  const currentDateShowtimes: any[] =
-    showtimesByDate.find?.((d: any) => d.date === selectedDate)?.showtimes ||
-    [];
+  const currentDateShowtimes: any[] = useMemo(() => {
+    const showtimesByDate = (showtimesData as any)?.data || [];
+    return (
+      showtimesByDate.find?.((d: any) => d.date === selectedDate)?.showtimes ||
+      []
+    );
+  }, [showtimesData, selectedDate]);
 
   // Nhóm theo cinema
   const groupedByCinema = useMemo(() => {
@@ -265,6 +273,9 @@ export default function ShowtimeSection({ movieId }: ShowtimeSectionProps) {
                         );
                         return (
                           <button
+                            onClick={() => {
+                              navigate(`/booking/${slug}/${st._id}`);
+                            }}
                             key={st._id}
                             className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:border-orange-500 hover:text-orange-500 transition-colors duration-200 cursor-pointer"
                           >
