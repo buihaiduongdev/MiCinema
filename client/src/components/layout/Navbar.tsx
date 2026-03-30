@@ -1,9 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import LoginPage from '../../features/auth/pages/LoginPage';
+import { useCurrentUser } from '../../features/auth/hooks/useCurrentUser';
+import { useLogout } from '../../features/auth/hooks/useLogout';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: user } = useCurrentUser();
+  const logout = useLogout();
+
+  const handleLogout = () => {
+    logout.mutate();
+  };
 
   const navItems = [
     { label: 'LỊCH CHIẾU', href: '/schedule' },
@@ -48,19 +55,48 @@ export default function Navbar() {
             />
 
             {/* Auth Buttons */}
-            <div className="flex shrink-0 gap-2">
-              <Link
-                to="/login"
-                className="flex h-10 items-center whitespace-nowrap px-3 lg:px-4 text-sm font-medium bg-white/10 border border-white/30 rounded hover:bg-white hover:text-slate-900 transition-all"
-              >
-                Đăng nhập
-              </Link>
-              <Link
-                to="/register"
-                className="flex h-10 items-center whitespace-nowrap px-3 lg:px-4 text-sm font-medium bg-yellow-500 text-black rounded hover:bg-yellow-600 transition-all"
-              >
-                Đăng ký
-              </Link>
+            <div className="flex shrink-0 items-center gap-2 lg:gap-3">
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <Link
+                    to="/member"
+                    className="flex items-center gap-2 hover:bg-white/10 p-1 rounded-lg pr-4 transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold ring-2 ring-white/20 uppercase">
+                      {user.fullName?.charAt(0) || 'U'}
+                    </div>
+                    <div className="hidden xl:block">
+                      <p className="text-[12px] text-gray-400 leading-none">
+                        Xin chào,
+                      </p>
+                      <p className="text-sm font-semibold truncate max-w-[100px]">
+                        {user.fullName}
+                      </p>
+                    </div>
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="h-9 px-4 text-sm font-medium border border-white/20 rounded hover:bg-white/10 transition-all cursor-pointer"
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
+              ) : (
+                <div className="flex shrink-0 gap-2">
+                  <Link
+                    to="/login"
+                    className="flex h-10 items-center whitespace-nowrap px-3 lg:px-4 text-sm font-medium bg-white/10 border border-white/30 rounded hover:bg-white hover:text-slate-900 transition-all"
+                  >
+                    Đăng nhập
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="flex h-10 items-center whitespace-nowrap px-3 lg:px-4 text-sm font-medium bg-yellow-500 text-black rounded hover:bg-yellow-600 transition-all"
+                  >
+                    Đăng ký
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
