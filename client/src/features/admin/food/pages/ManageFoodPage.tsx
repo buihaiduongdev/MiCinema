@@ -114,11 +114,7 @@ export default function ManageFoodPage() {
     { enabled: tab === 'combo' || addComboOpen || !!editComboId },
   );
 
-  const ordersQuery = useAdminFoodOrders(
-    orderShowtimeId,
-    orderPage,
-    limit,
-  );
+  const ordersQuery = useAdminFoodOrders(orderShowtimeId, orderPage, limit);
   const showtimesSelect = useShowtimesForFoodSelect();
 
   const deactivateProduct = useDeactivateProduct();
@@ -136,9 +132,7 @@ export default function ManageFoodPage() {
     () =>
       (showtimesSelect.data ?? []).map((s) => {
         const movie =
-          typeof s.movieId === 'object' && s.movieId
-            ? s.movieId.title
-            : 'Phim';
+          typeof s.movieId === 'object' && s.movieId ? s.movieId.title : 'Phim';
         const room =
           typeof s.roomId === 'object' && s.roomId ? s.roomId.name : '';
         const t = new Date(s.startTime).toLocaleString('vi-VN');
@@ -152,9 +146,7 @@ export default function ManageFoodPage() {
 
   const confirmHide = async (p: AdminProductRow) => {
     if (
-      !window.confirm(
-        `Ẩn "${p.name}" khỏi menu? (Có thể bật lại khi sửa.)`,
-      )
+      !window.confirm(`Ẩn "${p.name}" khỏi menu? (Có thể bật lại khi sửa.)`)
     ) {
       return;
     }
@@ -178,12 +170,21 @@ export default function ManageFoodPage() {
   const comboPayload = comboQuery.data;
   const retailProducts = retailPayload?.data ?? [];
   const comboProducts = comboPayload?.data ?? [];
-  const retailTotalPages = Math.max(1, retailPayload?.pagination?.totalPages ?? 1);
-  const comboTotalPages = Math.max(1, comboPayload?.pagination?.totalPages ?? 1);
+  const retailTotalPages = Math.max(
+    1,
+    retailPayload?.pagination?.totalPages ?? 1,
+  );
+  const comboTotalPages = Math.max(
+    1,
+    comboPayload?.pagination?.totalPages ?? 1,
+  );
 
   const ordersPayload = ordersQuery.data;
   const orders = ordersPayload?.data ?? [];
-  const orderTotalPages = Math.max(1, ordersPayload?.pagination?.totalPages ?? 1);
+  const orderTotalPages = Math.max(
+    1,
+    ordersPayload?.pagination?.totalPages ?? 1,
+  );
 
   const retailLoading = tab === 'retail' && retailQuery.isLoading;
   const comboLoading = tab === 'combo' && comboQuery.isLoading;
@@ -277,7 +278,9 @@ export default function ManageFoodPage() {
                           <th className="px-4 py-3 font-semibold">Tên</th>
                           <th className="px-4 py-3 font-semibold">Danh mục</th>
                           <th className="px-4 py-3 font-semibold">Giá</th>
-                          <th className="px-4 py-3 font-semibold">Trạng thái</th>
+                          <th className="px-4 py-3 font-semibold">
+                            Trạng thái
+                          </th>
                           <th className="px-4 py-3 font-semibold text-right">
                             Thao tác
                           </th>
@@ -400,7 +403,9 @@ export default function ManageFoodPage() {
                           <th className="px-4 py-3 font-semibold">Giá</th>
                           <th className="px-4 py-3 font-semibold">Giảm %</th>
                           <th className="px-4 py-3 font-semibold">Dòng SP</th>
-                          <th className="px-4 py-3 font-semibold">Trạng thái</th>
+                          <th className="px-4 py-3 font-semibold">
+                            Trạng thái
+                          </th>
                           <th className="px-4 py-3 font-semibold text-right">
                             Thao tác
                           </th>
@@ -546,10 +551,7 @@ export default function ManageFoodPage() {
                             ? `${u.fullName} (${u.email})`
                             : '—';
                         const itemsSummary = o.items
-                          .map(
-                            (i) =>
-                              `${i.productName} ×${i.quantity}`,
-                          )
+                          .map((i) => `${i.productName} ×${i.quantity}`)
                           .join(', ');
                         return (
                           <tr

@@ -87,9 +87,13 @@ export function ComboForm({
   const addLine = () =>
     setLines((prev) => [...prev, { productId: '', quantity: 1 }]);
   const removeLine = (i: number) =>
-    setLines((prev) => (prev.length <= 1 ? prev : prev.filter((_, j) => j !== i)));
+    setLines((prev) =>
+      prev.length <= 1 ? prev : prev.filter((_, j) => j !== i),
+    );
   const setLine = (i: number, patch: Partial<Line>) =>
-    setLines((prev) => prev.map((row, j) => (j === i ? { ...row, ...patch } : row)));
+    setLines((prev) =>
+      prev.map((row, j) => (j === i ? { ...row, ...patch } : row)),
+    );
 
   const handleSubmit = async () => {
     if (!name.trim() || !image.trim()) {
@@ -168,7 +172,10 @@ export function ComboForm({
           comboItems,
           ...(description.trim() ? { description: description.trim() } : {}),
         };
-        if (discountPercentPayload !== undefined && discountPercentPayload !== null) {
+        if (
+          discountPercentPayload !== undefined &&
+          discountPercentPayload !== null
+        ) {
           body.discountPercent = discountPercentPayload;
         }
         await createCombo.mutateAsync(body);

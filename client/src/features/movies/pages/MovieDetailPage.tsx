@@ -66,7 +66,7 @@ export default function MovieDetailPage() {
         <div className="flex gap-8">
           {/* LEFT: Showtime Section */}
           <div className="flex-1 min-w-0">
-            <ShowtimeSection movieId={movie._id} />
+            <ShowtimeSection movieId={movie._id} slug={slug || '404'} />
           </div>
 
           {/* RIGHT: Sidebar — Phim đang chiếu */}

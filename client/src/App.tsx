@@ -15,6 +15,8 @@ import PersonsListPage from './features/persons/pages/PersonsListPage';
 import PersonDetailPage from './features/persons/pages/PersonDetailPage';
 import BookingPage from './features/booking/pages/BookingPage';
 import BookingConfirmPage from './features/booking/pages/BookingConfirmPage';
+import BookingResultPage from './features/booking/pages/BookingResultPage';
+
 function App() {
   const adminChildren =
     adminRoutes.find((route) => route.path === 'admin')?.children || [];
@@ -42,7 +44,7 @@ function App() {
 
         {/* Booking */}
         <Route
-          path="/booking/:showtimeId"
+          path="/booking/:slug/:showtimeId"
           element={
             <ProtectedRoute>
               <BookingPage />
@@ -51,7 +53,19 @@ function App() {
         />
         <Route
           path="/booking/confirm/:bookingId"
-          element={<BookingConfirmPage />}
+          element={
+            <ProtectedRoute>
+              <BookingConfirmPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/booking/result/:bookingId"
+          element={
+            <ProtectedRoute>
+              <BookingResultPage />
+            </ProtectedRoute>
+          }
         />
         {/* Persons */}
         <Route path="/dien-vien" element={<PersonsListPage />} />

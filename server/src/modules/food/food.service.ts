@@ -184,7 +184,8 @@ export const updateProduct = async (id: string, data: PatchProductInput) => {
   }
   if (data.price !== undefined) product.price = data.price;
   if (data.image !== undefined) product.image = data.image.trim();
-  if (data.description !== undefined) product.description = data.description.trim();
+  if (data.description !== undefined)
+    product.description = data.description.trim();
   if (data.isActive !== undefined) product.isActive = data.isActive;
 
   await product.save();
