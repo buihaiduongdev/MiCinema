@@ -6,7 +6,7 @@ import BentoGrid from '@/components/common/BentoGrid';
 import { useMovies } from '@/features/movies/hooks/useMovies';
 import type { MovieResponse } from '@/features/movies/services/movies.service';
 import { formatDate, formatDuration } from '@/utils/format';
-
+import { useNavigate } from 'react-router-dom';
 type HomeMovie = MovieResponse & {
   releaseDate: string | Date;
   createdAt?: string | Date;
@@ -73,7 +73,7 @@ export default function HomePage() {
     'https://images.unsplash.com/photo-1489599856769-c5ae6f84f5a7?w=800&h=1200&fit=crop';
   const fallbackHero =
     'https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=1920&h=1080&fit=crop';
-
+  const navigate = useNavigate();
   const {
     data: moviesResponse,
     isLoading,
@@ -173,23 +173,27 @@ export default function HomePage() {
         buttonText: index === 0 ? 'Xem trailer' : undefined,
         onButtonClick:
           index === 0 && movie.trailer
-            ? () => window.open(movie.trailer as string, '_blank')
+            ? (e) => {
+                e.stopPropagation();
+                window.open(movie.trailer as string, '_blank');
+              }
             : undefined,
+        onClick: () => navigate(`/phim/${movie.slug}`),
       };
     });
-  }, [trendingMovies]);
+  }, [trendingMovies, navigate]);
 
   const heroMovie =
     heroCandidates[activeHeroIndex] || trendingMovies[0] || normalizedMovies[0];
 
   const handlePlay = () => {
     if (!heroMovie) return;
-    alert(`Đang mở phim: ${heroMovie.title}`);
+    navigate(`/phim/${heroMovie.slug}`);
   };
 
   const handleInfo = () => {
     if (!heroMovie) return;
-    alert(`Thông tin phim: ${heroMovie.title}`);
+    navigate(`/phim/${heroMovie.slug}`);
   };
 
   return (
@@ -272,7 +276,7 @@ export default function HomePage() {
               imageUrl={getMovieImage(movie)}
               rating={`${movie.rating.toFixed(1)}/10`}
               duration={formatDuration(movie.duration)}
-              onClick={() => alert(`Opening: ${movie.title}`)}
+              onClick={() => navigate(`/phim/${movie.slug}`)}
             />
           ))}
         </HorizontalScrollSection>
@@ -289,6 +293,7 @@ export default function HomePage() {
             <div
               key={movie._id || movie.title}
               className="flex-none w-40 sm:w-48 md:w-56 lg:w-64 aspect-[2/3] bg-slate-800 rounded-lg overflow-hidden group hover:shadow-xl transition-all hover:scale-105 duration-300 relative"
+              onClick={() => navigate(`/phim/${movie.slug}`)}
             >
               <img
                 alt={movie.title}

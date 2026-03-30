@@ -8,6 +8,7 @@ interface BentoGridItemProps {
   large?: boolean;
   buttonText?: string;
   onButtonClick?: () => void;
+  onClick: () => void;
 }
 
 interface BentoGridProps {
@@ -27,6 +28,7 @@ export default function BentoGrid({ title, items }: BentoGridProps) {
           {items.map((item) => (
             <div
               key={item.id}
+              onClick={item.onClick}
               className={`relative group rounded-2xl overflow-hidden cursor-pointer ${
                 item.large ? 'md:col-span-2 md:row-span-2' : ''
               } ${item.colSpan ? `md:col-span-${item.colSpan}` : ''} ${

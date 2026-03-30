@@ -33,7 +33,9 @@ export function ProductForm({ onSuccess }: Props) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState<number | string>('');
   const [image, setImage] = useState('');
-  const [category, setCategory] = useState<string | null>(PRODUCT_CATEGORY.DRINK);
+  const [category, setCategory] = useState<string | null>(
+    PRODUCT_CATEGORY.DRINK,
+  );
   const [description, setDescription] = useState('');
   const createProduct = useCreateProduct();
 

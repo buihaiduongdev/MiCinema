@@ -10,7 +10,9 @@ import type {
 } from '@shared/schemas/food.schema.js';
 
 export const createProduct = async (req: Request, res: Response) => {
-  const product = await foodService.createProduct(req.body as CreateProductInput);
+  const product = await foodService.createProduct(
+    req.body as CreateProductInput,
+  );
   res.status(201).json(responseSuccess(product, 'Thêm sản phẩm thành công'));
 };
 
@@ -38,7 +40,9 @@ export const updateProduct = async (req: Request, res: Response) => {
     req.params.id as string,
     req.body as PatchProductInput,
   );
-  res.status(200).json(responseSuccess(product, 'Cập nhật sản phẩm thành công'));
+  res
+    .status(200)
+    .json(responseSuccess(product, 'Cập nhật sản phẩm thành công'));
 };
 
 export const deactivateProduct = async (req: Request, res: Response) => {

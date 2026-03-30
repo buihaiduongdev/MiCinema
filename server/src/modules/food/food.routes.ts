@@ -37,11 +37,7 @@ router.post(
   foodController.createProduct,
 );
 
-router.post(
-  '/combos',
-  validate(createComboSchema),
-  foodController.createCombo,
-);
+router.post('/combos', validate(createComboSchema), foodController.createCombo);
 
 const idParams = validate({ params: productIdParamsSchema });
 const updateProductHandlers = [

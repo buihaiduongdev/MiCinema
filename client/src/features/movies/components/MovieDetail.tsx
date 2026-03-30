@@ -89,13 +89,13 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
             )}
 
             {/* Movie Title on Banner */}
-            <div className="absolute bottom-6 left-0 right-0">
-              <Container size="xl">
-                <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
-                  {movie.title}
-                </h1>
-              </Container>
-            </div>
+            {/* <div className="absolute bottom-6 left-0 right-0">
+                <Container size="xl">
+                  <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
+                    {movie.title}
+                  </h1>
+                </Container>
+              </div> */}
           </>
         )}
       </div>

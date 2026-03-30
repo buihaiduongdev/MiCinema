@@ -11,7 +11,6 @@ export default function Navbar() {
     { label: 'ƯU ĐÃI', href: '/offers' },
     { label: 'TIN TỨC PHIM', href: '/news' },
     { label: 'THÀNH VIÊN', href: '/member' },
-    { label: 'TEST BOOKING', href: '/booking/69c3ad3df06717ca81e4939a' },
   ];
 
   return (

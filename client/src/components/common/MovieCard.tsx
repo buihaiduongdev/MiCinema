@@ -39,7 +39,7 @@ export default function MovieCard({ movie, onBuyTicket }: MovieCardProps) {
     if (onBuyTicket) {
       onBuyTicket(movie);
     } else {
-      navigate(`/dat-ve/${movie.slug}`);
+      navigate(`/phim/${movie.slug}`);
     }
   };
 
