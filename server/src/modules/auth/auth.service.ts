@@ -9,6 +9,7 @@
 
 import { User } from '../../models/User.model.js';
 import { RegisterInput, LoginInput } from '@shared/schemas/auth.schema.js';
+import { User as UserType } from '@shared/schemas/user.schema.js';
 
 export const login = async (data: LoginInput) => {
   const user = await User.findOne({ email: data.email }).select('+password');
@@ -32,4 +33,14 @@ export const register = async (data: RegisterInput) => {
 
   const user = await User.create(data);
   return user;
+};
+
+export const updateMe = async (userId: string, payload: Partial<UserType>) => {
+  const updated = await User.findByIdAndUpdate(userId, payload, { new: true });
+
+  if (!updated) {
+    throw new Error('Người dùng không tồn tại');
+  }
+
+  return updated;
 };

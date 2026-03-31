@@ -3,6 +3,7 @@ import * as authController from './auth.controller.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { protect } from 'src/middlewares/auth.middleware.js';
 import { registerSchema, loginSchema } from '@shared/schemas/auth.schema.js';
+import { updateProfileSchema } from '@shared/schemas/user.schema.js';
 import { responseSuccess } from 'src/utils/response.js';
 import { User } from '@shared/schemas/user.schema.js';
 
@@ -16,4 +17,5 @@ router.use(protect);
 router.get('/me', (req, res) => {
   res.json(responseSuccess<User>(req.user));
 });
+router.patch('/me', validate(updateProfileSchema), authController.updateMe);
 export default router;
