@@ -34,7 +34,11 @@ const ticketStatusClasses: Record<TicketItem['status'], string> = {
   CANCELLED: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
 };
 
-const sidebarItems: Array<{ key: SectionKey; label: string; icon: ReactElement }> = [
+const sidebarItems: Array<{
+  key: SectionKey;
+  label: string;
+  icon: ReactElement;
+}> = [
   {
     key: 'info',
     label: 'Thông tin',
@@ -55,23 +59,34 @@ const sidebarItems: Array<{ key: SectionKey; label: string; icon: ReactElement }
 export default function ProfileInfoPage() {
   const { user, logout } = useAuth();
   const queryClient = useQueryClient();
-  const { data: myBookingsData, isLoading: isLoadingBookings } = useMyBookings(1, 20);
+  const { data: myBookingsData, isLoading: isLoadingBookings } = useMyBookings(
+    1,
+    20,
+  );
   const [activeSection, setActiveSection] = useState<SectionKey>('info');
   const [profileMessage, setProfileMessage] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
   const userRecord = (user ?? {}) as Record<string, unknown>;
 
   const displayName =
-    typeof userRecord.fullName === 'string' && userRecord.fullName.trim().length > 0
+    typeof userRecord.fullName === 'string' &&
+    userRecord.fullName.trim().length > 0
       ? userRecord.fullName
       : 'Cinema Member';
-  const displayEmail = typeof userRecord.email === 'string' ? userRecord.email : 'member@micinema.vn';
+  const displayEmail =
+    typeof userRecord.email === 'string'
+      ? userRecord.email
+      : 'member@micinema.vn';
   const rawPhone = typeof userRecord.phone === 'string' ? userRecord.phone : '';
   const displayPhone = rawPhone || 'Chua cap nhat';
   const memberTier =
-    typeof userRecord.membershipTier === 'string' ? userRecord.membershipTier : 'BRONZE';
-  const memberRole = typeof userRecord.role === 'string' ? userRecord.role : 'CUSTOMER';
-  const totalPoints = typeof userRecord.loyaltyPoints === 'number' ? userRecord.loyaltyPoints : 0;
+    typeof userRecord.membershipTier === 'string'
+      ? userRecord.membershipTier
+      : 'BRONZE';
+  const memberRole =
+    typeof userRecord.role === 'string' ? userRecord.role : 'CUSTOMER';
+  const totalPoints =
+    typeof userRecord.loyaltyPoints === 'number' ? userRecord.loyaltyPoints : 0;
   const userId = typeof userRecord._id === 'string' ? userRecord._id : 'N/A';
   const fallbackAvatar =
     'https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg';
@@ -165,7 +180,9 @@ export default function ProfileInfoPage() {
             )) as Record<string, unknown>;
             const showtime = response.data as Record<string, unknown>;
             const movie =
-              showtime && typeof showtime.movieId === 'object' && showtime.movieId
+              showtime &&
+              typeof showtime.movieId === 'object' &&
+              showtime.movieId
                 ? (showtime.movieId as Record<string, unknown>)
                 : null;
             const room =
@@ -238,7 +255,9 @@ export default function ProfileInfoPage() {
         movieTitle || `Booking #${booking._id.slice(-6).toUpperCase()}`;
 
       const fallbackStartTimeRaw =
-        showtimeId !== 'N/A' ? showtimeFallbackMap?.[showtimeId]?.startTime : '';
+        showtimeId !== 'N/A'
+          ? showtimeFallbackMap?.[showtimeId]?.startTime
+          : '';
       const fallbackRoomName =
         showtimeId !== 'N/A'
           ? showtimeFallbackMap?.[showtimeId]?.roomName || 'N/A'
@@ -294,13 +313,17 @@ export default function ProfileInfoPage() {
       await queryClient.invalidateQueries({ queryKey: ['me'] });
     },
     onError: (error) => {
-      setProfileMessage(error.message || 'Cập nhật thất bại, vui lòng thử lại.');
+      setProfileMessage(
+        error.message || 'Cập nhật thất bại, vui lòng thử lại.',
+      );
     },
   });
 
   const handlePasswordSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setPasswordMessage('Tính năng đổi mật khẩu đang được hoàn thiện. Vui lòng thử lại sau.');
+    setPasswordMessage(
+      'Tính năng đổi mật khẩu đang được hoàn thiện. Vui lòng thử lại sau.',
+    );
   };
 
   const handleProfileSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -319,7 +342,9 @@ export default function ProfileInfoPage() {
         <section className="px-4 py-10 sm:px-8 lg:px-10">
           <div className="mb-6 flex items-center gap-3">
             <ShieldCheck className="h-5 w-5 text-rose-300" />
-            <h2 className="text-xl font-bold sm:text-2xl">Thông tin tài khoản</h2>
+            <h2 className="text-xl font-bold sm:text-2xl">
+              Thông tin tài khoản
+            </h2>
           </div>
           <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4">
             <div className="flex items-center gap-4">
@@ -335,7 +360,9 @@ export default function ProfileInfoPage() {
               />
               <div>
                 <p className="text-lg font-bold">{displayName}</p>
-                <p className="text-sm text-white/65">{memberRole} - {memberTier}</p>
+                <p className="text-sm text-white/65">
+                  {memberRole} - {memberTier}
+                </p>
               </div>
             </div>
           </div>
@@ -346,13 +373,17 @@ export default function ProfileInfoPage() {
                 className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur"
               >
                 <div className="mb-5 flex items-center gap-3">
-                  <div className="rounded-lg bg-rose-500/15 p-2">{card.icon}</div>
+                  <div className="rounded-lg bg-rose-500/15 p-2">
+                    {card.icon}
+                  </div>
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-white/60">
                     {card.label}
                   </p>
                 </div>
                 <p className="text-lg font-bold leading-tight">{card.value}</p>
-                <p className="mt-3 border-t border-white/10 pt-3 text-xs text-white/55">{card.sub}</p>
+                <p className="mt-3 border-t border-white/10 pt-3 text-xs text-white/55">
+                  {card.sub}
+                </p>
               </article>
             ))}
           </div>
@@ -384,10 +415,16 @@ export default function ProfileInfoPage() {
                 className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-white/5 to-white/[0.03] p-5 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">{ticket.id}</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">
+                    {ticket.id}
+                  </p>
                   <p className="mt-1 text-lg font-bold">{ticket.movieTitle}</p>
-                  <p className="mt-1 text-sm text-white/65">{ticket.showtime}</p>
-                  <p className="mt-1 text-sm text-white/80">Ghe: {ticket.seat}</p>
+                  <p className="mt-1 text-sm text-white/65">
+                    {ticket.showtime}
+                  </p>
+                  <p className="mt-1 text-sm text-white/80">
+                    Ghe: {ticket.seat}
+                  </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span
@@ -422,7 +459,9 @@ export default function ProfileInfoPage() {
             <form onSubmit={handleProfileSubmit} className="space-y-4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-sm font-semibold text-white/80">User ID</label>
+                  <label className="mb-1 block text-sm font-semibold text-white/80">
+                    User ID
+                  </label>
                   <input
                     type="text"
                     value={userId}
@@ -431,7 +470,9 @@ export default function ProfileInfoPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-semibold text-white/80">Email</label>
+                  <label className="mb-1 block text-sm font-semibold text-white/80">
+                    Email
+                  </label>
                   <input
                     type="email"
                     value={displayEmail}
@@ -440,7 +481,9 @@ export default function ProfileInfoPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-semibold text-white/80">Hạng thành viên</label>
+                  <label className="mb-1 block text-sm font-semibold text-white/80">
+                    Hạng thành viên
+                  </label>
                   <input
                     type="text"
                     value={memberTier}
@@ -449,7 +492,9 @@ export default function ProfileInfoPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-semibold text-white/80">Điểm tích lũy</label>
+                  <label className="mb-1 block text-sm font-semibold text-white/80">
+                    Điểm tích lũy
+                  </label>
                   <input
                     type="text"
                     value={String(totalPoints)}
@@ -462,7 +507,9 @@ export default function ProfileInfoPage() {
               <div className="my-2 border-t border-white/10" />
 
               <div>
-                <label className="mb-2 block text-sm font-semibold text-white/80">Avatar</label>
+                <label className="mb-2 block text-sm font-semibold text-white/80">
+                  Avatar
+                </label>
                 <div className="flex items-center gap-4">
                   <img
                     src={profileForm.avatar.trim() || fallbackAvatar}
@@ -489,7 +536,9 @@ export default function ProfileInfoPage() {
                 </div>
               </div>
               <div>
-                <label className="mb-1 block text-sm font-semibold text-white/80">Họ và tên</label>
+                <label className="mb-1 block text-sm font-semibold text-white/80">
+                  Họ và tên
+                </label>
                 <input
                   type="text"
                   value={profileForm.fullName}
@@ -505,7 +554,9 @@ export default function ProfileInfoPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-semibold text-white/80">Số điện thoại</label>
+                <label className="mb-1 block text-sm font-semibold text-white/80">
+                  Số điện thoại
+                </label>
                 <input
                   type="tel"
                   value={profileForm.phone}
@@ -539,45 +590,51 @@ export default function ProfileInfoPage() {
           <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <h3 className="mb-4 text-lg font-bold">Đổi mật khẩu</h3>
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <div>
-                <label className="mb-1 block text-sm font-semibold text-white/80">Mật khẩu hiện tại</label>
-              <input
-                type="password"
-                className="w-full rounded-lg border border-white/15 bg-black/40 px-4 py-2.5 text-sm outline-none ring-0 transition placeholder:text-white/30 focus:border-rose-400"
-                placeholder="Nhập mật khẩu hiện tại"
-                required
-              />
-            </div>
-            <div>
-                <label className="mb-1 block text-sm font-semibold text-white/80">Mật khẩu mới</label>
-              <input
-                type="password"
-                className="w-full rounded-lg border border-white/15 bg-black/40 px-4 py-2.5 text-sm outline-none ring-0 transition placeholder:text-white/30 focus:border-rose-400"
-                placeholder="Nhập mật khẩu mới"
-                required
-              />
-            </div>
-            <div>
-                <label className="mb-1 block text-sm font-semibold text-white/80">Xác nhận mật khẩu mới</label>
-              <input
-                type="password"
-                className="w-full rounded-lg border border-white/15 bg-black/40 px-4 py-2.5 text-sm outline-none ring-0 transition placeholder:text-white/30 focus:border-rose-400"
-                placeholder="Nhập lại mật khẩu mới"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="mt-2 rounded-lg bg-rose-500 px-5 py-2.5 text-sm font-bold text-black transition hover:bg-rose-400"
-            >
-              Cập nhật mật khẩu
-            </button>
-          </form>
-          {passwordMessage && (
-            <p className="mt-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
-              {passwordMessage}
-            </p>
-          )}
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-white/80">
+                  Mật khẩu hiện tại
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-lg border border-white/15 bg-black/40 px-4 py-2.5 text-sm outline-none ring-0 transition placeholder:text-white/30 focus:border-rose-400"
+                  placeholder="Nhập mật khẩu hiện tại"
+                  required
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-white/80">
+                  Mật khẩu mới
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-lg border border-white/15 bg-black/40 px-4 py-2.5 text-sm outline-none ring-0 transition placeholder:text-white/30 focus:border-rose-400"
+                  placeholder="Nhập mật khẩu mới"
+                  required
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-semibold text-white/80">
+                  Xác nhận mật khẩu mới
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-lg border border-white/15 bg-black/40 px-4 py-2.5 text-sm outline-none ring-0 transition placeholder:text-white/30 focus:border-rose-400"
+                  placeholder="Nhập lại mật khẩu mới"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="mt-2 rounded-lg bg-rose-500 px-5 py-2.5 text-sm font-bold text-black transition hover:bg-rose-400"
+              >
+                Cập nhật mật khẩu
+              </button>
+            </form>
+            {passwordMessage && (
+              <p className="mt-4 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
+                {passwordMessage}
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -627,7 +684,7 @@ export default function ProfileInfoPage() {
             className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm font-semibold text-rose-200 transition hover:bg-rose-500/20"
           >
             <LogOut className="h-4 w-4" />
-              Đăng xuất
+            Đăng xuất
           </button>
         </aside>
 
@@ -668,7 +725,9 @@ export default function ProfileInfoPage() {
                 <span className="mb-2 inline-flex rounded-sm bg-rose-500/25 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-rose-200">
                   Information
                 </span>
-                <h1 className="text-3xl font-black tracking-tight sm:text-5xl">{displayName}</h1>
+                <h1 className="text-3xl font-black tracking-tight sm:text-5xl">
+                  {displayName}
+                </h1>
                 <p className="mt-1 text-sm text-white/70 sm:text-base">
                   Hồ sơ thành viên Micinema
                 </p>
