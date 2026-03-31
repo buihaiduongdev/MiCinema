@@ -88,7 +88,13 @@ export const getAllByUser = async (userId: string, page = 1, limit = 10) => {
   const skip = getSkip(page, limit);
   const [bookings, totalItems] = await Promise.all([
     Booking.find({ userId })
-      .populate('showtimeId')
+      .populate({
+        path: 'showtimeId',
+        populate: [
+          { path: 'movieId', select: 'title poster slug' },
+          { path: 'roomId', select: 'name' },
+        ],
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit),

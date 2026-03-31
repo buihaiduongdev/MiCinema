@@ -9,10 +9,6 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(32),
   JWT_EXPIRES_IN: z.string().default('7d'),
   CORS_ORIGIN: z.string(),
-  VNP_TMNCODE: z.string(),
-  VNP_HASHSECRET: z.string(),
-  VNP_URL: z.string().url(),
-  VNP_RETURNURL: z.string().url(),
 });
 
 const _env = envSchema.safeParse(process.env);

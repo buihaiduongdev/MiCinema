@@ -29,3 +29,14 @@ export const login = async (req: Request, res: Response) => {
   const responseData: AuthResponseData = { user, token };
   res.status(200).json(responseSuccess(responseData, 'Đăng nhập thành công'));
 };
+
+export const updateMe = async (req: Request, res: Response) => {
+  const userId = req.user?._id?.toString();
+
+  if (!userId) {
+    throw new Error('Không tìm thấy thông tin người dùng');
+  }
+
+  const user = await authService.updateMe(userId, req.body);
+  res.status(200).json(responseSuccess(user, 'Cập nhật thông tin thành công'));
+};
