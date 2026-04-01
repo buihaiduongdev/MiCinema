@@ -3,6 +3,7 @@ import * as foodService from './food.service.js';
 import { responseSuccess } from '../../utils/response.js';
 import type {
   CreateComboInput,
+  CreateFoodOrderInput,
   CreateProductInput,
   FoodOrderListQuery,
   PatchProductInput,
@@ -57,4 +58,12 @@ export const listFoodOrders = async (req: Request, res: Response) => {
   res
     .status(200)
     .json(responseSuccess(result, 'Lấy danh sách đơn đồ ăn thành công'));
+};
+
+export const createFoodOrder = async (req: Request, res: Response) => {
+  const userId = (req as any).user._id;
+  const order = req.body as CreateFoodOrderInput;
+  const result = await foodService.createFoodOrder(userId, order);
+
+  res.status(200).json(responseSuccess(result, 'Tạo đơn thành công'));
 };

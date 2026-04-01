@@ -13,11 +13,18 @@ import {
   patchProductSchema,
   productListQuerySchema,
   productIdParamsSchema,
+  createFoodOrderSchema,
 } from '@shared/schemas/food.schema.js';
 
 const router = Router();
 
 router.use(protect);
+router.post(
+  '/orders',
+  validate({ body: createFoodOrderSchema }),
+  foodController.createFoodOrder,
+);
+
 router.use(restrictTo('ADMIN'));
 
 router.get(
