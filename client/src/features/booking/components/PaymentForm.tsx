@@ -7,10 +7,12 @@ import {
   Image,
   Group,
   Divider,
+  Button,
 } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { usePayment } from '../hooks/usePayment';
 import { useNavigate } from 'react-router-dom';
+import apiClient from '@/lib/api-client';
 
 type Props = {
   bookingId: string;
@@ -24,21 +26,23 @@ export function PaymentForm({ bookingId, totalPrice }: Props) {
   const { mutate: pay } = usePayment();
 
   useEffect(() => {
-    if (bookingId) {
+    if (bookingId && !qrUrl) {
       pay(bookingId, {
         onSuccess: (res) => {
           setQrUrl(res.data.paymentUrl);
-
-          setTimeout(() => {
-            setIsRedirecting(true);
-            setTimeout(() => {
-              navigate(`/booking/result/${bookingId}`);
-            }, 2000);
-          }, 2000);
         },
       });
     }
-  }, [bookingId]);
+  }, [bookingId, pay, qrUrl]);
+
+  const handleManualConfirm = () => {
+    setIsRedirecting(true);
+    apiClient.patch(`/booking/${bookingId}/confirm-payment`).then(() => {
+      setTimeout(() => {
+        navigate(`/booking/result/${bookingId}`);
+      }, 1500);
+    });
+  };
 
   return (
     <Paper
@@ -71,7 +75,7 @@ export function PaymentForm({ bookingId, totalPrice }: Props) {
               <Image src={qrUrl} w={300} alt="VietQR" />
             </Paper>
 
-            <Stack gap="xs">
+            <Stack gap="xs" w="100%">
               <Group gap="xs" justify="center">
                 <Text size="xl" fw={800} c="yellow.5">
                   {totalPrice.toLocaleString('vi-VN')}₫
@@ -86,14 +90,26 @@ export function PaymentForm({ bookingId, totalPrice }: Props) {
                   </Text>
                 </Group>
               ) : (
-                <Text
-                  c="gray.5"
-                  size="sm"
-                  fw={600}
-                  style={{ fontStyle: 'italic' }}
-                >
-                  Vui lòng quét mã trên ứng dụng ngân hàng của bạn
-                </Text>
+                <Stack gap="md" w="100%">
+                  <Text
+                    c="gray.5"
+                    size="sm"
+                    fw={600}
+                    style={{ fontStyle: 'italic' }}
+                  >
+                    Vui lòng quét mã trên ứng dụng ngân hàng của bạn
+                  </Text>
+                  <Button
+                    color="yellow"
+                    size="lg"
+                    fullWidth
+                    radius="md"
+                    onClick={handleManualConfirm}
+                    loading={isRedirecting}
+                  >
+                    TÔI ĐÃ CHUYỂN TIỀN XONG
+                  </Button>
+                </Stack>
               )}
             </Stack>
 
@@ -104,7 +120,7 @@ export function PaymentForm({ bookingId, totalPrice }: Props) {
             />
 
             <Text size="xs" c="gray.6">
-              Hệ thống sẽ tự động chuyển hướng sau khi giao dịch hoàn tất.
+              Vui lòng nhấn xác nhận sau khi quét mã thành công.
             </Text>
           </>
         )}

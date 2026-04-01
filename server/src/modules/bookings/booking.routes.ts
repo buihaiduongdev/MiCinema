@@ -46,7 +46,7 @@ router.get(
 
 router.patch(
   '/:id/confirm-payment',
-  restrictTo(ROLES.STAFF, ROLES.ADMIN),
+  // restrictTo(ROLES.STAFF, ROLES.ADMIN),
   validate({ params: z.object({ id: objectIdSchema }) }),
   bookingController.confirmPayment,
 );
@@ -56,5 +56,7 @@ router.get(
   validate({ params: z.object({ id: objectIdSchema }) }),
   bookingController.getBookingDetail,
 );
+
+router.patch('/:id/cancel', bookingController.cancelBooking);
 
 export default router;

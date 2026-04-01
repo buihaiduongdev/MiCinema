@@ -85,3 +85,16 @@ export const foodOrderListQuerySchema = paginationSchema.extend({
 });
 
 export type FoodOrderListQuery = z.infer<typeof foodOrderListQuerySchema>;
+
+export const orderItemInputSchema = z.object({
+  productId: objectIdSchema,
+  quantity: z.number().int().min(1, 'Số lượng tối thiếu là 1'),
+});
+
+export const createFoodOrderSchema = z.object({
+  bookingId: objectIdSchema,
+  items: z.array(orderItemInputSchema).min(1, 'Bạn cần ít nhất 1 sản phẩm'),
+});
+
+export type OrderItemInput = z.infer<typeof orderItemInputSchema>;
+export type CreateFoodOrderInput = z.infer<typeof createFoodOrderSchema>;
