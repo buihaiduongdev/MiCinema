@@ -30,4 +30,6 @@ router.post(
   ticketController.refund,
 );
 
+router.get('/verify/:ticketCode', ticketController.verifyTicket);
+
 export default router;

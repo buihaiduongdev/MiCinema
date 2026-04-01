@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as bookingService from './booking.service.js';
 import { responseSuccess } from 'src/utils/response.js';
 import type { AdminBookingListQuery } from '@shared/schemas/booking.schema.js';
+import { log } from 'node:console';
 
 export const getSeats = async (req: Request, res: Response) => {
   const { showtimeId } = req.params;
@@ -30,7 +31,6 @@ export const getMyBookings = async (req: Request, res: Response) => {
 export const getBookingDetail = async (req: Request, res: Response) => {
   const { id } = req.params;
   const booking = await bookingService.getById(id as string);
-
   res
     .status(200)
     .json(responseSuccess(booking, 'Lấy chi tiết đặt vé thành công'));
@@ -60,6 +60,6 @@ export const listBookingsAdmin = async (req: Request, res: Response) => {
 export const cancelBooking = async (req: Request, res: Response) => {
   const userId = (req as any).user._id;
   const { id } = req.params;
-  const booking = await bookingService.cancelBooking(userId, id);
+  const booking = await bookingService.cancelBooking(userId, id as string);
   res.status(200).json(responseSuccess(booking, 'Hủy đơn đặt vé thành công'));
 };

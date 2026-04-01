@@ -17,6 +17,7 @@ import {
   useConfirmBookingPayment,
   useTicketCheckIn,
   useTicketRefund,
+  useVerifyTicket,
   type AdminBookingRow,
 } from '../hooks/useAdminBookings';
 import { BOOKING_STATUS } from '@shared/constants/statuses';
@@ -69,9 +70,12 @@ function statusLabel(status: string): string {
   }
 }
 
-/**
- * UC-24–26: Quản lý đặt vé — danh sách + lọc, xác nhận thanh toán, check-in, hoàn vé
- */
+interface VerificationPackage {
+  booking: any;
+  tickets: any[];
+  foodOrders: any[];
+}
+
 export default function ManageBookingsPage() {
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -94,9 +98,13 @@ export default function ManageBookingsPage() {
   const confirmPay = useConfirmBookingPayment();
   const checkIn = useTicketCheckIn();
   const refund = useTicketRefund();
+  const verifyTicket = useVerifyTicket();
 
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [checkInCode, setCheckInCode] = useState('');
+  const [verificationPkg, setVerificationPkg] =
+    useState<VerificationPackage | null>(null);
+
   const [refundOpen, setRefundOpen] = useState(false);
   const [refundTicketId, setRefundTicketId] = useState('');
   const [refundAmount, setRefundAmount] = useState<number | ''>('');
@@ -132,6 +140,43 @@ export default function ManageBookingsPage() {
     });
   };
 
+  const handleVerify = () => {
+    if (!checkInCode.trim()) return;
+    verifyTicket.mutate(checkInCode.trim(), {
+      onSuccess: (res) => {
+        setVerificationPkg(res.data as VerificationPackage);
+      },
+      onError: (e: Error) => {
+        notifications.show({
+          title: 'Lỗi',
+          message: e.message,
+          color: 'red',
+        });
+      },
+    });
+  };
+
+  const handleSingleCheckIn = (code: string) => {
+    checkIn.mutate(code, {
+      onSuccess: (res) => {
+        notifications.show({
+          title: 'Check-in',
+          message: res?.message || 'Thành công',
+          color: 'green',
+        });
+        handleVerify();
+        refetch();
+      },
+      onError: (e: Error) => {
+        notifications.show({
+          title: 'Lỗi',
+          message: e.message,
+          color: 'red',
+        });
+      },
+    });
+  };
+
   const submitCheckIn = () => {
     if (!checkInCode.trim()) return;
     checkIn.mutate(checkInCode.trim(), {
@@ -143,6 +188,7 @@ export default function ManageBookingsPage() {
         });
         setCheckInOpen(false);
         setCheckInCode('');
+        setVerificationPkg(null);
         refetch();
       },
       onError: (e: Error) => {
@@ -392,41 +438,228 @@ export default function ManageBookingsPage() {
 
       <Modal
         opened={checkInOpen}
-        onClose={() => setCheckInOpen(false)}
-        title="Check-in vé (UC-25)"
-        classNames={{
-          header: 'text-[#dae2fd]',
-          content: 'bg-[#131b2e] border border-[#2a3142]',
+        onClose={() => {
+          setCheckInOpen(false);
+          setVerificationPkg(null);
+        }}
+        title="Check-in vé & Đồ ăn"
+        size="xl"
+        styles={{
+          content: { backgroundColor: '#020617', border: '1px solid #2a3142' },
+          header: { backgroundColor: '#020617', color: '#dae2fd' },
+          body: { backgroundColor: '#020617' },
         }}
       >
-        <Stack gap="md">
-          <Text size="sm" className="text-[#c2c6d8]">
-            Nhập mã vé (ticketCode) sau khi khách đã thanh toán.
-          </Text>
-          <TextInput
-            label="Mã vé"
-            placeholder="Dán mã từ QR / nhập tay"
-            value={checkInCode}
-            onChange={(e) => setCheckInCode(e.target.value)}
-          />
-          <Group justify="flex-end">
-            <Button variant="default" onClick={() => setCheckInOpen(false)}>
-              Huỷ
-            </Button>
-            <Button loading={checkIn.isPending} onClick={submitCheckIn}>
-              Xác nhận check-in
+        <Stack gap="xl">
+          <Group align="flex-end">
+            <TextInput
+              label="Mã vé"
+              placeholder="Nhập mã vé bất kỳ trong đơn..."
+              value={checkInCode}
+              onChange={(e) => setCheckInCode(e.target.value)}
+              style={{ flex: 1 }}
+              onKeyDown={(e) => e.key === 'Enter' && handleVerify()}
+            />
+            <Button
+              loading={verifyTicket.isPending}
+              onClick={handleVerify}
+              variant="filled"
+              color="blue"
+            >
+              Kiểm tra đơn
             </Button>
           </Group>
+
+          {verificationPkg && (
+            <Stack gap="lg">
+              <div className="p-4 rounded-xl bg-[#0f172a] border border-[#1e293b]">
+                <Text fw={700} size="lg" c="blue.4" mb="xs">
+                  Thông tin phim
+                </Text>
+                <Group gap="xl">
+                  <Stack gap={4}>
+                    <Text size="xs" c="gray.5">
+                      Phim
+                    </Text>
+                    <Text c="white" fw={600}>
+                      {verificationPkg.booking.showtimeId.movieId.title}
+                    </Text>
+                  </Stack>
+                  <Stack gap={4}>
+                    <Text size="xs" c="gray.5">
+                      Suất chiếu
+                    </Text>
+                    <Text c="white" fw={600}>
+                      {new Date(
+                        verificationPkg.booking.showtimeId.startTime,
+                      ).toLocaleString('vi-VN')}
+                    </Text>
+                  </Stack>
+                  <Stack gap={4}>
+                    <Text size="xs" c="gray.5">
+                      Phòng
+                    </Text>
+                    <Text c="white" fw={600}>
+                      {verificationPkg.booking.showtimeId.roomId.name}
+                    </Text>
+                  </Stack>
+                </Group>
+              </div>
+
+              <div>
+                <Text fw={700} c="white" mb="sm">
+                  Danh sách ghế ({verificationPkg.tickets.length})
+                </Text>
+                <div className="overflow-hidden border border-[#1e293b] rounded-lg">
+                  <table className="w-full text-sm text-left border-collapse">
+                    <thead className="bg-[#0f172a] text-[#8c90a1]">
+                      <tr>
+                        <th className="px-4 py-2 border-b border-[#1e293b]">
+                          Ghế
+                        </th>
+                        <th className="px-4 py-2 border-b border-[#1e293b]">
+                          Mã vé
+                        </th>
+                        <th className="px-4 py-2 border-b border-[#1e293b]">
+                          Trạng thái
+                        </th>
+                        <th className="px-4 py-2 border-b border-[#1e293b] text-right">
+                          Thao tác
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-[#020617] text-white">
+                      {verificationPkg.tickets.map((t) => (
+                        <tr key={t._id} className="hover:bg-white/5">
+                          <td className="px-4 py-3 border-b border-[#1e293b] font-bold">
+                            {t.row}
+                            {t.col}
+                          </td>
+                          <td className="px-4 py-3 border-b border-[#1e293b] font-mono text-blue-400">
+                            {t.ticketCode}
+                          </td>
+                          <td className="px-4 py-3 border-b border-[#1e293b]">
+                            <span
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                t.status === 'USED'
+                                  ? 'bg-emerald-500/20 text-emerald-400'
+                                  : 'bg-blue-500/20 text-blue-400'
+                              }`}
+                            >
+                              {t.status === 'USED'
+                                ? 'ĐÃ CHECK-IN'
+                                : 'CHƯA DÙNG'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 border-b border-[#1e293b] text-right">
+                            {t.status !== 'USED' && (
+                              <Button
+                                size="compact-xs"
+                                variant="light"
+                                color="green"
+                                loading={checkIn.isPending}
+                                onClick={() =>
+                                  handleSingleCheckIn(t.ticketCode)
+                                }
+                              >
+                                Check-in
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <Text fw={700} c="white" mb="sm">
+                  Đồ ăn kèm ({verificationPkg.foodOrders.length})
+                </Text>
+                {verificationPkg.foodOrders.length > 0 ? (
+                  <div className="overflow-hidden border border-[#1e293b] rounded-lg">
+                    <table className="w-full text-sm text-left border-collapse">
+                      <thead className="bg-[#0f172a] text-[#8c90a1]">
+                        <tr>
+                          <th className="px-4 py-2 border-b border-[#1e293b]">
+                            Sản phẩm
+                          </th>
+                          <th className="px-4 py-2 border-b border-[#1e293b] text-center">
+                            SL
+                          </th>
+                          <th className="px-4 py-2 border-b border-[#1e293b] text-right">
+                            Trạng thái đơn
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-[#020617] text-white">
+                        {verificationPkg.foodOrders.flatMap((order) =>
+                          order.items.map((item: any, idx: number) => (
+                            <tr
+                              key={`${order._id}-${idx}`}
+                              className="hover:bg-white/5"
+                            >
+                              <td className="px-4 py-3 border-b border-[#1e293b]">
+                                {item.productName}
+                              </td>
+                              <td className="px-4 py-3 border-b border-[#1e293b] text-center">
+                                {item.quantity}
+                              </td>
+                              <td className="px-4 py-3 border-b border-[#1e293b] text-right">
+                                <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">
+                                  {order.status}
+                                </span>
+                              </td>
+                            </tr>
+                          )),
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <Text size="sm" c="gray.6" ta="center" py="md">
+                    Không có đồ ăn đi kèm
+                  </Text>
+                )}
+              </div>
+            </Stack>
+          )}
+
+          {!verificationPkg && (
+            <Stack gap="sm">
+              <Text size="xs" c="gray.6" ta="center">
+                Nhập mã vé để kéo toàn bộ thông tin đơn hàng đi kèm
+              </Text>
+              <Group justify="center">
+                <Button
+                  variant="outline"
+                  color="gray"
+                  onClick={() => setCheckInOpen(false)}
+                >
+                  Hủy
+                </Button>
+                <Button
+                  color="blue"
+                  onClick={submitCheckIn}
+                  loading={checkIn.isPending}
+                >
+                  Check-in nhanh
+                </Button>
+              </Group>
+            </Stack>
+          )}
         </Stack>
       </Modal>
 
       <Modal
         opened={refundOpen}
         onClose={() => setRefundOpen(false)}
-        title="Huỷ vé & hoàn tiền (UC-26)"
-        classNames={{
-          header: 'text-[#dae2fd]',
-          content: 'bg-[#131b2e] border border-[#2a3142]',
+        title="Huỷ vé & hoàn tiền"
+        styles={{
+          content: { backgroundColor: '#020617', border: '1px solid #2a3142' },
+          header: { backgroundColor: '#020617', color: '#dae2fd' },
+          body: { backgroundColor: '#020617' },
         }}
       >
         <Stack gap="md">

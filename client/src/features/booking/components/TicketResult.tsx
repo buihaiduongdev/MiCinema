@@ -95,27 +95,41 @@ export function TicketResult({ booking }: Props) {
               </Text>
               <Text fw={800}>{room.name}</Text>
             </Stack>
-            <Stack gap={2} ta="right">
-              <Text size="xs" c="gray.6" fw={700}>
-                GHẾ
-              </Text>
-              <Text fw={800}>
-                {booking.seats.map((s) => `${s.row}${s.col}`).join(', ')}
-              </Text>
-            </Stack>
           </Group>
+
+          {/* Ticket Codes List */}
+          {(booking as any).tickets && (booking as any).tickets.length > 0 && (
+            <Stack gap={4} p="xs" bg="gray.0" style={{ borderRadius: 8 }}>
+              <Text size="xs" c="gray.6" fw={700} ta="center">
+                DANH SÁCH MÃ VÉ
+              </Text>
+              <Stack gap={2}>
+                {(booking as any).tickets.map((t: any) => (
+                  <Group key={t._id} justify="space-between">
+                    <Text size="xs" fw={700} c="gray.8">
+                      Ghế {t.row}
+                      {t.col}
+                    </Text>
+                    <Text size="xs" fw={800} c="blue.7" ff="monospace">
+                      {t.ticketCode}
+                    </Text>
+                  </Group>
+                ))}
+              </Stack>
+            </Stack>
+          )}
 
           {/* Mã QR để Check-in */}
           <Stack align="center" gap="xs">
             <QRCodeSVG
-              value={`booking:${booking._id}`}
+              value={
+                (booking as any).tickets?.[0]?.ticketCode ||
+                `booking:${booking._id}`
+              }
               size={140}
               level="H"
               includeMargin
             />
-            <Text size="xs" fw={700} c="gray.6" lts={1}>
-              MÃ ĐƠN: {booking._id.toUpperCase()}
-            </Text>
           </Stack>
         </Stack>
 

@@ -313,7 +313,8 @@ export default function ProfileInfoPage() {
       const safeStatus =
         booking.status === 'PAID' ||
         booking.status === 'PENDING' ||
-        booking.status === 'CANCELLED'
+        booking.status === 'CANCELLED' ||
+        booking.status === 'COMPLETED'
           ? booking.status
           : 'PENDING';
 
