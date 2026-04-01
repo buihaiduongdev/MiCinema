@@ -79,6 +79,16 @@ export const useTicketCheckIn = () => {
   });
 };
 
+export const useVerifyTicket = () => {
+  return useMutation({
+    mutationFn: async (ticketCode: string) => {
+      return apiClient.get<ApiResponse<unknown>>(
+        `tickets/verify/${ticketCode}`,
+      );
+    },
+  });
+};
+
 export const useTicketRefund = () => {
   const qc = useQueryClient();
   return useMutation({

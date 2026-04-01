@@ -10,8 +10,10 @@ import {
   FOOD_ORDER_STATUS,
 } from '@shared/constants/statuses.js';
 import { FoodOrder } from '../../models/FoodOrder.model.js';
+import { Ticket } from '../../models/Ticket.model.js';
 import { getSkip, getPaginationData } from '../../utils/pagination.js';
 import { issueTicketsForPaidBooking } from '../tickets/ticket.service.js';
+import { log } from 'node:console';
 
 const httpError = (message: string, statusCode: number) => {
   const e = new Error(message) as Error & { statusCode: number };
@@ -109,11 +111,21 @@ export const getAllByUser = async (userId: string, page = 1, limit = 10) => {
   return { bookings, meta };
 };
 
-export const getById = async (id: string) => {
-  return Booking.findById(id).populate({
-    path: 'showtimeId',
-    populate: [{ path: 'movieId' }, { path: 'roomId' }],
-  });
+export const getById = async (id: string): Promise<any | null> => {
+  const booking = await Booking.findById(id)
+    .populate({
+      path: 'showtimeId',
+      populate: [{ path: 'movieId' }, { path: 'roomId' }],
+    })
+    .lean();
+
+  if (!booking) return null;
+
+  const tickets = await Ticket.find({
+    bookingId: new mongoose.Types.ObjectId(id),
+  }).lean();
+
+  return { ...booking, tickets };
 };
 
 export const getSeatMap = async (showtimeId: string) => {
