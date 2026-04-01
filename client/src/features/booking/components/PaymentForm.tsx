@@ -1,15 +1,16 @@
 import {
-  Button,
   Stack,
   Text,
   Paper,
   Title,
-  Divider,
+  Loader,
+  Image,
   Group,
-  Radio,
+  Divider,
 } from '@mantine/core';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePayment } from '../hooks/usePayment';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   bookingId: string;
@@ -17,59 +18,97 @@ type Props = {
 };
 
 export function PaymentForm({ bookingId, totalPrice }: Props) {
-  const [method, setMethod] = useState('ATM');
-  const { mutate: pay, isPending } = usePayment();
+  const [qrUrl, setQrUrl] = useState('');
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const navigate = useNavigate();
+  const { mutate: pay } = usePayment();
+
+  useEffect(() => {
+    if (bookingId) {
+      pay(bookingId, {
+        onSuccess: (res) => {
+          setQrUrl(res.data.paymentUrl);
+
+          setTimeout(() => {
+            setIsRedirecting(true);
+            setTimeout(() => {
+              navigate(`/booking/result/${bookingId}`);
+            }, 2000);
+          }, 2000);
+        },
+      });
+    }
+  }, [bookingId]);
 
   return (
     <Paper
       p="xl"
       radius="lg"
-      bg="rgba(15, 23, 42, 0.8)"
-      style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'white' }}
+      bg="#0f172a"
+      ta="center"
+      style={{ border: '2px solid #e11d48', color: 'white', minHeight: 400 }}
     >
-      <Title order={3} mb="md" c="white">
-        Hình thức thanh toán
-      </Title>
+      <Stack align="center" gap="xl" h="100%" justify="center">
+        {!qrUrl ? (
+          <Stack align="center">
+            <Loader color="yellow" size="xl" />
+            <Text c="gray.4" fw={700}>
+              ĐANG TẠO MÃ THANH TOÁN...
+            </Text>
+          </Stack>
+        ) : (
+          <>
+            <Title order={3} c="white" style={{ letterSpacing: '1px' }}>
+              QUÉT MÃ VIETQR ĐỂ XÁC NHẬN
+            </Title>
 
-      <Radio.Group value={method} onChange={setMethod}>
-        <Stack gap="md">
-          <Paper p="sm" withBorder bg="transparent" radius="md">
-            <Radio
-              value="ATM"
-              label="Thẻ ATM / Internet Banking"
-              color="yellow"
+            <Paper
+              p="sm"
+              bg="white"
+              radius="md"
+              style={{ boxShadow: '0 0 30px rgba(225, 29, 72, 0.3)' }}
+            >
+              <Image src={qrUrl} w={300} alt="VietQR" />
+            </Paper>
+
+            <Stack gap="xs">
+              <Group gap="xs" justify="center">
+                <Text size="xl" fw={800} c="yellow.5">
+                  {totalPrice.toLocaleString('vi-VN')}₫
+                </Text>
+              </Group>
+
+              {isRedirecting ? (
+                <Group gap="xs" justify="center">
+                  <Loader color="green" size="xs" />
+                  <Text c="green.4" fw={700}>
+                    ĐÃ NHẬN THANH TOÁN!
+                  </Text>
+                </Group>
+              ) : (
+                <Text
+                  c="gray.5"
+                  size="sm"
+                  fw={600}
+                  style={{ fontStyle: 'italic' }}
+                >
+                  Vui lòng quét mã trên ứng dụng ngân hàng của bạn
+                </Text>
+              )}
+            </Stack>
+
+            <Divider
+              w="100%"
+              color="gray.8"
+              style={{ borderStyle: 'dashed' }}
             />
-          </Paper>
-          <Paper p="sm" withBorder bg="transparent" radius="md">
-            <Radio value="MOMO" label="Ví điện tử MoMo" color="yellow" />
-          </Paper>
-        </Stack>
-      </Radio.Group>
 
-      <Divider my="xl" color="gray.8" />
-
-      <Group justify="space-between" mb="xl">
-        <Text size="lg" fw={700}>
-          SỐ TIỀN CẦN THANH TOÁN
-        </Text>
-        <Title order={2} c="yellow.5">
-          {totalPrice.toLocaleString('vi-VN')}₫
-        </Title>
-      </Group>
-
-      <Button
-        fullWidth
-        size="lg"
-        color="red.7"
-        loading={isPending}
-        onClick={() => pay(bookingId)}
-      >
-        THANH TOÁN NGAY
-      </Button>
-
-      <Text size="xs" ta="center" mt="md" c="gray.5">
-        Bằng việc bấm thanh toán, bạn đồng ý với các Điều khoản của MiCinema.
-      </Text>
+            <Text size="xs" c="gray.6">
+              Hệ thống sẽ tự động chuyển hướng sau khi giao dịch hoàn tất.
+            </Text>
+          </>
+        )}
+      </Stack>
     </Paper>
   );
 }

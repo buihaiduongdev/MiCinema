@@ -4,9 +4,17 @@ import {
 BarChart3,
   Users,
   Trophy,
+<<<<<<< HEAD
   Film,        
   UserCircle,   
   Ticket,      
+=======
+  Film,
+  Armchair,
+  UtensilsCrossed,
+  UserCircle,
+  Ticket,
+>>>>>>> main
   LayoutDashboard,
   Settings,
   LogOut,
@@ -17,9 +25,17 @@ const iconMap = {
 BarChart3,
   Users,
   Trophy,
+<<<<<<< HEAD
   Film,         
   UserCircle,
   Ticket,       
+=======
+  Film,
+  Armchair,
+  UtensilsCrossed,
+  UserCircle,
+  Ticket,
+>>>>>>> main
 };
 
 const getIcon = (icon?: string) => {

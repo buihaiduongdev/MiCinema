@@ -77,8 +77,14 @@ export default function MovieForm({ movieId, onSuccess }: MovieFormProps) {
             typeof a === 'string' ? a : a._id,
           ) || [],
         genres:
+<<<<<<< HEAD
           existingMovie.genres?.map((g) => (typeof g === 'string' ? g : g._id)) ||
           [],
+=======
+          existingMovie.genres?.map((g) =>
+            typeof g === 'string' ? g : g._id,
+          ) || [],
+>>>>>>> main
         duration: existingMovie.duration || 90,
         releaseDate: existingMovie.releaseDate
           ? new Date(existingMovie.releaseDate)
@@ -107,7 +113,13 @@ export default function MovieForm({ movieId, onSuccess }: MovieFormProps) {
       releaseDate: formData.releaseDate
         ? dayjs(formData.releaseDate).toISOString()
         : dayjs().toISOString(),
+<<<<<<< HEAD
       endDate: formData.endDate ? dayjs(formData.endDate).toISOString() : undefined,
+=======
+      endDate: formData.endDate
+        ? dayjs(formData.endDate).toISOString()
+        : undefined,
+>>>>>>> main
       poster: formData.poster,
       trailer: formData.trailer || undefined,
       language: formData.language,
@@ -123,13 +135,26 @@ export default function MovieForm({ movieId, onSuccess }: MovieFormProps) {
     }
   };
 
+<<<<<<< HEAD
   if (isLoadingMovie || isLoadingGenres || isLoadingDirectors || isLoadingActors) {
+=======
+  if (
+    isLoadingMovie ||
+    isLoadingGenres ||
+    isLoadingDirectors ||
+    isLoadingActors
+  ) {
+>>>>>>> main
     return <LoadingSpinner />;
   }
 
   const genreOptions =
     genres?.map((g) => ({ value: g._id, label: g.name })) || [];
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> main
   // Director options với avatar
   const directorOptions: PersonOption[] =
     directors?.map((p) => ({

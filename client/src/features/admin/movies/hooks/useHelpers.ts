@@ -52,12 +52,21 @@ export const useDirectors = () => {
   return useQuery({
     queryKey: ['persons', 'directors'],
     queryFn: async () => {
+<<<<<<< HEAD
       const result = await apiClient.get('/persons', { 
         params: { limit: 100, role: 'DIRECTOR' } 
       });
       
       const apiResponse = result as ApiResponse<PaginatedResponse<Person>>;
       
+=======
+      const result = await apiClient.get('/persons', {
+        params: { limit: 100, role: 'DIRECTOR' },
+      });
+
+      const apiResponse = result as ApiResponse<PaginatedResponse<Person>>;
+
+>>>>>>> main
       if (apiResponse.data && Array.isArray(apiResponse.data.data)) {
         return apiResponse.data.data;
       }
@@ -76,12 +85,21 @@ export const useActors = () => {
   return useQuery({
     queryKey: ['persons', 'actors'],
     queryFn: async () => {
+<<<<<<< HEAD
       const result = await apiClient.get('/persons', { 
         params: { limit: 100, role: 'ACTOR' } 
       });
       
       const apiResponse = result as ApiResponse<PaginatedResponse<Person>>;
       
+=======
+      const result = await apiClient.get('/persons', {
+        params: { limit: 100, role: 'ACTOR' },
+      });
+
+      const apiResponse = result as ApiResponse<PaginatedResponse<Person>>;
+
+>>>>>>> main
       if (apiResponse.data && Array.isArray(apiResponse.data.data)) {
         return apiResponse.data.data;
       }
@@ -100,10 +118,19 @@ export const usePersons = () => {
   return useQuery({
     queryKey: ['persons', 'all'],
     queryFn: async () => {
+<<<<<<< HEAD
       const result = await apiClient.get('/persons', { params: { limit: 100 } });
       
       const apiResponse = result as ApiResponse<PaginatedResponse<Person>>;
       
+=======
+      const result = await apiClient.get('/persons', {
+        params: { limit: 100 },
+      });
+
+      const apiResponse = result as ApiResponse<PaginatedResponse<Person>>;
+
+>>>>>>> main
       if (apiResponse.data && Array.isArray(apiResponse.data.data)) {
         return apiResponse.data.data;
       }

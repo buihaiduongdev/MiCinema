@@ -19,3 +19,7 @@ export const registerApi = (
 
 export const getMeApi = (): Promise<ApiResponse<User>> =>
   apiClient.get('/auth/me');
+
+export const updateMeApi = (
+  data: Partial<Pick<User, 'fullName' | 'phone' | 'avatar'>>,
+): Promise<ApiResponse<User>> => apiClient.patch('/auth/me', data);

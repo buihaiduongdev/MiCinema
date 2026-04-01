@@ -174,7 +174,14 @@ export default function ManagePersonsPage() {
           title: { fontWeight: 'bold', fontSize: '1.25rem' },
         }}
       >
+<<<<<<< HEAD
         <PersonForm personId={editingPersonId} onSuccess={handleCloseFormModal} />
+=======
+        <PersonForm
+          personId={editingPersonId}
+          onSuccess={handleCloseFormModal}
+        />
+>>>>>>> main
       </Modal>
 
       <DeletePersonDialog

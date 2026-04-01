@@ -1,8 +1,13 @@
 import axios from 'axios';
 
+const rawBaseURL =
+  (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000/api';
+const normalizedBaseURL = rawBaseURL.endsWith('/api')
+  ? rawBaseURL
+  : `${rawBaseURL.replace(/\/+$/, '')}/api`;
+
 const apiClient = axios.create({
-  baseURL:
-    (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000/api',
+  baseURL: normalizedBaseURL,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -26,7 +31,16 @@ apiClient.interceptors.response.use(
       }
     }
 
-    const message = error.response?.data?.message || 'Lỗi hệ thống';
+    const responseData = error.response?.data;
+    const message =
+      (typeof responseData === 'object' && responseData?.message) ||
+      (typeof responseData === 'string' &&
+      responseData.includes('Cannot') &&
+      responseData.includes('/auth/')
+        ? 'Sai endpoint API. Hãy kiểm tra VITE_API_URL, cần có /api ở cuối.'
+        : '') ||
+      'Lỗi hệ thống';
+
     return Promise.reject(new Error(message));
   },
 );

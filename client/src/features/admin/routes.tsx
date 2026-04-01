@@ -10,6 +10,8 @@ import { MemberRankingPage } from './loyalty/pages';
 import { ManageMoviesPage } from './movies/pages';
 import { ManagePersonsPage } from './persons/pages';
 import ManageBookingsPage from './bookings/pages/ManageBookingsPage';
+import ManageRoomsPage from './rooms/pages/ManageRoomsPage';
+import ManageFoodPage from './food/pages/ManageFoodPage';
 
 export const adminRoutes = [
   {
@@ -28,6 +30,21 @@ export const adminRoutes = [
         icon: 'Film',
       },
       {
+<<<<<<< HEAD
+=======
+        path: 'rooms',
+        element: <ManageRoomsPage />,
+        name: 'Quản lý phòng chiếu',
+        icon: 'Armchair',
+      },
+      {
+        path: 'food',
+        element: <ManageFoodPage />,
+        name: 'Đồ ăn & nước uống',
+        icon: 'UtensilsCrossed',
+      },
+      {
+>>>>>>> main
         path: 'persons',
         element: <ManagePersonsPage />,
         name: 'Đạo diễn & Diễn viên',

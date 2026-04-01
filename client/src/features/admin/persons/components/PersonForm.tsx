@@ -10,11 +10,15 @@ import {
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import {
   useCreatePerson,
   useUpdatePerson,
   usePersonById,
 } from '../hooks';
+=======
+import { useCreatePerson, useUpdatePerson, usePersonById } from '../hooks';
+>>>>>>> main
 import { PERSON_ROLE } from '@shared/constants/person-roles';
 import { LoadingSpinner } from '../../../../components/ui/LoadingSpinner';
 import dayjs from '../../../../lib/dayjs';
@@ -186,7 +190,14 @@ export default function PersonForm({ personId, onSuccess }: PersonFormProps) {
           max={250}
           value={formData.height}
           onChange={(value) =>
+<<<<<<< HEAD
             setFormData({ ...formData, height: value ? Number(value) : undefined })
+=======
+            setFormData({
+              ...formData,
+              height: value ? Number(value) : undefined,
+            })
+>>>>>>> main
           }
           styles={inputStyles}
         />

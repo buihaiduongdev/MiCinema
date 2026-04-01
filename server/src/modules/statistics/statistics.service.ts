@@ -124,7 +124,13 @@ export const getRevenue = async (opts: RevenueOptions = {}) => {
             $concat: [
               { $toString: '$_id.year' },
               '-W',
-              { $cond: [{ $lt: ['$_id.week', 10] }, { $concat: ['0', { $toString: '$_id.week' }] }, { $toString: '$_id.week' }] },
+              {
+                $cond: [
+                  { $lt: ['$_id.week', 10] },
+                  { $concat: ['0', { $toString: '$_id.week' }] },
+                  { $toString: '$_id.week' },
+                ],
+              },
             ],
           },
           revenue: 1,
@@ -526,4 +532,3 @@ export const getUserGrowth = async (opts: UserGrowthOptions = {}) => {
     data,
   };
 };
-
