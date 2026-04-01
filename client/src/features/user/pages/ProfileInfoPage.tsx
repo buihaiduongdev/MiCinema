@@ -9,19 +9,19 @@ import {
   Mail,
   Phone,
   ShieldCheck,
+  Star,
   Ticket,
   UserRound,
 } from 'lucide-react';
-import { useDisclosure } from '@mantine/hooks';
-import { useCancelBooking } from '@/features/booking/hooks/useBooking';
-import BookingDetailModal from '../components/BookingDetailModal';
+import PointsSummary from '@/features/loyalty/components/PointsSummary';
+import PointsHistory from '@/features/loyalty/components/PointsHistory';
 import { useAuth } from '@/hooks/useAuth';
 import Navbar from '@/components/layout/Navbar';
 import { updateMeApi } from '@/features/auth/services/auth.service';
 import { useMyBookings } from '@/features/booking/hooks/useMyBookings';
 import apiClient from '@/lib/api-client';
 
-type SectionKey = 'info' | 'tickets' | 'password';
+type SectionKey = 'info' | 'tickets' | 'loyalty' | 'password';
 
 type TicketItem = {
   id: string;
@@ -51,6 +51,11 @@ const sidebarItems: Array<{
     key: 'tickets',
     label: 'Lịch sử đặt vé',
     icon: <Ticket className="h-4 w-4" />,
+  },
+  {
+    key: 'loyalty',
+    label: 'Tích điểm',
+    icon: <Star className="h-4 w-4" />,
   },
   {
     key: 'password',
@@ -411,6 +416,22 @@ export default function ProfileInfoPage() {
                 </p>
               </article>
             ))}
+          </div>
+        </section>
+      );
+    }
+
+    if (activeSection === 'loyalty') {
+      return (
+        <section className="px-4 py-10 sm:px-8 lg:px-10">
+          <div className="mb-6 flex items-center gap-3">
+            <Star className="h-5 w-5 text-rose-300" />
+            <h2 className="text-xl font-bold sm:text-2xl">Tích điểm thành viên</h2>
+          </div>
+          <PointsSummary />
+          <div className="mt-8">
+            <h3 className="text-lg font-bold mb-4">Lịch sử giao dịch</h3>
+            <PointsHistory />
           </div>
         </section>
       );

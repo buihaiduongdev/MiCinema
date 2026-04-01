@@ -137,7 +137,6 @@ export default function MovieForm({ movieId, onSuccess }: MovieFormProps) {
 
   const genreOptions =
     genres?.map((g) => ({ value: g._id, label: g.name })) || [];
-
   // Director options với avatar
   const directorOptions: PersonOption[] =
     directors?.map((p) => ({

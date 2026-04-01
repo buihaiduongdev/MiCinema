@@ -40,6 +40,7 @@ import paymentRoutes from './modules/payments/payment.routes.js';
 import statisticsRoutes from './modules/statistics/statistics.routes.js';
 import roomRoutes from './modules/rooms/room.routes.js';
 import foodRoutes from './modules/food/food.routes.js';
+import reviewRoutes from './modules/reviews/review.routes.js';
 
 import { errorHandler } from './middlewares/error.middleware.js';
 
@@ -69,6 +70,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/food', foodRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.use(errorHandler);
 

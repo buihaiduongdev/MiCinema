@@ -20,3 +20,4 @@ export * from './schemas/showtime.schema.js';
 export * from './schemas/booking.schema.js';
 export * from './schemas/room.schema.js';
 export * from './schemas/food.schema.js';
+export * from './schemas/review.schema.js';

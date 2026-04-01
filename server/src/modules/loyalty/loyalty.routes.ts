@@ -33,4 +33,14 @@ router.get('/ranking', loyaltyController.getMemberRankingDetailed);
 
 router.use(protect);
 
+/**
+ * GET /api/loyalty/me - Tóm tắt loyalty (điểm, hạng, tiến trình)
+ */
+router.get('/me', loyaltyController.getMySummary);
+
+/**
+ * GET /api/loyalty/me/history - Lịch sử tích/dùng điểm
+ */
+router.get('/me/history', loyaltyController.getMyHistory);
+
 export default router;

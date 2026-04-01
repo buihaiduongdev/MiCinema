@@ -14,3 +14,4 @@ export * from './LoyaltyHistory.model.js';
 export * from './Person.model.js';
 export * from './Genre.model.js';
 export * from './Cinema.model.js';
+export * from './Review.model.js';

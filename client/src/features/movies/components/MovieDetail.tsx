@@ -195,7 +195,7 @@ export default function MovieDetail({ movie }: MovieDetailProps) {
                   opened={isRatingModalOpen}
                   onClose={() => setIsRatingModalOpen(false)}
                   movieTitle={movie.title}
-                  movieRating={movie.rating}
+                  movieId={movie._id}
                 />
 
                 {/* Country */}
