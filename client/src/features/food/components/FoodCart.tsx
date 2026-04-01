@@ -7,9 +7,14 @@ import {
   Divider,
   Button,
   ScrollArea,
+  Image,
 } from '@mantine/core';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import { useFoodMenu } from '../hooks/useFoodMenu';
+import {
+  getProductImageFallback,
+  getProductImageUrl,
+} from '@/utils/image';
 
 interface FoodCartProps {
   cart: Record<string, number>;
@@ -73,6 +78,16 @@ export default function FoodCart({
             <Stack gap="sm">
               {cartItems.map((item) => (
                 <Group key={item._id} justify="space-between" wrap="nowrap">
+                  <Image
+                    src={getProductImageUrl(item.image, item.category, 'thumb')}
+                    fallbackSrc={getProductImageFallback(item.category)}
+                    w={44}
+                    h={44}
+                    radius="md"
+                    fit="cover"
+                    alt={item.name}
+                    flex="none"
+                  />
                   <Stack gap={0} flex={1}>
                     <Text size="sm" fw={600} c="white" lineClamp={1}>
                       {item.name}

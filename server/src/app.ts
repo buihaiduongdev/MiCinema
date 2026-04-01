@@ -23,6 +23,7 @@
  * - /api/genres → genre.routes
  */
 import express, { Application } from 'express';
+import path from 'path';
 import cors from 'cors';
 import { corsOptions } from './config/cors';
 
@@ -49,6 +50,9 @@ const app: Application = express();
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+/** Ảnh upload (multer lưu vào public/uploads) — client dùng URL /uploads/... */
+app.use(express.static(path.join(process.cwd(), 'public')));
 
 app.get('/health', (req, res) => {
   res

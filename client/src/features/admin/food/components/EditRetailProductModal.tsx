@@ -10,6 +10,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import type { AdminProductRow } from '../hooks/useFoodCRUD';
 import { useUpdateProduct } from '../hooks/useFoodCRUD';
+import { FoodProductImageField } from './FoodProductImageField';
 
 const inputStyles = {
   input: {
@@ -48,7 +49,7 @@ export function EditRetailProductModal({ product, opened, onClose }: Props) {
       notifications.show({
         color: 'red',
         title: 'Thiếu thông tin',
-        message: 'Nhập tên và URL ảnh.',
+        message: 'Nhập tên và tải ảnh.',
       });
       return;
     }
@@ -117,12 +118,11 @@ export function EditRetailProductModal({ product, opened, onClose }: Props) {
           styles={inputStyles}
           labelProps={{ style: { color: '#c2c6d8' } }}
         />
-        <TextInput
-          label="URL ảnh"
+        <FoodProductImageField
           value={image}
-          onChange={(e) => setImage(e.currentTarget.value)}
-          styles={inputStyles}
-          labelProps={{ style: { color: '#c2c6d8' } }}
+          onChange={setImage}
+          category={product?.category}
+          disabled={updateProduct.isPending}
         />
         <Textarea
           label="Mô tả"

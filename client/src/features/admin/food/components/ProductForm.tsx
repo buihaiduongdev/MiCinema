@@ -10,6 +10,7 @@ import { notifications } from '@mantine/notifications';
 import { PRODUCT_CATEGORY } from '@shared/constants/food-constants';
 import type { CreateProductInput } from '@shared/schemas/food.schema';
 import { useCreateProduct } from '../hooks/useFoodCRUD';
+import { FoodProductImageField } from './FoodProductImageField';
 
 const inputStyles = {
   input: {
@@ -50,7 +51,7 @@ export function ProductForm({ onSuccess }: Props) {
       notifications.show({
         color: 'red',
         title: 'Thiếu thông tin',
-        message: 'Nhập tên, URL ảnh và chọn danh mục.',
+        message: 'Nhập tên, tải ảnh và chọn danh mục.',
       });
       return;
     }
@@ -117,14 +118,11 @@ export function ProductForm({ onSuccess }: Props) {
         labelProps={{ style: { color: '#c2c6d8' } }}
         required
       />
-      <TextInput
-        label="URL ảnh"
-        placeholder="https://..."
+      <FoodProductImageField
         value={image}
-        onChange={(e) => setImage(e.currentTarget.value)}
-        styles={inputStyles}
-        labelProps={{ style: { color: '#c2c6d8' } }}
-        required
+        onChange={setImage}
+        category={category ?? undefined}
+        disabled={createProduct.isPending}
       />
       <Select
         label="Danh mục"
