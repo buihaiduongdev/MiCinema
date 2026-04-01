@@ -3,11 +3,13 @@ import * as foodService from './food.service.js';
 import { responseSuccess } from '../../utils/response.js';
 import type {
   CreateComboInput,
+  CreateFoodOrderInput,
   CreateProductInput,
   FoodOrderListQuery,
   PatchProductInput,
   ProductListQuery,
 } from '@shared/schemas/food.schema.js';
+import { FOOD_ORDER_STATUS } from '@shared/constants/statuses.js';
 
 export const createProduct = async (req: Request, res: Response) => {
   const product = await foodService.createProduct(
@@ -57,4 +59,40 @@ export const listFoodOrders = async (req: Request, res: Response) => {
   res
     .status(200)
     .json(responseSuccess(result, 'Lấy danh sách đơn đồ ăn thành công'));
+};
+
+export const createFoodOrder = async (req: Request, res: Response) => {
+  const userId = (req as any).user._id;
+  const order = req.body as CreateFoodOrderInput;
+  const result = await foodService.createFoodOrder(userId, order);
+
+  res.status(200).json(responseSuccess(result, 'Tạo đơn thành công'));
+};
+
+export const getFoodOrdersByBooking = async (req: Request, res: Response) => {
+  const { bookingId } = req.params;
+  const orders = await foodService.getFoodOrdersByBooking(bookingId as string);
+  res
+    .status(200)
+    .json(responseSuccess(orders, 'Lấy danh sách đồ ăn thành công'));
+};
+
+export const createFoodPayment = async (req: Request, res: Response) => {
+  const { orderId } = req.params;
+  const order = await foodService.getFoodOrdersById(orderId as string);
+  if (!order) throw new Error('Không tìm thấy đơn đồ ăn');
+  const paymentUrl = `https://img.vietqr.io/image/970422-0345588112-compact2.jpg?amount=${order.totalAmount}&addInfo=MiCinema Food ${orderId}&accountName=BUI HAI DUONG`;
+
+  res
+    .status(200)
+    .json(responseSuccess({ paymentUrl }, 'Tạo mã thanh toán thành công'));
+};
+
+export const simulatePaid = async (req: Request, res: Response) => {
+  const { orderId } = req.params;
+  const order = await foodService.updateOrderStatus(
+    orderId as string,
+    FOOD_ORDER_STATUS.PAID,
+  );
+  res.status(200).json(responseSuccess(order, 'Đã xác nhận thanh toán đồ ăn'));
 };

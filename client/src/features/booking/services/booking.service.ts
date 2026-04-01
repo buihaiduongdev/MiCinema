@@ -43,3 +43,9 @@ export const createPaymentApi = (
 ): Promise<ApiResponse<{ paymentUrl: string }>> => {
   return apiClient.post('/payments/pay', { bookingId });
 };
+
+export const cancelBookingApi = (
+  id: string,
+): Promise<ApiResponse<BookingType>> => {
+  return apiClient.patch(`/booking/${id}/cancel`);
+};

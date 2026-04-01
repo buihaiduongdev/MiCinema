@@ -75,7 +75,29 @@ export default function ProfileInfoPage() {
   const [profileMessage, setProfileMessage] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
   const userRecord = (user ?? {}) as Record<string, unknown>;
-
+  //detail
+  const [opened, { open, close }] = useDisclosure(false);
+  const [selectedBooking, setSelectedBooking] = useState<{
+    id: string;
+    status: string;
+  } | null>(null);
+  const { mutate: cancelBooking } = useCancelBooking();
+  const handleOpenDetail = (id: string, status: string) => {
+    setSelectedBooking({ id, status });
+    open();
+  };
+  const handleCancelBooking = () => {
+    if (
+      selectedBooking &&
+      window.confirm('Bạn có chắc chắn muốn hủy vé này?')
+    ) {
+      cancelBooking(selectedBooking.id, {
+        onSuccess: () => {
+          close();
+        },
+      });
+    }
+  };
   const displayName =
     typeof userRecord.fullName === 'string' &&
     userRecord.fullName.trim().length > 0
@@ -95,7 +117,7 @@ export default function ProfileInfoPage() {
     typeof userRecord.role === 'string' ? userRecord.role : 'CUSTOMER';
   const totalPoints =
     typeof userRecord.loyaltyPoints === 'number' ? userRecord.loyaltyPoints : 0;
-  const userId = typeof userRecord._id === 'string' ? userRecord._id : 'N/A';
+  // const userId = typeof userRecord._id === 'string' ? userRecord._id : 'N/A';
   const fallbackAvatar =
     'https://i.pinimg.com/originals/c6/e5/65/c6e56503cfdd87da299f72dc416023d4.jpg';
   const displayAvatar = user?.avatar?.trim() || fallbackAvatar;
@@ -303,7 +325,7 @@ export default function ProfileInfoPage() {
       return {
         id: booking._id,
         movieTitle: resolvedMovieTitle,
-        showtime: `Dat ve: ${createdAt} - Chieu: ${startTime} - ${roomName} - Showtime: ${showtimeId}`,
+        showtime: `Dat ve: ${createdAt} - Chieu: ${startTime} - ${roomName}`,
         seat: seatLabel || 'N/A',
         status: safeStatus,
       };
@@ -439,9 +461,9 @@ export default function ProfileInfoPage() {
                 className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-white/5 to-white/[0.03] p-5 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">
+                  {/* <p className="text-xs uppercase tracking-[0.2em] text-white/45">
                     {ticket.id}
-                  </p>
+                  </p> */}
                   <p className="mt-1 text-lg font-bold">{ticket.movieTitle}</p>
                   <p className="mt-1 text-sm text-white/65">
                     {ticket.showtime}
@@ -458,9 +480,10 @@ export default function ProfileInfoPage() {
                   </span>
                   <button
                     type="button"
+                    onClick={() => handleOpenDetail(ticket.id, ticket.status)}
                     className="rounded-lg border border-white/20 px-3 py-2 text-sm font-semibold transition hover:bg-white/10"
                   >
-                    Chi tiet
+                    Chi tiết
                   </button>
                 </div>
               </article>
@@ -482,7 +505,7 @@ export default function ProfileInfoPage() {
             <h3 className="mb-4 text-lg font-bold">Thông tin cá nhân</h3>
             <form onSubmit={handleProfileSubmit} className="space-y-4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
+                {/* <div>
                   <label className="mb-1 block text-sm font-semibold text-white/80">
                     User ID
                   </label>
@@ -492,7 +515,7 @@ export default function ProfileInfoPage() {
                     readOnly
                     className="w-full rounded-lg border border-white/10 bg-black/25 px-4 py-2.5 text-sm text-white/70 outline-none"
                   />
-                </div>
+                </div> */}
                 <div>
                   <label className="mb-1 block text-sm font-semibold text-white/80">
                     Email
@@ -764,6 +787,15 @@ export default function ProfileInfoPage() {
           </div>
         </main>
       </div>
+      {selectedBooking && (
+        <BookingDetailModal
+          opened={opened}
+          onClose={close}
+          bookingId={selectedBooking.id}
+          status={selectedBooking.status}
+          onCancel={handleCancelBooking}
+        />
+      )}
     </div>
   );
 }

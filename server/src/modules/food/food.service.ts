@@ -8,10 +8,13 @@ import { getSkip, getPaginationData } from '../../utils/pagination.js';
 import type {
   CreateComboInput,
   CreateProductInput,
+  CreateFoodOrderInput,
   FoodOrderListQuery,
   PatchProductInput,
   ProductListQuery,
 } from '@shared/schemas/food.schema.js';
+import { Booking } from 'src/models/Booking.model.js';
+import { FOOD_ORDER_STATUS } from '@shared/constants/statuses.js';
 
 const httpError = (message: string, statusCode: number) => {
   const e = new Error(message) as Error & { statusCode: number };
@@ -227,4 +230,67 @@ export const listFoodOrdersByShowtime = async (query: FoodOrderListQuery) => {
 
   const pagination = getPaginationData(totalItems, page, limit);
   return { data, pagination };
+};
+
+export const createFoodOrder = async (
+  userId: string,
+  data: CreateFoodOrderInput,
+) => {
+  const { bookingId, items } = data;
+  const booking = await Booking.findById(bookingId).lean();
+
+  if (!booking) throw new Error('Không tìm thấy thông tin đặt vé liên quan');
+
+  const productIds = items.map((product) => product.productId);
+  const products = await Product.find({ _id: { $in: productIds } }).lean();
+
+  //Tránh trùng lặp ids
+  if (products.length !== new Set(productIds).size)
+    throw new Error('Một số sản phẩm không tồn tại trong hệ thống');
+
+  const orderItems = items.map((item) => {
+    const p = products.find(
+      (p) => p._id.toString() === item.productId && p.isActive,
+    );
+    if (!p) throw new Error('Lỗi dữ liệu sản phẩm');
+
+    return {
+      productId: p._id,
+      productName: p.name,
+      quantity: item.quantity,
+      unitPrice: p.price,
+    };
+  });
+
+  const totalAmount = orderItems.reduce(
+    (acc, item) => acc + item.unitPrice * item.quantity,
+    0,
+  );
+
+  const foodOrder = await FoodOrder.create({
+    userId,
+    showtimeId: booking.showtimeId,
+    bookingId: bookingId,
+    items: orderItems,
+    totalAmount,
+    status: FOOD_ORDER_STATUS.PENDING,
+  });
+
+  return foodOrder;
+};
+
+export const getFoodOrdersByBooking = async (bookingId: string) => {
+  return await FoodOrder.find({ bookingId }).lean();
+};
+
+export const getFoodOrdersById = async (orderId: string) => {
+  return await FoodOrder.findById(orderId).lean();
+};
+
+export const updateOrderStatus = async (orderId: string, status: string) => {
+  const order = await FoodOrder.findById(orderId);
+  if (!order) throw httpError('Không tìm thấy đơn đồ ăn', 404);
+  order.status = status;
+  await order.save();
+  return order;
 };

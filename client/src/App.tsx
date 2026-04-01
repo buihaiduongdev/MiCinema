@@ -17,6 +17,8 @@ import BookingPage from './features/booking/pages/BookingPage';
 import BookingConfirmPage from './features/booking/pages/BookingConfirmPage';
 import BookingResultPage from './features/booking/pages/BookingResultPage';
 import ProfileInfoPage from './features/user/pages/ProfileInfoPage';
+import FoodMenuPage from './features/food/pages/FoodMenuPage';
+import FoodConfirmPage from './features/food/pages/FoodConfirmPage';
 
 function App() {
   const adminChildren =
@@ -64,6 +66,22 @@ function App() {
           element={
             <ProtectedRoute>
               <BookingResultPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/order/food"
+          element={
+            <ProtectedRoute>
+              <FoodMenuPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/order/food/confirm/:orderId"
+          element={
+            <ProtectedRoute>
+              <FoodConfirmPage />
             </ProtectedRoute>
           }
         />
