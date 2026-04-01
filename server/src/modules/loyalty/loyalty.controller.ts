@@ -61,3 +61,28 @@ export const getMemberRankingDetailed = async (req: Request, res: Response) => {
     .status(200)
     .json(responseSuccess(data, 'Lấy bảng xếp hạng thành viên thành công'));
 };
+
+/**
+ * GET /api/loyalty/me — Tóm tắt loyalty của user hiện tại
+ * Protected: cần đăng nhập
+ */
+export const getMySummary = async (req: Request, res: Response) => {
+  const data = await loyaltyService.getMySummary(req.user._id.toString());
+  res
+    .status(200)
+    .json(responseSuccess(data, 'Lấy thông tin tích điểm thành công'));
+};
+
+/**
+ * GET /api/loyalty/me/history — Lịch sử tích/dùng điểm của user
+ * Protected: cần đăng nhập
+ */
+export const getMyHistory = async (req: Request, res: Response) => {
+  const result = await loyaltyService.getByUserId(
+    req.user._id.toString(),
+    req.query as any,
+  );
+  res
+    .status(200)
+    .json(responseSuccess(result, 'Lấy lịch sử điểm thành công'));
+};

@@ -30,8 +30,6 @@ export const adminRoutes = [
         icon: 'Film',
       },
       {
-<<<<<<< HEAD
-=======
         path: 'rooms',
         element: <ManageRoomsPage />,
         name: 'Quản lý phòng chiếu',
@@ -44,7 +42,6 @@ export const adminRoutes = [
         icon: 'UtensilsCrossed',
       },
       {
->>>>>>> main
         path: 'persons',
         element: <ManagePersonsPage />,
         name: 'Đạo diễn & Diễn viên',
