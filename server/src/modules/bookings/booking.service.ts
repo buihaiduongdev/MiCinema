@@ -4,7 +4,12 @@ import { Showtime } from '../../models/Showtime.model.js';
 import { User } from '../../models/User.model.js';
 import { CreateBooking } from '@shared/schemas/booking.schema.js';
 import type { AdminBookingListQuery } from '@shared/schemas/booking.schema.js';
-import { BOOKING_STATUS, SHOWTIME_STATUS } from '@shared/constants/statuses.js';
+import {
+  BOOKING_STATUS,
+  SHOWTIME_STATUS,
+  FOOD_ORDER_STATUS,
+} from '@shared/constants/statuses.js';
+import { FoodOrder } from '../../models/FoodOrder.model.js';
 import { getSkip, getPaginationData } from '../../utils/pagination.js';
 import { issueTicketsForPaidBooking } from '../tickets/ticket.service.js';
 
@@ -223,19 +228,45 @@ export const markBookingPaid = async (bookingId: string) => {
 export const cleanupExpiredBookings = async () => {
   const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
-  const result = await Booking.updateMany(
-    {
-      status: BOOKING_STATUS.PENDING,
-      createdAt: { $lt: tenMinutesAgo },
-    },
-    {
-      $set: { status: BOOKING_STATUS.CANCELLED },
-    },
+  // 1. Tìm các booking hết hạn
+  const expiredBookings = await Booking.find({
+    status: BOOKING_STATUS.PENDING,
+    createdAt: { $lt: tenMinutesAgo },
+  }).select('_id');
+
+  if (expiredBookings.length === 0) return;
+
+  const expiredIds = expiredBookings.map((b) => b._id);
+
+  // 2. Hủy các booking này
+  await Booking.updateMany(
+    { _id: { $in: expiredIds } },
+    { $set: { status: BOOKING_STATUS.CANCELLED } },
   );
 
-  if (result.modifiedCount > 0) {
-    console.log(
-      `Đã giải phóng bàn cho ${result.modifiedCount} đơn hàng hết hạn.`,
-    );
+  // 3. Hủy luôn các đơn hàng đồ ăn liên quan
+  await FoodOrder.updateMany(
+    { bookingId: { $in: expiredIds.map((id) => id.toString()) } },
+    { $set: { status: FOOD_ORDER_STATUS.CANCELLED } },
+  );
+
+  console.log(`Đã hủy ${expiredIds.length} đơn đặt vé và đồ ăn kèm hết hạn.`);
+};
+export const cancelBooking = async (userId: string, bookingId: string) => {
+  const booking = await Booking.findOne({ _id: bookingId, userId });
+  if (!booking) throw httpError('Không tìm thấy đơn đặt vé', 404);
+
+  if (booking.status === 'PAID') {
+    throw httpError('Không thể hủy vé đã thanh toán', 400);
   }
+
+  booking.status = BOOKING_STATUS.CANCELLED;
+  await booking.save();
+
+  await FoodOrder.updateMany(
+    { bookingId: bookingId },
+    { $set: { status: FOOD_ORDER_STATUS.CANCELLED } },
+  );
+
+  return booking;
 };

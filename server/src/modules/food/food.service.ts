@@ -270,10 +270,27 @@ export const createFoodOrder = async (
   const foodOrder = await FoodOrder.create({
     userId,
     showtimeId: booking.showtimeId,
+    bookingId: bookingId,
     items: orderItems,
     totalAmount,
     status: FOOD_ORDER_STATUS.PENDING,
   });
 
   return foodOrder;
+};
+
+export const getFoodOrdersByBooking = async (bookingId: string) => {
+  return await FoodOrder.find({ bookingId }).lean();
+};
+
+export const getFoodOrdersById = async (orderId: string) => {
+  return await FoodOrder.findById(orderId).lean();
+};
+
+export const updateOrderStatus = async (orderId: string, status: string) => {
+  const order = await FoodOrder.findById(orderId);
+  if (!order) throw httpError('Không tìm thấy đơn đồ ăn', 404);
+  order.status = status;
+  await order.save();
+  return order;
 };

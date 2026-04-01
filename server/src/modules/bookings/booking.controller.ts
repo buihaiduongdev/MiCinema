@@ -56,3 +56,10 @@ export const listBookingsAdmin = async (req: Request, res: Response) => {
     .status(200)
     .json(responseSuccess(data, 'Lấy danh sách đặt vé thành công'));
 };
+
+export const cancelBooking = async (req: Request, res: Response) => {
+  const userId = (req as any).user._id;
+  const { id } = req.params;
+  const booking = await bookingService.cancelBooking(userId, id);
+  res.status(200).json(responseSuccess(booking, 'Hủy đơn đặt vé thành công'));
+};

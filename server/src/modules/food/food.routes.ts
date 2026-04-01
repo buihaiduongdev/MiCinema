@@ -24,7 +24,12 @@ router.post(
   validate({ body: createFoodOrderSchema }),
   foodController.createFoodOrder,
 );
-
+router.get(
+  '/orders/by-booking/:bookingId',
+  foodController.getFoodOrdersByBooking,
+);
+router.post('/orders/:orderId/pay', foodController.createFoodPayment);
+router.patch('/orders/:orderId/simulate-paid', foodController.simulatePaid);
 router.use(restrictTo('ADMIN'));
 
 router.get(
