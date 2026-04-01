@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as foodService from './food.service.js';
-import { responseSuccess } from '../../utils/response.js';
+import { responseError, responseSuccess } from '../../utils/response.js';
 import type {
   CreateComboInput,
   CreateFoodOrderInput,
@@ -10,6 +10,16 @@ import type {
   ProductListQuery,
 } from '@shared/schemas/food.schema.js';
 import { FOOD_ORDER_STATUS } from '@shared/constants/statuses.js';
+
+/** Upload ảnh sản phẩm/combo — trả về đường dẫn public `/uploads/...` */
+export const uploadProductImage = async (req: Request, res: Response) => {
+  const file = req.file;
+  if (!file?.filename) {
+    return res.status(400).json(responseError('Không có file ảnh'));
+  }
+  const url = `/uploads/${file.filename}`;
+  res.status(200).json(responseSuccess({ url }, 'Upload ảnh thành công'));
+};
 
 export const createProduct = async (req: Request, res: Response) => {
   const product = await foodService.createProduct(

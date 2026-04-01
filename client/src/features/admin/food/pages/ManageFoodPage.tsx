@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, Modal, Select, Badge, Tabs } from '@mantine/core';
+import { Button, Modal, Select, Badge, Tabs, Image } from '@mantine/core';
 import { Plus, Home, ChevronRight, Pencil, EyeOff } from 'lucide-react';
 import { notifications } from '@mantine/notifications';
 import { PRODUCT_CATEGORY } from '@shared/constants/food-constants';
@@ -16,6 +16,10 @@ import { EditRetailProductModal } from '../components/EditRetailProductModal';
 import { ComboForm } from '../components/ComboForm';
 import { EditComboModal } from '../components/EditComboModal';
 import { LoadingSpinner } from '../../../../components/ui/LoadingSpinner';
+import {
+  getProductImageFallback,
+  getProductImageUrl,
+} from '@/utils/image';
 
 const CATEGORY_LABELS: Record<string, string> = {
   [PRODUCT_CATEGORY.POPCORN]: 'Bắp / Đồ ăn nhẹ',
@@ -293,10 +297,21 @@ export default function ManageFoodPage() {
                             className="border-b border-[#424656]/25 hover:bg-[#171f33]/80"
                           >
                             <td className="px-4 py-3 w-20">
-                              <img
-                                src={p.image}
+                              <Image
+                                src={getProductImageUrl(
+                                  p.image,
+                                  p.category,
+                                  'thumb',
+                                )}
+                                fallbackSrc={getProductImageFallback(
+                                  p.category,
+                                )}
                                 alt=""
-                                className="w-14 h-14 rounded-lg object-cover bg-[#060e20]"
+                                w={56}
+                                h={56}
+                                radius="md"
+                                fit="cover"
+                                bg="#060e20"
                               />
                             </td>
                             <td className="px-4 py-3 text-[#dae2fd] font-medium">
@@ -418,10 +433,21 @@ export default function ManageFoodPage() {
                             className="border-b border-[#424656]/25 hover:bg-[#171f33]/80"
                           >
                             <td className="px-4 py-3 w-20">
-                              <img
-                                src={p.image}
+                              <Image
+                                src={getProductImageUrl(
+                                  p.image,
+                                  p.category,
+                                  'thumb',
+                                )}
+                                fallbackSrc={getProductImageFallback(
+                                  p.category,
+                                )}
                                 alt=""
-                                className="w-14 h-14 rounded-lg object-cover bg-[#060e20]"
+                                w={56}
+                                h={56}
+                                radius="md"
+                                fit="cover"
+                                bg="#060e20"
                               />
                             </td>
                             <td className="px-4 py-3 text-[#dae2fd] font-medium">

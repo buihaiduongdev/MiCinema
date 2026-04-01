@@ -8,9 +8,11 @@ import {
   Textarea,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { PRODUCT_CATEGORY } from '@shared/constants/food-constants';
 import type { CreateComboInput } from '@shared/schemas/food.schema';
 import type { AdminProductDetail } from '../hooks/useFoodCRUD';
 import { useCreateCombo, useUpdateProduct } from '../hooks/useFoodCRUD';
+import { FoodProductImageField } from './FoodProductImageField';
 
 const inputStyles = {
   input: {
@@ -100,7 +102,7 @@ export function ComboForm({
       notifications.show({
         color: 'red',
         title: 'Thiếu thông tin',
-        message: 'Nhập tên combo và URL ảnh.',
+        message: 'Nhập tên combo và tải ảnh.',
       });
       return;
     }
@@ -217,12 +219,11 @@ export function ComboForm({
         styles={inputStyles}
         labelProps={{ style: { color: '#c2c6d8' } }}
       />
-      <TextInput
-        label="URL ảnh"
+      <FoodProductImageField
         value={image}
-        onChange={(e) => setImage(e.currentTarget.value)}
-        styles={inputStyles}
-        labelProps={{ style: { color: '#c2c6d8' } }}
+        onChange={setImage}
+        category={PRODUCT_CATEGORY.COMBO}
+        disabled={pending}
       />
       <NumberInput
         label="Giảm giá (%) — gợi ý so với giá lẻ"

@@ -7,6 +7,13 @@ import { useMovies } from '@/features/movies/hooks/useMovies';
 import type { MovieResponse } from '@/features/movies/services/movies.service';
 import { formatDate, formatDuration } from '@/utils/format';
 import { useNavigate } from 'react-router-dom';
+import {
+  MOVIE_HERO_FALLBACK,
+  MOVIE_POSTER_FALLBACK,
+  type ImageVariant,
+  resolveImageUrl,
+} from '@/utils/image';
+
 type HomeMovie = MovieResponse & {
   releaseDate: string | Date;
   createdAt?: string | Date;
@@ -18,8 +25,6 @@ type HomeMovie = MovieResponse & {
   viewCount?: number;
   directors?: unknown[];
 };
-
-type ImageVariant = 'hero' | 'poster' | 'thumb';
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null;
@@ -49,30 +54,9 @@ const getListLabels = (values: unknown, fallback = 'N/A'): string => {
   return labels.length > 0 ? labels.join(' • ') : fallback;
 };
 
-const optimizeImageUrl = (url: string, variant: ImageVariant): string => {
-  let optimized = url.trim();
-
-  // TMDB: đổi size nhỏ (w500) lên size lớn hơn cho Hero để hạn chế vỡ ảnh.
-  if (optimized.includes('image.tmdb.org/t/p/')) {
-    if (variant === 'hero') {
-      return optimized.replace(/\/w\d+\//, '/original/');
-    }
-
-    if (variant === 'thumb') {
-      return optimized.replace(/\/w\d+\//, '/w342/');
-    }
-
-    return optimized.replace(/\/w\d+\//, '/w780/');
-  }
-
-  return optimized;
-};
-
 export default function HomePage() {
-  const fallbackPoster =
-    'https://images.unsplash.com/photo-1489599856769-c5ae6f84f5a7?w=800&h=1200&fit=crop';
-  const fallbackHero =
-    'https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=1920&h=1080&fit=crop';
+  const fallbackPoster = MOVIE_POSTER_FALLBACK;
+  const fallbackHero = MOVIE_HERO_FALLBACK;
   const navigate = useNavigate();
   const {
     data: moviesResponse,
@@ -108,12 +92,11 @@ export default function HomePage() {
     movie: HomeMovie,
     variant: ImageVariant = 'poster',
   ) => {
-    if (movie.poster && movie.poster.trim().length > 0) {
-      return optimizeImageUrl(movie.poster, variant);
-    }
-
-    if (variant === 'hero') return fallbackHero;
-    return fallbackPoster;
+    return resolveImageUrl(
+      movie.poster,
+      variant,
+      variant === 'hero' ? fallbackHero : fallbackPoster,
+    );
   };
 
   const trendingMovies = useMemo(() => {
