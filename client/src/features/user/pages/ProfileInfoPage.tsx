@@ -13,6 +13,9 @@ import {
   Ticket,
   UserRound,
 } from 'lucide-react';
+import { useDisclosure } from '@mantine/hooks';
+import { useCancelBooking } from '@/features/booking/hooks/useBooking';
+import BookingDetailModal from '../components/BookingDetailModal';
 import PointsSummary from '@/features/loyalty/components/PointsSummary';
 import PointsHistory from '@/features/loyalty/components/PointsHistory';
 import { useAuth } from '@/hooks/useAuth';
