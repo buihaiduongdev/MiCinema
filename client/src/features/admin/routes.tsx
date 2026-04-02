@@ -12,6 +12,7 @@ import { ManagePersonsPage } from './persons/pages';
 import ManageBookingsPage from './bookings/pages/ManageBookingsPage';
 import ManageRoomsPage from './rooms/pages/ManageRoomsPage';
 import ManageFoodPage from './food/pages/ManageFoodPage';
+import ManageShowtimesPage from './showtimes/pages/ManageShowtimesPage';
 
 export const adminRoutes = [
   {
@@ -40,6 +41,12 @@ export const adminRoutes = [
         element: <ManageFoodPage />,
         name: 'Đồ ăn & nước uống',
         icon: 'UtensilsCrossed',
+      },
+      {
+        path: 'showtimes',
+        element: <ManageShowtimesPage />,
+        name: 'Quản lý lịch chiếu',
+        icon: 'Calendar',
       },
       {
         path: 'persons',
