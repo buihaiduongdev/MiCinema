@@ -26,6 +26,7 @@ export const bookingSchema = createBookingSchema.extend({
   status: z.nativeEnum(BOOKING_STATUS),
   totalPrice: z.number(),
   createdAt: z.date().or(z.string()),
+  tickets: z.array(z.any()).optional(),
 });
 export type SeatSelection = z.infer<typeof seatSelectionSchema>;
 export type CreateBooking = z.infer<typeof createBookingSchema>;

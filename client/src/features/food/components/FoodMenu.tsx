@@ -12,6 +12,10 @@ import {
 } from '@mantine/core';
 import { IconPlus, IconMinus } from '@tabler/icons-react';
 import { useFoodMenu } from '../hooks/useFoodMenu';
+import {
+  getProductImageFallback,
+  getProductImageUrl,
+} from '@/utils/image';
 
 interface FoodMenuProps {
   onUpdateQuantity: (productId: string, delta: number) => void;
@@ -42,7 +46,13 @@ export default function FoodMenu({ onUpdateQuantity, cart }: FoodMenuProps) {
           }}
         >
           <Card.Section>
-            <Image src={product.image} height={180} alt={product.name} />
+            <Image
+              src={getProductImageUrl(product.image, product.category, 'thumb')}
+              fallbackSrc={getProductImageFallback(product.category)}
+              height={180}
+              alt={product.name}
+              fit="cover"
+            />
           </Card.Section>
           <Stack mt="md" gap="xs">
             <Group justify="space-between" wrap="nowrap">

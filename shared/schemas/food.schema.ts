@@ -64,11 +64,15 @@ export const patchProductSchema = z
 
 export type PatchProductInput = z.infer<typeof patchProductSchema>;
 
-export const productListQuerySchema = paginationSchema.extend({
-  category: z.nativeEnum(PRODUCT_CATEGORY).optional(),
-  /** retail = không COMBO; combo = chỉ COMBO; all = mặc định (hoặc lọc category) */
-  kind: z.enum(['retail', 'combo', 'all']).optional(),
-});
+/** Admin cần tải nhiều sản phẩm lẻ cho dropdown combo — limit > 100 so với pagination mặc định */
+export const productListQuerySchema = paginationSchema
+  .omit({ limit: true })
+  .extend({
+    limit: z.coerce.number().min(1).max(200).default(10),
+    category: z.nativeEnum(PRODUCT_CATEGORY).optional(),
+    /** retail = không COMBO; combo = chỉ COMBO; all = mặc định (hoặc lọc category) */
+    kind: z.enum(['retail', 'combo', 'all']).optional(),
+  });
 
 export type ProductListQuery = z.infer<typeof productListQuerySchema>;
 

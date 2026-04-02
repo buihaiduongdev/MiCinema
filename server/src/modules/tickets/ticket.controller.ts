@@ -27,3 +27,12 @@ export const refund = async (req: Request, res: Response) => {
     .status(200)
     .json(responseSuccess(result, 'Huỷ vé và hoàn tiền thành công'));
 };
+
+/** GET /api/tickets/verify/:ticketCode */
+export const verifyTicket = async (req: Request, res: Response) => {
+  const { ticketCode } = req.params;
+  const result = await ticketService.getVerificationPackageByCode(
+    ticketCode as string,
+  );
+  res.status(200).json(responseSuccess(result, 'Lấy thông tin vé thành công'));
+};

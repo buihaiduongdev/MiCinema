@@ -6,6 +6,7 @@ import { Router } from 'express';
 import * as foodController from './food.controller.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { protect, restrictTo } from '../../middlewares/auth.middleware.js';
+import { uploadSingle } from '../../middlewares/upload.middleware.js';
 import {
   createComboSchema,
   createProductSchema,
@@ -30,6 +31,17 @@ router.get(
 );
 router.post('/orders/:orderId/pay', foodController.createFoodPayment);
 router.patch('/orders/:orderId/simulate-paid', foodController.simulatePaid);
+
+/**
+ * TEMP — test upload: chỉ cần JWT (protect), không cần ADMIN.
+ * Khi test xong: xóa block này và đặt lại `POST /upload-image` ngay sau `router.use(restrictTo('ADMIN'))`.
+ */
+router.post(
+  '/upload-image',
+  uploadSingle('image'),
+  foodController.uploadProductImage,
+);
+
 router.use(restrictTo('ADMIN'));
 
 router.get(

@@ -3,7 +3,12 @@ import { Ticket } from '../../models/Ticket.model.js';
 import { Booking } from '../../models/Booking.model.js';
 import type { IBooking } from '../../models/Booking.model.js';
 import type { TicketRefundBody } from '@shared/schemas/ticket.schema.js';
-import { BOOKING_STATUS, TICKET_STATUS } from '@shared/constants/statuses.js';
+import {
+  BOOKING_STATUS,
+  TICKET_STATUS,
+  FOOD_ORDER_STATUS,
+} from '@shared/constants/statuses.js';
+import { FoodOrder } from '../../models/FoodOrder.model.js';
 
 function newTicketCode(): string {
   return randomBytes(12).toString('base64url').replace(/=/g, '');
@@ -44,9 +49,7 @@ export const checkInByTicketCode = async (ticketCode: string) => {
     return { ticket: populated, alreadyCheckedIn: true as const };
   }
 
-  const booking = await Booking.findById(ticket.bookingId)
-    .select('status')
-    .lean();
+  const booking = await Booking.findById(ticket.bookingId);
   if (!booking) throw httpError('Không tìm thấy đặt vé', 400);
   if (booking.status === BOOKING_STATUS.CANCELLED) {
     throw httpError('Đặt vé đã huỷ, không thể check-in', 400);
@@ -65,6 +68,17 @@ export const checkInByTicketCode = async (ticketCode: string) => {
   ticket.status = TICKET_STATUS.USED;
   ticket.usedAt = new Date();
   await ticket.save();
+
+  // Check if all tickets in this booking are already checked-in or cancelled/refunded
+  const remainingTickets = await Ticket.countDocuments({
+    bookingId: ticket.bookingId,
+    status: TICKET_STATUS.ISSUED,
+  });
+
+  if (remainingTickets === 0) {
+    booking.status = BOOKING_STATUS.COMPLETED;
+    await booking.save();
+  }
 
   const populated = await loadTicketForCheckInResponse(ticket._id.toString());
   return { ticket: populated, alreadyCheckedIn: false as const };
@@ -173,4 +187,35 @@ export const issueTicketsForPaidBooking = async (booking: IBooking) => {
   }));
 
   await Ticket.insertMany(docs);
+};
+
+/**
+ * Lấy gói thông tin kiểm tra vé (Verification Package) từ một mã vé duy nhất.
+ */
+export const getVerificationPackageByCode = async (ticketCode: string) => {
+  const ticket = await Ticket.findOne({ ticketCode: ticketCode.trim() }).lean();
+  if (!ticket) throw httpError('Mã vé không tồn tại', 404);
+
+  const bookingId = ticket.bookingId;
+
+  // Bookings with populated showtime details
+  const booking = await Booking.findById(bookingId)
+    .populate({
+      path: 'showtimeId',
+      populate: [{ path: 'movieId' }, { path: 'roomId' }],
+    })
+    .lean();
+
+  if (!booking) throw httpError('Không tìm thấy đơn đặt vé', 404);
+
+  const [tickets, foodOrders] = await Promise.all([
+    Ticket.find({ bookingId }).lean(),
+    FoodOrder.find({ bookingId }).lean(),
+  ]);
+
+  return {
+    booking,
+    tickets,
+    foodOrders,
+  };
 };
