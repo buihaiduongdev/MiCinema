@@ -14,7 +14,11 @@ import type {
   ProductListQuery,
 } from '@shared/schemas/food.schema.js';
 import { Booking } from 'src/models/Booking.model.js';
-import { FOOD_ORDER_STATUS } from '@shared/constants/statuses.js';
+import {
+  FOOD_ORDER_STATUS,
+  LOYALTY_ACTION,
+} from '@shared/constants/statuses.js';
+import * as loyaltyService from '../loyalty/loyalty.service.js';
 
 const httpError = (message: string, statusCode: number) => {
   const e = new Error(message) as Error & { statusCode: number };
@@ -275,6 +279,18 @@ export const createFoodOrder = async (
     totalAmount,
     status: FOOD_ORDER_STATUS.PENDING,
   });
+
+  // +5 điểm loyalty cho mỗi đơn đồ ăn
+  try {
+    await loyaltyService.create({
+      userId,
+      points: 5,
+      action: LOYALTY_ACTION.EARN,
+      description: `Tích điểm đặt đồ ăn (+5 điểm)`,
+    });
+  } catch (e) {
+    console.error('[createFoodOrder] Loyalty earn error:', e);
+  }
 
   return foodOrder;
 };

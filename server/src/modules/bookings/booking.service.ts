@@ -13,7 +13,8 @@ import { FoodOrder } from '../../models/FoodOrder.model.js';
 import { Ticket } from '../../models/Ticket.model.js';
 import { getSkip, getPaginationData } from '../../utils/pagination.js';
 import { issueTicketsForPaidBooking } from '../tickets/ticket.service.js';
-import { log } from 'node:console';
+import * as loyaltyService from '../loyalty/loyalty.service.js';
+import { LOYALTY_ACTION, MEMBERSHIP_TIER } from '@shared/constants/statuses.js';
 
 const httpError = (message: string, statusCode: number) => {
   const e = new Error(message) as Error & { statusCode: number };
@@ -232,9 +233,108 @@ export const markBookingPaid = async (bookingId: string) => {
 
   await issueTicketsForPaidBooking(booking);
 
+  // === Tự động cộng điểm loyalty sau khi thanh toán ===
+  try {
+    const POINTS_PER_TICKET = 10;
+    const pointsEarned = booking.seats.length * POINTS_PER_TICKET;
+    if (pointsEarned > 0) {
+      await loyaltyService.create({
+        userId: booking.userId.toString(),
+        points: pointsEarned,
+        action: LOYALTY_ACTION.EARN,
+        description: `Tích điểm ${booking.seats.length} vé đặt #${bookingId.slice(-8).toUpperCase()} (+${pointsEarned} điểm)`,
+        bookingId: bookingId,
+      });
+    }
+  } catch (e) {
+    // Không throw — lỗi loyalty không được phép block việc thanh toán
+    console.error('[markBookingPaid] Loyalty earn error:', e);
+  }
+
   const updated = await getById(bookingId);
   if (!updated) throw httpError('Không tìm thấy đặt vé', 404);
   return updated;
+};
+
+// ====== Discount helpers ======
+
+/** Tỷ lệ giảm giá theo hạng thành viên */
+const TIER_DISCOUNT_RATE = {
+  [MEMBERSHIP_TIER.BRONZE]: 0, // 0%
+  [MEMBERSHIP_TIER.SILVER]: 0.05, // 5%
+  [MEMBERSHIP_TIER.GOLD]: 0.1, // 10%
+} as const;
+
+const POINTS_TO_VND = 1000; // 1 điểm = 1000đ khi quy đổi
+
+/**
+ * Tính kết quả giảm giá trước khi khách xác nhận thanh toán.
+ * - Giảm theo hạng thành viên (luôn áp dụng).
+ * - Tiêu điểm thêm (tuỳ khách chọn), bị giới hạn ≤ 50% giá sau giảm tier.
+ */
+export const calculateDiscount = async (
+  userId: string,
+  basePrice: number,
+  redeemPoints: number = 0,
+) => {
+  const user = await User.findById(userId)
+    .select('loyaltyPoints membershipTier')
+    .lean();
+  if (!user) throw httpError('Người dùng không tồn tại', 404);
+
+  const tier =
+    ((user as any).membershipTier as keyof typeof TIER_DISCOUNT_RATE) ||
+    MEMBERSHIP_TIER.BRONZE;
+  const tierRate = TIER_DISCOUNT_RATE[tier] ?? 0;
+  const tierDiscount = Math.round(basePrice * tierRate);
+  const priceAfterTier = basePrice - tierDiscount;
+
+  // Giới hạn điểm có thể dùng
+  const maxRedeemablePoints = Math.min(
+    (user as any).loyaltyPoints as number,
+    Math.floor((priceAfterTier * 0.5) / POINTS_TO_VND), // tối đa 50% giá sau tier
+  );
+  const safeRedeemPoints = Math.max(
+    0,
+    Math.min(redeemPoints, maxRedeemablePoints),
+  );
+  const pointsDiscount = safeRedeemPoints * POINTS_TO_VND;
+
+  const finalPrice = Math.max(0, priceAfterTier - pointsDiscount);
+
+  return {
+    basePrice,
+    membershipTier: tier,
+    tierDiscountRate: tierRate,
+    tierDiscount,
+    priceAfterTier,
+    availablePoints: (user as any).loyaltyPoints as number,
+    maxRedeemablePoints,
+    redeemPoints: safeRedeemPoints,
+    pointsDiscount,
+    finalPrice,
+    pointsPerVnd: 1 / POINTS_TO_VND,
+  };
+};
+
+/**
+ * Tiêu điểm và trả về số tiền giảm + ghi lịch sử.
+ * Gọi sau khi PATCH confirm-payment (trong markBookingPaid).
+ */
+export const redeemLoyaltyPoints = async (
+  userId: string,
+  bookingId: string,
+  points: number,
+) => {
+  if (points <= 0) return 0;
+  const discount = await loyaltyService.create({
+    userId,
+    points: -points,
+    action: LOYALTY_ACTION.REDEEM,
+    description: `Đổi ${points} điểm cho đơn #${bookingId.slice(-8).toUpperCase()}`,
+    bookingId,
+  });
+  return discount;
 };
 
 export const cleanupExpiredBookings = async () => {

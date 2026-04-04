@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import * as bookingService from './booking.service.js';
 import { responseSuccess } from 'src/utils/response.js';
 import type { AdminBookingListQuery } from '@shared/schemas/booking.schema.js';
-import { log } from 'node:console';
 
 export const getSeats = async (req: Request, res: Response) => {
   const { showtimeId } = req.params;
@@ -39,11 +38,46 @@ export const getBookingDetail = async (req: Request, res: Response) => {
 /** PATCH .../confirm-payment — STAFF/ADMIN: PENDING → PAID (thanh toán tại quầy / xác nhận). */
 export const confirmPayment = async (req: Request, res: Response) => {
   const { id } = req.params;
+  const { redeemPoints } = req.body as { redeemPoints?: number };
+
+  // If user chose to redeem points, record it before confirming payment
+  const userId = (req as any).user?._id?.toString();
+  if (userId && redeemPoints && redeemPoints > 0) {
+    await bookingService.redeemLoyaltyPoints(
+      userId,
+      id as string,
+      redeemPoints,
+    );
+  }
+
   const booking = await bookingService.markBookingPaid(id as string);
 
   res
     .status(200)
     .json(responseSuccess(booking, 'Xác nhận thanh toán thành công'));
+};
+
+/** GET .../discount?redeemPoints=N — Tính giảm giá cho user hiện tại */
+export const getDiscount = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const redeemPoints = req.query.redeemPoints
+    ? Number(req.query.redeemPoints)
+    : 0;
+  const userId = (req as any).user._id.toString();
+
+  const booking = await bookingService.getById(id as string);
+  if (!booking) {
+    res.status(404).json({ message: 'Không tìm thấy đặt vé' });
+    return;
+  }
+
+  const discount = await bookingService.calculateDiscount(
+    userId,
+    (booking as any).totalPrice,
+    redeemPoints,
+  );
+
+  res.status(200).json(responseSuccess(discount, 'Tính giảm giá thành công'));
 };
 
 /** GET /admin — UC-24: danh sách đặt vé + lọc (STAFF/ADMIN) */
