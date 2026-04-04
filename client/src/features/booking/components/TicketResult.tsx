@@ -98,13 +98,13 @@ export function TicketResult({ booking }: Props) {
           </Group>
 
           {/* Ticket Codes List */}
-          {(booking as any).tickets && (booking as any).tickets.length > 0 && (
+          {booking.tickets && booking.tickets.length > 0 && (
             <Stack gap={4} p="xs" bg="gray.0" style={{ borderRadius: 8 }}>
               <Text size="xs" c="gray.6" fw={700} ta="center">
                 DANH SÁCH MÃ VÉ
               </Text>
               <Stack gap={2}>
-                {(booking as any).tickets.map((t: any) => (
+                {booking.tickets.map((t) => (
                   <Group key={t._id} justify="space-between">
                     <Text size="xs" fw={700} c="gray.8">
                       Ghế {t.row}
@@ -123,8 +123,7 @@ export function TicketResult({ booking }: Props) {
           <Stack align="center" gap="xs">
             <QRCodeSVG
               value={
-                (booking as any).tickets?.[0]?.ticketCode ||
-                `booking:${booking._id}`
+                booking.tickets?.[0]?.ticketCode || `booking:${booking._id}`
               }
               size={140}
               level="H"

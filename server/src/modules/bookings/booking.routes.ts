@@ -52,6 +52,12 @@ router.patch(
 );
 
 router.get(
+  '/:id/discount',
+  validate({ params: z.object({ id: objectIdSchema }) }),
+  bookingController.getDiscount,
+);
+
+router.get(
   '/:id',
   validate({ params: z.object({ id: objectIdSchema }) }),
   bookingController.getBookingDetail,

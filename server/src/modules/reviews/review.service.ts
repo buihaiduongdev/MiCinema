@@ -19,9 +19,7 @@ import type {
 } from '@shared/schemas/review.schema';
 
 // Populate fields dùng chung
-const POPULATE_FIELDS = [
-  { path: 'userId', select: 'fullName avatar email' },
-];
+const POPULATE_FIELDS = [{ path: 'userId', select: 'fullName avatar email' }];
 
 /**
  * Tính lại rating trung bình của phim sau khi thêm/sửa/xóa review
@@ -39,11 +37,15 @@ const recalculateMovieRating = async (movieId: string) => {
     },
   ]);
 
-  const avgRating = result.length > 0 ? Math.round(result[0].avgRating * 10) / 10 : 0;
+  const avgRating =
+    result.length > 0 ? Math.round(result[0].avgRating * 10) / 10 : 0;
 
   await Movie.findByIdAndUpdate(movieId, { rating: avgRating });
 
-  return { avgRating, totalReviews: result.length > 0 ? result[0].totalReviews : 0 };
+  return {
+    avgRating,
+    totalReviews: result.length > 0 ? result[0].totalReviews : 0,
+  };
 };
 
 /**
@@ -65,7 +67,9 @@ export const create = async (userId: string, data: CreateReviewInput) => {
     movieId: data.movieId,
   });
   if (existingReview) {
-    throw new Error('Bạn đã đánh giá phim này rồi. Hãy chỉnh sửa đánh giá hiện tại.');
+    throw new Error(
+      'Bạn đã đánh giá phim này rồi. Hãy chỉnh sửa đánh giá hiện tại.',
+    );
   }
 
   const review = await Review.create({
@@ -112,7 +116,10 @@ export const getByMovie = async (movieId: string, filter: ReviewFilter) => {
 /**
  * Lấy review của user cho 1 phim cụ thể (kiểm tra đã review chưa)
  */
-export const getUserReviewForMovie = async (userId: string, movieId: string) => {
+export const getUserReviewForMovie = async (
+  userId: string,
+  movieId: string,
+) => {
   const review = await Review.findOne({ userId, movieId })
     .populate(POPULATE_FIELDS)
     .lean();
@@ -150,7 +157,11 @@ export const getByUser = async (userId: string, filter: ReviewFilter) => {
 /**
  * Cập nhật review (chỉ owner được sửa)
  */
-export const update = async (reviewId: string, userId: string, data: UpdateReviewInput) => {
+export const update = async (
+  reviewId: string,
+  userId: string,
+  data: UpdateReviewInput,
+) => {
   const review = await Review.findById(reviewId);
   if (!review) throw new Error('Không tìm thấy đánh giá');
 
@@ -179,7 +190,11 @@ export const update = async (reviewId: string, userId: string, data: UpdateRevie
 /**
  * Xóa review (owner hoặc admin)
  */
-export const remove = async (reviewId: string, userId: string, userRole: string) => {
+export const remove = async (
+  reviewId: string,
+  userId: string,
+  userRole: string,
+) => {
   const review = await Review.findById(reviewId);
   if (!review) throw new Error('Không tìm thấy đánh giá');
 
@@ -219,13 +234,17 @@ export const getMovieRatingStats = async (movieId: string) => {
   const totalReviews = distribution.reduce((sum, d) => sum + d.count, 0);
 
   // Tạo object phân bố: { 5: 75, 4: 15, 3: 5, 2: 3, 1: 2 } (%)
-  const ratingDistribution: Record<number, { count: number; percentage: number }> = {};
+  const ratingDistribution: Record<
+    number,
+    { count: number; percentage: number }
+  > = {};
   for (let i = 1; i <= 5; i++) {
     const found = distribution.find((d) => d._id === i);
     const count = found ? found.count : 0;
     ratingDistribution[i] = {
       count,
-      percentage: totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0,
+      percentage:
+        totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0,
     };
   }
 
