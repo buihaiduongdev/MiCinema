@@ -20,33 +20,113 @@ export default function DashboardPage() {
   >('day');
   const { data: overviewData, isLoading: overviewLoading } =
     useDashboardOverview();
-  const { data: revenueData, isLoading: revenueLoading } =
+  const {
+    data: revenueData,
+    isLoading: revenueLoading,
+    isError: revenueIsError,
+    error: revenueError,
+  } =
     useRevenueStats(revenueGroupBy);
   const { data: occupancyData, isLoading: occupancyLoading } =
     useOccupancyByRoom();
   const { data: topMoviesData, isLoading: topMoviesLoading } =
     useTopMoviesByRevenue(5);
 
-  const revenueChartData = useMemo(() => {
-    const apiData = revenueData?.data?.data;
+  const formatDayKey = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
 
-    if (!apiData || apiData.length === 0) {
-      return [];
+  const formatMonthKey = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}`;
+  };
+
+  const getIsoWeekKey = (date: Date) => {
+    const utcDate = new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+    );
+    const dayNumber = utcDate.getUTCDay() || 7;
+    utcDate.setUTCDate(utcDate.getUTCDate() + 4 - dayNumber);
+
+    const yearStart = new Date(Date.UTC(utcDate.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil(
+      ((utcDate.getTime() - yearStart.getTime()) / 86400000 + 1) / 7,
+    );
+
+    return `${utcDate.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+  };
+
+  const buildExpectedBuckets = (groupBy: 'day' | 'week' | 'month') => {
+    const now = new Date();
+
+    if (groupBy === 'day') {
+      return Array.from({ length: 30 }, (_, idx) => {
+        const date = new Date(now);
+        date.setDate(now.getDate() - (29 - idx));
+        return formatDayKey(date);
+      });
     }
 
-    return apiData.map((item: any) => ({
-      day: item._id,
-      revenue: item.revenue ?? 0,
-      bookings: item.bookings ?? 0,
-    }));
-  }, [revenueData]);
+    if (groupBy === 'week') {
+      return Array.from({ length: 12 }, (_, idx) => {
+        const date = new Date(now);
+        date.setDate(now.getDate() - (11 - idx) * 7);
+        return getIsoWeekKey(date);
+      });
+    }
+
+    return Array.from({ length: 12 }, (_, idx) => {
+      const date = new Date(now.getFullYear(), now.getMonth() - (11 - idx), 1);
+      return formatMonthKey(date);
+    });
+  };
+
+  const revenueChartData = useMemo(() => {
+    const apiData = Array.isArray(revenueData?.data?.data)
+      ? revenueData.data.data
+      : [];
+
+    const aggregatedByKey = new Map<
+      string,
+      { revenue: number; bookings: number }
+    >();
+
+    apiData.forEach((item: any) => {
+      const key = String(item?._id ?? '');
+      if (!key) return;
+
+      const prev = aggregatedByKey.get(key) ?? { revenue: 0, bookings: 0 };
+      const revenue = Number(item?.revenue ?? 0);
+      const bookings = Number(item?.bookings ?? 0);
+
+      aggregatedByKey.set(key, {
+        revenue: prev.revenue + (Number.isFinite(revenue) ? revenue : 0),
+        bookings: prev.bookings + (Number.isFinite(bookings) ? bookings : 0),
+      });
+    });
+
+    const buckets = buildExpectedBuckets(revenueGroupBy);
+
+    return buckets.map((bucketKey) => {
+      const value = aggregatedByKey.get(bucketKey);
+      return {
+        day: bucketKey,
+        revenue: value?.revenue ?? 0,
+        bookings: value?.bookings ?? 0,
+      };
+    });
+  }, [revenueData, revenueGroupBy]);
 
   const maxRevenue = useMemo(() => {
     if (!revenueChartData.length) return 1;
-    return Math.max(
-      ...revenueChartData.map((item: { revenue: number }) => item.revenue),
-      1,
-    );
+    const values = revenueChartData
+      .map((item: { revenue: number }) => Number(item.revenue))
+      .filter((v: number) => Number.isFinite(v));
+    return Math.max(...values, 1);
   }, [revenueChartData]);
 
   // Screening performance từ occupancy data
@@ -152,11 +232,10 @@ export default function DashboardPage() {
                 {(['day', 'week', 'month'] as const).map((option) => (
                   <button
                     key={option}
-                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
-                      revenueGroupBy === option
-                        ? 'bg-[#0066ff] text-white'
-                        : 'bg-[#222a3d] text-[#8c90a1] hover:bg-[#2d3449]'
-                    }`}
+                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${revenueGroupBy === option
+                      ? 'bg-[#0066ff] text-white'
+                      : 'bg-[#222a3d] text-[#8c90a1] hover:bg-[#2d3449]'
+                      }`}
                     onClick={() => setRevenueGroupBy(option)}
                   >
                     {option === 'day'
@@ -181,9 +260,8 @@ export default function DashboardPage() {
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className={`border-b w-full h-px ${
-                      i === 4 ? 'border-[#424656]/10' : 'border-[#424656]/5'
-                    }`}
+                    className={`border-b w-full h-px ${i === 4 ? 'border-[#424656]/10' : 'border-[#424656]/5'
+                      }`}
                   ></div>
                 ))}
               </div>
@@ -192,15 +270,21 @@ export default function DashboardPage() {
               <div className="flex-grow flex items-end justify-between px-4 h-full relative z-10 gap-1">
                 {revenueChartData.length > 0 ? (
                   revenueChartData.map((item: any, idx: number) => {
+                    const safeRevenue = Number(item.revenue);
+                    const normalizedRevenue = Number.isFinite(safeRevenue)
+                      ? safeRevenue
+                      : 0;
+                    const ratio =
+                      maxRevenue > 0 ? normalizedRevenue / maxRevenue : 0;
                     const heightPercent = Math.max(
                       8,
-                      Math.round((item.revenue / maxRevenue) * 100),
+                      Math.round(Math.max(0, ratio) * 100),
                     );
 
                     return (
                       <div
                         key={idx}
-                        className="group relative w-full flex flex-col items-center"
+                        className="group relative flex-1 min-w-0 h-full flex flex-col items-center justify-end"
                       >
                         <div
                           className="w-full bg-[#0066ff] rounded-t-lg shadow-[0_-4px_15px_rgba(0,102,255,0.2)] transition-all group-hover:bg-[#2a7bff]"
@@ -213,8 +297,14 @@ export default function DashboardPage() {
                     );
                   })
                 ) : (
-                  <div className="w-full text-center text-sm text-[#8c90a1]">
-                    Chưa có dữ liệu doanh thu.
+                  <div className="w-full text-center text-sm text-[#8c90a1] space-y-2">
+                    <p>Chưa có dữ liệu doanh thu.</p>
+                    {revenueIsError && (
+                      <p className="text-[#ffb4ac] text-xs">
+                        {(revenueError as Error)?.message ||
+                          'Không thể tải dữ liệu doanh thu.'}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
@@ -256,13 +346,12 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-8 py-6">
                         <span
-                          className={`px-3 py-1 text-[10px] font-extrabold rounded-full border ${
-                            String(item.format) === 'IMAX 4K'
-                              ? 'bg-[#0066ff]/10 text-[#0066ff] border-[#0066ff]/20'
-                              : String(item.format) === 'Dolby Atmos'
-                                ? 'bg-[#ffb4ac]/10 text-[#ffb4ac] border-[#ffb4ac]/20'
-                                : 'bg-[#222a3d] text-[#8c90a1]'
-                          }`}
+                          className={`px-3 py-1 text-[10px] font-extrabold rounded-full border ${String(item.format) === 'IMAX 4K'
+                            ? 'bg-[#0066ff]/10 text-[#0066ff] border-[#0066ff]/20'
+                            : String(item.format) === 'Dolby Atmos'
+                              ? 'bg-[#ffb4ac]/10 text-[#ffb4ac] border-[#ffb4ac]/20'
+                              : 'bg-[#222a3d] text-[#8c90a1]'
+                            }`}
                         >
                           {String(item.format)}
                         </span>
@@ -358,8 +447,8 @@ export default function DashboardPage() {
         ) : (
           <div className="flex gap-6 overflow-x-auto pb-2">
             {topMoviesData?.data &&
-            Array.isArray(topMoviesData.data) &&
-            topMoviesData.data.length > 0 ? (
+              Array.isArray(topMoviesData.data) &&
+              topMoviesData.data.length > 0 ? (
               topMoviesData.data.map((movie: any, idx: number) => (
                 <div
                   key={movie.movieId || idx}

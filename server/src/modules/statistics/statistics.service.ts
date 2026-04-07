@@ -14,6 +14,11 @@ import { CinemaRoom } from '../../models/CinemaRoom.model.js';
 import { Movie } from '../../models/Movie.model.js';
 import { BOOKING_STATUS } from '@shared/constants/statuses.js';
 
+const REVENUE_BOOKING_STATUSES = [
+  BOOKING_STATUS.PAID,
+  BOOKING_STATUS.COMPLETED,
+];
+
 type RevenueOptions = {
   startDate?: Date;
   endDate?: Date;
@@ -50,7 +55,7 @@ export const getOverview = async () => {
     totalShowtimes,
   ] = await Promise.all([
     Booking.aggregate([
-      { $match: { status: BOOKING_STATUS.PAID } },
+      { $match: { status: { $in: REVENUE_BOOKING_STATUSES } } },
       { $group: { _id: null, total: { $sum: '$totalPrice' } } },
     ]),
     Booking.countDocuments(),
@@ -85,7 +90,7 @@ export const getRevenue = async (opts: RevenueOptions = {}) => {
   try {
     const { startDate, endDate, groupBy = 'day' } = opts;
 
-    const match: any = { status: BOOKING_STATUS.PAID };
+    const match: any = { status: { $in: REVENUE_BOOKING_STATUSES } };
     if (startDate || endDate) {
       match.createdAt = {};
       if (startDate) match.createdAt.$gte = startDate;

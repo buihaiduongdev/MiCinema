@@ -47,9 +47,19 @@ import { errorHandler } from './middlewares/error.middleware.js';
 
 const app: Application = express();
 
+// Tránh 304 cho API JSON (dashboard/statistics cần dữ liệu mới mỗi lần gọi)
+app.set('etag', false);
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
 
 /** Ảnh upload (multer lưu vào public/uploads) — client dùng URL /uploads/... */
 app.use(express.static(path.join(process.cwd(), 'public')));

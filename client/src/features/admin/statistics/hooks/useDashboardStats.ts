@@ -27,10 +27,32 @@ export const useRevenueStats = (
   return useQuery({
     queryKey: ['statistics', 'revenue', groupBy, startDate, endDate],
     queryFn: async () => {
+      const resolvedEndDate = endDate ?? new Date();
+      const resolvedStartDate = (() => {
+        if (startDate) return startDate;
+
+        const d = new Date(resolvedEndDate);
+        if (groupBy === 'day') {
+          // 30 ngày gần nhất (bao gồm hôm nay)
+          d.setDate(d.getDate() - 29);
+          return d;
+        }
+        if (groupBy === 'week') {
+          // 12 tuần gần nhất (bao gồm tuần hiện tại)
+          d.setDate(d.getDate() - 11 * 7);
+          return d;
+        }
+        // 12 tháng gần nhất (bao gồm tháng hiện tại)
+        d.setMonth(d.getMonth() - 11);
+        return d;
+      })();
+
       const params = new URLSearchParams();
       params.append('groupBy', groupBy);
-      if (startDate) params.append('startDate', startDate.toISOString());
-      if (endDate) params.append('endDate', endDate.toISOString());
+      params.append('startDate', resolvedStartDate.toISOString());
+      params.append('endDate', resolvedEndDate.toISOString());
+      // Tránh browser/API cache trả 304 khiến query không có body dữ liệu.
+      params.append('_t', Date.now().toString());
 
       const response = await apiClient.get(`/statistics/revenue?${params}`);
       return response;

@@ -18,11 +18,6 @@ apiClient.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
-  /** FormData cần boundary tự sinh — bỏ application/json mặc định */
-  if (config.data instanceof FormData && config.headers) {
-    delete config.headers['Content-Type'];
-  }
-
   return config;
 });
 
