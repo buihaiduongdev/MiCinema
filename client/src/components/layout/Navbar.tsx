@@ -13,11 +13,11 @@ export default function Navbar() {
   };
 
   const navItems = [
-    { label: 'LỊCH CHIẾU', href: '/schedule' },
+    // { label: 'LỊCH CHIẾU', href: '/schedule' },
     { label: 'PHIM', href: '/phim' },
     { label: 'BẮP NƯỚC', href: '/order/food' },
-    { label: 'ƯU ĐÃI', href: '/offers' },
-    { label: 'TIN TỨC PHIM', href: '/news' },
+    // { label: 'ƯU ĐÃI', href: '/offers' },
+    // { label: 'TIN TỨC PHIM', href: '/news' },
     { label: 'THÀNH VIÊN', href: '/member' },
   ];
 
@@ -44,6 +44,14 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
+            {user?.role === 'ADMIN' && (
+              <Link
+                to="/admin"
+                className="text-sm font-medium hover:text-yellow-400 transition-colors"
+              >
+                ADMIN
+              </Link>
+            )}
           </div>
 
           {/* Right Section */}
@@ -135,6 +143,15 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
+            {user?.role === 'ADMIN' && (
+              <Link
+                to="/admin"
+                className="block px-4 py-3 hover:bg-white/10 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                ADMIN
+              </Link>
+            )}
           </div>
         )}
       </div>

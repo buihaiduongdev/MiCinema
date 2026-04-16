@@ -41,7 +41,11 @@ router.post(
   uploadSingle('image'),
   foodController.uploadProductImage,
 );
-
+router.get(
+  '/products',
+  validate({ query: productListQuerySchema }),
+  foodController.listProducts,
+);
 router.use(restrictTo('ADMIN'));
 
 router.get(
@@ -50,11 +54,6 @@ router.get(
   foodController.listFoodOrders,
 );
 
-router.get(
-  '/products',
-  validate({ query: productListQuerySchema }),
-  foodController.listProducts,
-);
 router.post(
   '/products',
   validate(createProductSchema),
