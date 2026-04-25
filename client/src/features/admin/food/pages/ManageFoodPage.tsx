@@ -16,10 +16,7 @@ import { EditRetailProductModal } from '../components/EditRetailProductModal';
 import { ComboForm } from '../components/ComboForm';
 import { EditComboModal } from '../components/EditComboModal';
 import { LoadingSpinner } from '../../../../components/ui/LoadingSpinner';
-import {
-  getProductImageFallback,
-  getProductImageUrl,
-} from '@/utils/image';
+import { getProductImageFallback, getProductImageUrl } from '@/utils/image';
 
 const CATEGORY_LABELS: Record<string, string> = {
   [PRODUCT_CATEGORY.POPCORN]: 'Bắp / Đồ ăn nhẹ',

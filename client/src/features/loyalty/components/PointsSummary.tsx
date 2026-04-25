@@ -8,11 +8,24 @@ import { Progress } from '@mantine/core';
 import { useLoyaltySummary } from '../hooks/useLoyalty';
 import type { LoyaltySummary } from '../services/loyalty.service';
 
-const TIER_COLORS: Record<string, { bg: string; text: string; icon: string }> = {
-  BRONZE: { bg: 'from-amber-700/40 to-amber-900/30', text: 'text-amber-300', icon: '🥉' },
-  SILVER: { bg: 'from-slate-400/40 to-slate-600/30', text: 'text-slate-200', icon: '🥈' },
-  GOLD: { bg: 'from-yellow-500/40 to-yellow-700/30', text: 'text-yellow-200', icon: '🥇' },
-};
+const TIER_COLORS: Record<string, { bg: string; text: string; icon: string }> =
+  {
+    BRONZE: {
+      bg: 'from-amber-700/40 to-amber-900/30',
+      text: 'text-amber-300',
+      icon: '🥉',
+    },
+    SILVER: {
+      bg: 'from-slate-400/40 to-slate-600/30',
+      text: 'text-slate-200',
+      icon: '🥈',
+    },
+    GOLD: {
+      bg: 'from-yellow-500/40 to-yellow-700/30',
+      text: 'text-yellow-200',
+      icon: '🥇',
+    },
+  };
 
 export default function PointsSummary() {
   const { data: rawData, isLoading } = useLoyaltySummary();
@@ -136,15 +149,22 @@ export default function PointsSummary() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
           <div className="flex items-start gap-2 text-white/60">
             <span className="text-emerald-400 mt-0.5">🎬</span>
-            <span>Mua vé xem phim: <strong className="text-white/80">+10 điểm/vé</strong></span>
+            <span>
+              Mua vé xem phim:{' '}
+              <strong className="text-white/80">+10 điểm/vé</strong>
+            </span>
           </div>
           <div className="flex items-start gap-2 text-white/60">
             <span className="text-emerald-400 mt-0.5">🍿</span>
-            <span>Mua đồ ăn: <strong className="text-white/80">+5 điểm/đơn</strong></span>
+            <span>
+              Mua đồ ăn: <strong className="text-white/80">+5 điểm/đơn</strong>
+            </span>
           </div>
           <div className="flex items-start gap-2 text-white/60">
             <span className="text-emerald-400 mt-0.5">⭐</span>
-            <span>Viết đánh giá: <strong className="text-white/80">+3 điểm</strong></span>
+            <span>
+              Viết đánh giá: <strong className="text-white/80">+3 điểm</strong>
+            </span>
           </div>
         </div>
         <div className="mt-3 pt-3 border-t border-white/10 text-xs text-white/40">

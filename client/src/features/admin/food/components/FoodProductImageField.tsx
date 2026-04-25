@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { FileInput, Image, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { uploadFoodProductImage } from '../services/foodUpload.service';
-import {
-  getProductImageFallback,
-  getProductImageUrl,
-} from '@/utils/image';
+import { getProductImageFallback, getProductImageUrl } from '@/utils/image';
 
 type Props = {
   value: string;

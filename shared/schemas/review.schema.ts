@@ -8,8 +8,16 @@ import { objectIdSchema } from './common.schema.js';
  */
 export const createReviewSchema = z.object({
   movieId: objectIdSchema,
-  rating: z.number().int().min(1, 'Đánh giá tối thiểu 1 sao').max(10, 'Đánh giá tối đa 10 sao'),
-  comment: z.string().max(1000, 'Bình luận tối đa 1000 ký tự').optional().or(z.literal('')),
+  rating: z
+    .number()
+    .int()
+    .min(1, 'Đánh giá tối thiểu 1 sao')
+    .max(10, 'Đánh giá tối đa 10 sao'),
+  comment: z
+    .string()
+    .max(1000, 'Bình luận tối đa 1000 ký tự')
+    .optional()
+    .or(z.literal('')),
 });
 
 export const updateReviewSchema = z.object({

@@ -286,17 +286,23 @@ export const getMySummary = async (userId: string) => {
 
   if (currentTier === MEMBERSHIP_TIER.BRONZE) {
     nextTier = MEMBERSHIP_TIER.SILVER;
-    pointsToNextTier = TIER_THRESHOLDS[MEMBERSHIP_TIER.SILVER] - user.loyaltyPoints;
+    pointsToNextTier =
+      TIER_THRESHOLDS[MEMBERSHIP_TIER.SILVER] - user.loyaltyPoints;
     progressPercent = Math.min(
       100,
-      Math.round((user.loyaltyPoints / TIER_THRESHOLDS[MEMBERSHIP_TIER.SILVER]) * 100),
+      Math.round(
+        (user.loyaltyPoints / TIER_THRESHOLDS[MEMBERSHIP_TIER.SILVER]) * 100,
+      ),
     );
   } else if (currentTier === MEMBERSHIP_TIER.SILVER) {
     nextTier = MEMBERSHIP_TIER.GOLD;
-    pointsToNextTier = TIER_THRESHOLDS[MEMBERSHIP_TIER.GOLD] - user.loyaltyPoints;
+    pointsToNextTier =
+      TIER_THRESHOLDS[MEMBERSHIP_TIER.GOLD] - user.loyaltyPoints;
     const tierRange =
-      TIER_THRESHOLDS[MEMBERSHIP_TIER.GOLD] - TIER_THRESHOLDS[MEMBERSHIP_TIER.SILVER];
-    const progress = user.loyaltyPoints - TIER_THRESHOLDS[MEMBERSHIP_TIER.SILVER];
+      TIER_THRESHOLDS[MEMBERSHIP_TIER.GOLD] -
+      TIER_THRESHOLDS[MEMBERSHIP_TIER.SILVER];
+    const progress =
+      user.loyaltyPoints - TIER_THRESHOLDS[MEMBERSHIP_TIER.SILVER];
     progressPercent = Math.min(100, Math.round((progress / tierRange) * 100));
   }
   // GOLD → đã max, progressPercent = 100

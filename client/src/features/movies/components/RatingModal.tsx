@@ -45,17 +45,16 @@ export default function RatingModal({
 
   // --- Data fetching ---
   const { data: statsData } = useMovieRatingStats(movieId);
-  const { data: reviewsData, isLoading: isLoadingReviews } =
-    useReviewsByMovie(movieId, {
+  const { data: reviewsData, isLoading: isLoadingReviews } = useReviewsByMovie(
+    movieId,
+    {
       page: reviewPage,
       limit: 10,
       sortBy: 'createdAt',
       sortOrder: 'desc',
-    });
-  const { data: myReviewData } = useMyReviewForMovie(
-    movieId,
-    isAuthenticated,
+    },
   );
+  const { data: myReviewData } = useMyReviewForMovie(movieId, isAuthenticated);
 
   // --- Mutations ---
   const createReview = useCreateReview();
@@ -63,11 +62,9 @@ export default function RatingModal({
   const deleteReviewMutation = useDeleteReview(movieId);
 
   const stats: ReviewStats | null = (statsData as any)?.data || null;
-  const reviews: ReviewResponse[] =
-    (reviewsData as any)?.data?.data || [];
+  const reviews: ReviewResponse[] = (reviewsData as any)?.data?.data || [];
   const reviewsPagination = (reviewsData as any)?.data?.pagination;
-  const myReview: ReviewResponse | null =
-    (myReviewData as any)?.data || null;
+  const myReview: ReviewResponse | null = (myReviewData as any)?.data || null;
 
   // Nếu user đã review → pre-fill form
   useEffect(() => {
@@ -179,8 +176,7 @@ export default function RatingModal({
   const avgRating = stats?.avgRating ?? 0;
   const totalReviews = stats?.totalReviews ?? 0;
 
-  const isSubmitting =
-    createReview.isPending || updateReviewMutation.isPending;
+  const isSubmitting = createReview.isPending || updateReviewMutation.isPending;
 
   return (
     <Modal
@@ -310,9 +306,7 @@ export default function RatingModal({
             {isAuthenticated ? (
               <>
                 <div className="flex items-center mb-3">
-                  <span className="text-sm mr-2 font-medium">
-                    Chất lượng:
-                  </span>
+                  <span className="text-sm mr-2 font-medium">Chất lượng:</span>
                   <Rating
                     value={userRating}
                     onChange={setUserRating}
@@ -404,9 +398,9 @@ export default function RatingModal({
                             )}
                           </span>
                           <span className="text-xs text-gray-400">
-                            {new Date(
-                              review.createdAt,
-                            ).toLocaleDateString('vi-VN')}
+                            {new Date(review.createdAt).toLocaleDateString(
+                              'vi-VN',
+                            )}
                           </span>
                         </div>
                         <Rating

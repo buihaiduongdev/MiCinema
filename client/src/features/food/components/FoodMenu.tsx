@@ -12,10 +12,7 @@ import {
 } from '@mantine/core';
 import { IconPlus, IconMinus } from '@tabler/icons-react';
 import { useFoodMenu } from '../hooks/useFoodMenu';
-import {
-  getProductImageFallback,
-  getProductImageUrl,
-} from '@/utils/image';
+import { getProductImageFallback, getProductImageUrl } from '@/utils/image';
 
 interface FoodMenuProps {
   onUpdateQuantity: (productId: string, delta: number) => void;

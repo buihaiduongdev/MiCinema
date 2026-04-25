@@ -430,7 +430,9 @@ export default function ProfileInfoPage() {
         <section className="px-4 py-10 sm:px-8 lg:px-10">
           <div className="mb-6 flex items-center gap-3">
             <Star className="h-5 w-5 text-rose-300" />
-            <h2 className="text-xl font-bold sm:text-2xl">Tích điểm thành viên</h2>
+            <h2 className="text-xl font-bold sm:text-2xl">
+              Tích điểm thành viên
+            </h2>
           </div>
           <PointsSummary />
           <div className="mt-8">

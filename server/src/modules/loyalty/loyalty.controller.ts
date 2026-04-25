@@ -82,7 +82,5 @@ export const getMyHistory = async (req: Request, res: Response) => {
     req.user._id.toString(),
     req.query as any,
   );
-  res
-    .status(200)
-    .json(responseSuccess(result, 'Lấy lịch sử điểm thành công'));
+  res.status(200).json(responseSuccess(result, 'Lấy lịch sử điểm thành công'));
 };

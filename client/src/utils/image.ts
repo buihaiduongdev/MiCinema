@@ -90,9 +90,7 @@ export function absoluteUrlIfNeeded(url: string): string {
 }
 
 /** Ảnh dự phòng theo danh mục (dùng cho `fallbackSrc` khi URL gốc lỗi). */
-export function getProductImageFallback(
-  category: string | undefined,
-): string {
+export function getProductImageFallback(category: string | undefined): string {
   return (
     (category && PRODUCT_IMAGE_FALLBACK[category]) ??
     DEFAULT_PRODUCT_IMAGE_FALLBACK

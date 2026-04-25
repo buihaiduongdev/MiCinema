@@ -22,10 +22,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import ShowtimeForm from '../components/ShowtimeForm';
-import {
-  useShowtimes,
-  useCancelShowtime,
-} from '../hooks/useShowtimeCRUD';
+import { useShowtimes, useCancelShowtime } from '../hooks/useShowtimeCRUD';
 import { LoadingSpinner } from '../../../../components/ui/LoadingSpinner';
 import { useDebounce } from '../../../../hooks/useDebounce';
 
@@ -57,8 +54,7 @@ export default function ManageShowtimesPage() {
   const { data: rawData, isLoading } = useShowtimes(params);
   const cancelMutation = useCancelShowtime();
 
-  const showtimes: any[] =
-    (rawData as any)?.data?.data || [];
+  const showtimes: any[] = (rawData as any)?.data?.data || [];
   const pagination = (rawData as any)?.data?.pagination;
   const totalPages = pagination
     ? Math.ceil(pagination.totalItems / (pagination.itemsPerPage || 15))
@@ -268,9 +264,7 @@ export default function ManageShowtimesPage() {
                         </>
                       )}
                       {st.status !== 'OPEN' && (
-                        <span className="text-xs text-[#8c90a1] italic">
-                          —
-                        </span>
+                        <span className="text-xs text-[#8c90a1] italic">—</span>
                       )}
                     </div>
                   </div>
@@ -281,19 +275,22 @@ export default function ManageShowtimesPage() {
               {totalPages > 1 && (
                 <div className="p-4 flex justify-center border-t border-[#424656]/30">
                   <div className="flex gap-2">
-                    {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => (
-                      <button
-                        key={i + 1}
-                        onClick={() => setPage(i + 1)}
-                        className={`px-4 py-2 rounded-lg transition-all ${
-                          page === i + 1
-                            ? 'bg-[#0066ff] text-white font-bold'
-                            : 'bg-[#060e20] text-[#8c90a1] hover:text-[#dae2fd]'
-                        }`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
+                    {Array.from(
+                      { length: Math.min(totalPages, 10) },
+                      (_, i) => (
+                        <button
+                          key={i + 1}
+                          onClick={() => setPage(i + 1)}
+                          className={`px-4 py-2 rounded-lg transition-all ${
+                            page === i + 1
+                              ? 'bg-[#0066ff] text-white font-bold'
+                              : 'bg-[#060e20] text-[#8c90a1] hover:text-[#dae2fd]'
+                          }`}
+                        >
+                          {i + 1}
+                        </button>
+                      ),
+                    )}
                   </div>
                 </div>
               )}

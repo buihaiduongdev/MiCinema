@@ -11,10 +11,7 @@ import {
 } from '@mantine/core';
 import { IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import { useFoodMenu } from '../hooks/useFoodMenu';
-import {
-  getProductImageFallback,
-  getProductImageUrl,
-} from '@/utils/image';
+import { getProductImageFallback, getProductImageUrl } from '@/utils/image';
 
 interface FoodCartProps {
   cart: Record<string, number>;
