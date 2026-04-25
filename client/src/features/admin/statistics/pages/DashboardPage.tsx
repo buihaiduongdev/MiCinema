@@ -25,8 +25,7 @@ export default function DashboardPage() {
     isLoading: revenueLoading,
     isError: revenueIsError,
     error: revenueError,
-  } =
-    useRevenueStats(revenueGroupBy);
+  } = useRevenueStats(revenueGroupBy);
   const { data: occupancyData, isLoading: occupancyLoading } =
     useOccupancyByRoom();
   const { data: topMoviesData, isLoading: topMoviesLoading } =
@@ -232,10 +231,11 @@ export default function DashboardPage() {
                 {(['day', 'week', 'month'] as const).map((option) => (
                   <button
                     key={option}
-                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${revenueGroupBy === option
-                      ? 'bg-[#0066ff] text-white'
-                      : 'bg-[#222a3d] text-[#8c90a1] hover:bg-[#2d3449]'
-                      }`}
+                    className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                      revenueGroupBy === option
+                        ? 'bg-[#0066ff] text-white'
+                        : 'bg-[#222a3d] text-[#8c90a1] hover:bg-[#2d3449]'
+                    }`}
                     onClick={() => setRevenueGroupBy(option)}
                   >
                     {option === 'day'
@@ -260,8 +260,9 @@ export default function DashboardPage() {
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className={`border-b w-full h-px ${i === 4 ? 'border-[#424656]/10' : 'border-[#424656]/5'
-                      }`}
+                    className={`border-b w-full h-px ${
+                      i === 4 ? 'border-[#424656]/10' : 'border-[#424656]/5'
+                    }`}
                   ></div>
                 ))}
               </div>
@@ -346,12 +347,13 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-8 py-6">
                         <span
-                          className={`px-3 py-1 text-[10px] font-extrabold rounded-full border ${String(item.format) === 'IMAX 4K'
-                            ? 'bg-[#0066ff]/10 text-[#0066ff] border-[#0066ff]/20'
-                            : String(item.format) === 'Dolby Atmos'
-                              ? 'bg-[#ffb4ac]/10 text-[#ffb4ac] border-[#ffb4ac]/20'
-                              : 'bg-[#222a3d] text-[#8c90a1]'
-                            }`}
+                          className={`px-3 py-1 text-[10px] font-extrabold rounded-full border ${
+                            String(item.format) === 'IMAX 4K'
+                              ? 'bg-[#0066ff]/10 text-[#0066ff] border-[#0066ff]/20'
+                              : String(item.format) === 'Dolby Atmos'
+                                ? 'bg-[#ffb4ac]/10 text-[#ffb4ac] border-[#ffb4ac]/20'
+                                : 'bg-[#222a3d] text-[#8c90a1]'
+                          }`}
                         >
                           {String(item.format)}
                         </span>
@@ -447,8 +449,8 @@ export default function DashboardPage() {
         ) : (
           <div className="flex gap-6 overflow-x-auto pb-2">
             {topMoviesData?.data &&
-              Array.isArray(topMoviesData.data) &&
-              topMoviesData.data.length > 0 ? (
+            Array.isArray(topMoviesData.data) &&
+            topMoviesData.data.length > 0 ? (
               topMoviesData.data.map((movie: any, idx: number) => (
                 <div
                   key={movie.movieId || idx}

@@ -29,7 +29,9 @@ export const getReviewsByMovie = async (req: Request, res: Response) => {
     req.params.movieId as string,
     req.query as any,
   );
-  res.status(200).json(responseSuccess(result, 'Lấy danh sách đánh giá thành công'));
+  res
+    .status(200)
+    .json(responseSuccess(result, 'Lấy danh sách đánh giá thành công'));
 };
 
 /**
@@ -64,7 +66,9 @@ export const getMyReviews = async (req: Request, res: Response) => {
     req.user._id.toString(),
     req.query as any,
   );
-  res.status(200).json(responseSuccess(result, 'Lấy lịch sử đánh giá thành công'));
+  res
+    .status(200)
+    .json(responseSuccess(result, 'Lấy lịch sử đánh giá thành công'));
 };
 
 /**

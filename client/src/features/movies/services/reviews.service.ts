@@ -28,10 +28,7 @@ export interface ReviewStats {
   movieId: string;
   avgRating: number;
   totalReviews: number;
-  ratingDistribution: Record<
-    number,
-    { count: number; percentage: number }
-  >;
+  ratingDistribution: Record<number, { count: number; percentage: number }>;
 }
 
 // --- REVIEWS API ---
@@ -68,5 +65,4 @@ export const updateReview = (
 ) => apiClient.put(`/reviews/${id}`, data);
 
 /** Xóa review */
-export const deleteReview = (id: string) =>
-  apiClient.delete(`/reviews/${id}`);
+export const deleteReview = (id: string) => apiClient.delete(`/reviews/${id}`);

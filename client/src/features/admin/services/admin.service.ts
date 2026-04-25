@@ -39,7 +39,9 @@ export const cancelShowtime = (id: string) =>
 // --- HELPER APIs (cho form selects) ---
 
 export const getMoviesForSelect = () =>
-  apiClient.get('/movies', { params: { limit: 100, sortBy: 'title', sortOrder: 'asc' } });
+  apiClient.get('/movies', {
+    params: { limit: 100, sortBy: 'title', sortOrder: 'asc' },
+  });
 
 export const getCinemasForSelect = () =>
   apiClient.get('/cinemas', { params: { limit: 100 } });

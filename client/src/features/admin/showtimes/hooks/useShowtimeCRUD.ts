@@ -65,7 +65,10 @@ export const useCreateShowtime = () => {
     onError: (error: any) => {
       notifications.show({
         title: 'Lỗi',
-        message: error?.response?.data?.message || error.message || 'Tạo suất chiếu thất bại',
+        message:
+          error?.response?.data?.message ||
+          error.message ||
+          'Tạo suất chiếu thất bại',
         color: 'red',
       });
     },
@@ -89,7 +92,10 @@ export const useUpdateShowtime = () => {
     onError: (error: any) => {
       notifications.show({
         title: 'Lỗi',
-        message: error?.response?.data?.message || error.message || 'Cập nhật suất chiếu thất bại',
+        message:
+          error?.response?.data?.message ||
+          error.message ||
+          'Cập nhật suất chiếu thất bại',
         color: 'red',
       });
     },
@@ -112,7 +118,10 @@ export const useCancelShowtime = () => {
     onError: (error: any) => {
       notifications.show({
         title: 'Lỗi',
-        message: error?.response?.data?.message || error.message || 'Huỷ suất chiếu thất bại',
+        message:
+          error?.response?.data?.message ||
+          error.message ||
+          'Huỷ suất chiếu thất bại',
         color: 'red',
       });
     },

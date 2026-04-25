@@ -7,11 +7,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import {
-  Select,
-  NumberInput,
-  Button,
-} from '@mantine/core';
+import { Select, NumberInput, Button } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import 'dayjs/locale/vi';
 import {
@@ -56,9 +52,12 @@ export default function ShowtimeForm({
   const updateMutation = useUpdateShowtime();
 
   // Parse select data
-  const movies: any[] = (moviesRaw as any)?.data?.data || (moviesRaw as any)?.data || [];
-  const cinemas: any[] = (cinemasRaw as any)?.data?.data || (cinemasRaw as any)?.data || [];
-  const rooms: any[] = (roomsRaw as any)?.data?.data || (roomsRaw as any)?.data || [];
+  const movies: any[] =
+    (moviesRaw as any)?.data?.data || (moviesRaw as any)?.data || [];
+  const cinemas: any[] =
+    (cinemasRaw as any)?.data?.data || (cinemasRaw as any)?.data || [];
+  const rooms: any[] =
+    (roomsRaw as any)?.data?.data || (roomsRaw as any)?.data || [];
 
   const movieOptions = movies.map((m: any) => ({
     value: m._id,
@@ -207,7 +206,9 @@ export default function ShowtimeForm({
         label="Ngày & Giờ chiếu"
         placeholder="Chọn ngày giờ chiếu..."
         value={startTime ? new Date(startTime) : null}
-        onChange={(val) => setStartTime(val ? new Date(val).toISOString() : null)}
+        onChange={(val) =>
+          setStartTime(val ? new Date(val).toISOString() : null)
+        }
         locale="vi"
         valueFormat="DD/MM/YYYY HH:mm"
         minDate={new Date()}
