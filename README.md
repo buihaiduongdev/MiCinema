@@ -77,7 +77,3 @@ All endpoints are prefixed with `/api`.
 | Loyalty | `/loyalty` |
 | Reviews | `/reviews` |
 | Statistics | `/statistics` |
-
-## License
-
-MIT
